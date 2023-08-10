@@ -1,6 +1,0 @@
-D:\C#\CSharp\События\Events\Events\bin\Debug\Events.exe
-D:\C#\CSharp\События\Events\Events\bin\Debug\Events.pdb
-D:\C#\CSharp\События\Events\Events\obj\Debug\Events.csproj.AssemblyReference.cache
-D:\C#\CSharp\События\Events\Events\obj\Debug\Events.csproj.CoreCompileInputs.cache
-D:\C#\CSharp\События\Events\Events\obj\Debug\Events.exe
-D:\C#\CSharp\События\Events\Events\obj\Debug\Events.pdb
