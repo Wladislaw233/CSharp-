@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5944bbc6-5524-49f1-8efa-604f3c6691cb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../../1. Типы значений/Application/Models/Models/Client.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../1. Типы значений/Application/Models/Models/Currency.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../1. Типы значений/Application/Models/Models/Employee.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../1. Типы значений/Application/Models/Models/Person.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/indexLayout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/BankService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Client.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Currency.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Employee.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Models.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Person.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/Properties/AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/bin/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/bin/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/Models.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/Models.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/Models.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Release/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/Models/obj/Release/Models.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes.sln" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/PracticeWithTypes.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/Properties/AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/bin/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/bin/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/bin/Debug/PracticeWithTypes.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/bin/Debug/PracticeWithTypes.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.CopyComplete" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Приведение и преобразование типов/task.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/.idea/.idea.PracticeWithTypes/.idea/indexLayout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Client.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Currency.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Employee.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Models.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Person.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/Properties/AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/bin/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/bin/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/Models.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/Models.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/Models.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Release/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/Models/obj/Release/Models.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes.sln" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/PracticeWithTypes.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/Properties/AssemblyInfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/bin/Debug/Models.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/bin/Debug/Models.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/bin/Debug/PracticeWithTypes.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/bin/Debug/PracticeWithTypes.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.CopyComplete" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.CoreCompileInputs.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.csproj.FileListAbsolute.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/PracticeWithTypes/PracticeWithTypes/obj/Debug/PracticeWithTypes.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../Типы значений/task.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2Tn6p8cpDfNOte1sUvetulDAw5i" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\Intel\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\Intel\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\Intel\\AppData\\Local\\Symbols\\src"
+    ]
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5944bbc6-5524-49f1-8efa-604f3c6691cb" name="Changes" comment="" />
+      <created>1691666679161</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1691666679161</updated>
+      <workItem from="1691666680338" duration="67000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
