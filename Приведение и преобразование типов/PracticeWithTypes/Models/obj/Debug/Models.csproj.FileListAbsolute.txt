@@ -1,0 +1,18 @@
+D:\C#\tools\PracticeWithTypes\Models\bin\Debug\Models.dll
+D:\C#\tools\PracticeWithTypes\Models\bin\Debug\Models.pdb
+D:\C#\tools\PracticeWithTypes\Models\obj\Debug\Models.csproj.AssemblyReference.cache
+D:\C#\tools\PracticeWithTypes\Models\obj\Debug\Models.csproj.CoreCompileInputs.cache
+D:\C#\tools\PracticeWithTypes\Models\obj\Debug\Models.dll
+D:\C#\tools\PracticeWithTypes\Models\obj\Debug\Models.pdb
+D:\C#\Типы значений\PracticeWithTypes\Models\bin\Debug\Models.dll
+D:\C#\Типы значений\PracticeWithTypes\Models\bin\Debug\Models.pdb
+D:\C#\Типы значений\PracticeWithTypes\Models\obj\Debug\Models.csproj.AssemblyReference.cache
+D:\C#\Типы значений\PracticeWithTypes\Models\obj\Debug\Models.csproj.CoreCompileInputs.cache
+D:\C#\Типы значений\PracticeWithTypes\Models\obj\Debug\Models.dll
+D:\C#\Типы значений\PracticeWithTypes\Models\obj\Debug\Models.pdb
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\bin\Debug\Models.dll
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\bin\Debug\Models.pdb
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\obj\Debug\Models.csproj.AssemblyReference.cache
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\obj\Debug\Models.csproj.CoreCompileInputs.cache
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\obj\Debug\Models.dll
+D:\C#\CSharp\Приведение и преобразование типов\PracticeWithTypes\Models\obj\Debug\Models.pdb
