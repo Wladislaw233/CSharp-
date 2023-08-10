@@ -9,36 +9,33 @@ namespace Events
         public delegate void MethodContainerEventHandlerQuantityArrayElementsBiggerN(int n);
         public delegate void MethodContainerEventHandlerEmptyArray();
 
-        public event MethodContainerEventHandlerQuantityArrayElementsBiggerN QuantityBiggerN;
-        public event MethodContainerEventHandlerEmptyArray EmptyArray;
-        
-        public void Count(int n)
-        {
-            List<int> list = new List<int>();
-            int i = 0;
-            while (true)
-            {
-                list.Add(i);
-                if (list.Count > n)
-                {
-                    if (QuantityBiggerN != null)
-                    {
-                        QuantityBiggerN(n);
-                        list.Clear();
-                        break;
-                    }
-                }
+        public int QuantityInQueue = 0;
+        public int NumberLimit;
+        public event MethodContainerEventHandlerQuantityArrayElementsBiggerN QuantityInQueueBiggerN;
+        public event MethodContainerEventHandlerEmptyArray EmptyQueue;
 
-                i += 1;
-            }
-            if (list.Count() == 0)
+        public void Plus(int quantityPlus)
+        {
+            QuantityInQueue += quantityPlus;
+            EventHandler();
+        }
+
+        public void Minus(int quantityMinus)
+        {
+            QuantityInQueue = QuantityInQueue < quantityMinus  ? QuantityInQueue = 0 : QuantityInQueue -= quantityMinus;
+            EventHandler();
+        }
+        public void EventHandler()
+        {
+            Console.Clear();
+            if (QuantityInQueue == 0)
             {
-                if (EmptyArray != null)
-                {
-                    EmptyArray();
-                }
+                if (EmptyQueue != null) EmptyQueue();
             }
-            
+            else if (QuantityInQueue > NumberLimit)
+            {
+                if (QuantityInQueueBiggerN != null) QuantityInQueueBiggerN(NumberLimit);
+            }
         }
     }
 }

@@ -6,7 +6,9 @@ namespace Events
     {
         public void Message(int n)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Количество элементов списка превышает {0}", n);
+            Console.ResetColor();
         }
     }
 }

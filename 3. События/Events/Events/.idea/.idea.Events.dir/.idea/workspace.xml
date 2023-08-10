@@ -8,7 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="99b3883a-5bc4-4392-8550-441d22b03fe4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Events.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Events.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EventHandlerEmptyArray.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EventHandlerEmptyArray.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EventHandlerQuantityArrayElementsBiggerN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EventHandlerQuantityArrayElementsBiggerN.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Queue.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Queue.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +21,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "customColor": "",
@@ -75,7 +87,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1691667902513</updated>
-      <workItem from="1691667904382" duration="1625000" />
+      <workItem from="1691667904382" duration="7513000" />
     </task>
     <servers />
   </component>
