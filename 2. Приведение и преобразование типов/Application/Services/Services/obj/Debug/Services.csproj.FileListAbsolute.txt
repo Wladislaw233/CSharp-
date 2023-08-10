@@ -1,9 +1,0 @@
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\bin\Debug\Services.dll
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\bin\Debug\Services.pdb
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\bin\Debug\Models.dll
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\bin\Debug\Models.pdb
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\obj\Debug\Services.csproj.AssemblyReference.cache
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\obj\Debug\Services.csproj.CoreCompileInputs.cache
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\obj\Debug\Services.csproj.CopyComplete
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\obj\Debug\Services.dll
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Services\Services\obj\Debug\Services.pdb

@@ -1,6 +1,0 @@
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\bin\Debug\Models.dll
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\bin\Debug\Models.pdb
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\obj\Debug\Models.csproj.AssemblyReference.cache
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\obj\Debug\Models.csproj.CoreCompileInputs.cache
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\obj\Debug\Models.dll
-D:\C#\CSharp\2. Приведение и преобразование типов\Application\Models\Models\obj\Debug\Models.pdb
