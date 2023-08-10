@@ -9,6 +9,10 @@ namespace Events
             
             /* реализовать очередь, которая генерирует событие, когда кол-во
             объектов в ней превышает n и событие, когда становится пустой*/
+
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            
+            if (key.Key == ConsoleKey.OemPlus) ;
             
             Queue queue = new Queue();
             EventHandlerEmptyArray eventHandlerEmptyArray = new EventHandlerEmptyArray();
@@ -26,6 +30,8 @@ namespace Events
             int number = 37;
             int percent = 45; 
             numberAnalis.Analis(number, percent);
+            
+            public 
         }
     }
 }
