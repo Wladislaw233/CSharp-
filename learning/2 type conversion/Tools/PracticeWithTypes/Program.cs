@@ -11,6 +11,7 @@ namespace PracticeWithTypes
     {
         public static void Main(string[] args)
         {
+            // пункт а.
             Person person1 = new Person { FirstName = "Ivan", LastName = "Ivanov", DateOfBirth = DateTime.Now };
             Person person2 = new Person { FirstName = "Stas", LastName = "Petrov", DateOfBirth = DateTime.Now };
             Person person3 = new Person { FirstName = "Oleg", LastName = "Zubrov", DateOfBirth = DateTime.Now };
@@ -36,8 +37,10 @@ namespace PracticeWithTypes
             {
                 Console.WriteLine($"У владельца {employee.Person.FirstName} {employee.Person.LastName} зарплата: {employee.Salary} $");
             }
-            Console.WriteLine();
-            Console.ReadLine();
+            // пункт б.
+            Client client = new Client { FirstName = "Petya", LastName = "Petrov", Address = "Tiraspol, str. Lenina, 12/2", Email = "test@mail.ru", PhoneNumber = "123456789"};
+            Employee newEmployee = (Employee)client;
+
         }
     }
 }
