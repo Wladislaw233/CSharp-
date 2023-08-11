@@ -24,7 +24,7 @@ namespace PracticeWithTypes
         {
             employee.Contract = "Контракт сотрудника: " 
                                 + employee.Person.FirstName + " " 
-                                + employee.Person.LastName + ", возврат: " + employee.Person.Age;
+                                + employee.Person.LastName + ", дата рождения: " + employee.Person.DateOfBirth.ToString();
         }
     }    
 }
