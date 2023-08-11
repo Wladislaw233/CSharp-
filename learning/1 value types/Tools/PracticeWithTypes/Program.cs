@@ -6,9 +6,9 @@ namespace PracticeWithTypes
     {
         public static void Main(string[] args)
         {
-            Person person = new Person { FirsName = "Ivan", LastName = "Ivanov", BirthdayDate = DateTime.Now };
+            Person person = new Person { FirstName = "Ivan", LastName = "Ivanov", Age = 25};
             Employee employee = new Employee { Person = person};
-            CreateEmployeeContarct(employee);
+            UpdateEmployeeContarct(employee);
             Console.WriteLine("{0}", employee.Contract);
             Currency currency = new Currency();
             ChangeCurrency(ref currency);
@@ -22,12 +22,11 @@ namespace PracticeWithTypes
             currency.Course = 16.35;
         }
         
-        static void CreateEmployeeContarct(Employee employee)
+        static void UpdateEmployeeContarct(Employee employee)
         {
             employee.Contract = "Контракт сотрудника: " 
-                                + employee.Person.FirsName + " " 
-                                + employee.Person.LastName + " " +
-                                Convert.ToString(employee.Person.BirthdayDate);
+                                + employee.Person.FirstName + " " 
+                                + employee.Person.LastName + ", возврат: " + employee.Person.Age;
         }
     }    
 }
