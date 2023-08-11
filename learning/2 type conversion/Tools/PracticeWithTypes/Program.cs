@@ -39,8 +39,10 @@ namespace PracticeWithTypes
             }
             // пункт б.
             Client client = new Client { FirstName = "Petya", LastName = "Petrov", Address = "Tiraspol, str. Lenina, 12/2", Email = "test@mail.ru", PhoneNumber = "123456789"};
-            Employee newEmployee = (Employee)client;
-
+            Employee convertedEmployee = (Employee)client;
+            Console.WriteLine($"Клиент банка: \n\t {client.FirstName} {client.LastName}, \n\t e-mail: {client.Email},\n\t адрес: {client.Address},\n\t номер телефона: {client.PhoneNumber} \n" +
+                              $"Сотрудник банка полученный путем преобразования клиента: \n\t {convertedEmployee.Person.FirstName} {convertedEmployee.Person.LastName}, " +
+                              $"\n\t e-mail: {convertedEmployee.Email}, \n\t адрес: {convertedEmployee.Address}, \n\t номер телефона: {convertedEmployee.PhoneNumber}");
         }
     }
 }
