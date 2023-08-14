@@ -15,17 +15,20 @@ namespace Models
         // implicit - при не явном преобразовании
         public static explicit operator Employee(Client client)
         {
-            Person person = new Person();
+            var person = new Person();
             person.FirstName = client.FirstName;
             person.LastName = client.LastName;
             person.DateOfBirth = DateTime.Now;
-            return new Employee{ Person = person
-                                , Owner = false
-                                , Salary = 0
-                                , Contract = person.FirstName + "" + person.LastName + ", дата рождения: " + person.DateOfBirth.ToString()
-                                , Address = client.Address
-                                , PhoneNumber = client.PhoneNumber
-                                , Email = client.Email};
+            return new Employee
+            {
+                Person = person,
+                Owner = false,
+                Salary = 0,
+                Contract = person.FirstName + "" + person.LastName + ", дата рождения: " + person.DateOfBirth,
+                Address = client.Address,
+                PhoneNumber = client.PhoneNumber,
+                Email = client.Email
+            };
         }
     }
 }

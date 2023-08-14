@@ -2,16 +2,12 @@
 using Models;
 namespace Services
 {
-    
     public class BankService
     {
-        public void CalculateSalary(double profit, double expenses, List<Employee> employees)
+        public void CalculateSalaryOfBankOwners(double profit, double expenses, List<Employee> owners)
         {
-            double Salary = (profit - expenses) / employees.Count;
-            foreach (Employee employee in employees)
-            {
-                employee.Salary = (int)Salary;
-            }
+            var Salary = (profit - expenses) / owners.Count;
+            foreach (var employee in owners) employee.Salary = (int)Salary;
         }
     }
 }

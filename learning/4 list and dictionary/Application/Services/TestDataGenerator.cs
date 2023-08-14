@@ -69,7 +69,8 @@ public class TestDataGenerator
                 LastName = lastName,
                 Address = GenerateRandomAddress(), 
                 Email = GenerateRandomEmail(firstName, lastName),
-                PhoneNumber = GenerateRandomPhoneNumber()
+                PhoneNumber = GenerateRandomPhoneNumber(),
+                Age = random.Next(18, 70)
             });
         }
         return listBankClients;
@@ -82,9 +83,9 @@ public class TestDataGenerator
         return dictionaryBankClients;
     }
 
-    public static List<Employee> GenerateListWithThousandEmployers()
+    public static List<Employee> GenerateListWithThousandEmployees()
     {
-        List<Employee> listBankEmployers = new List<Employee>();
+        List<Employee> listBankEmployees = new List<Employee>();
         string firstName;
         string lastName;
         DateTime dateOfBirth;
@@ -93,7 +94,7 @@ public class TestDataGenerator
             firstName = GenerateRandomFirstName();
             lastName = GenerateRandomLastName();
             dateOfBirth = GenerateRandomDateOfBirth();
-            listBankEmployers.Add(new Employee
+            listBankEmployees.Add(new Employee
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -106,6 +107,6 @@ public class TestDataGenerator
                 Salary = random.Next(10000, 99999)
             });
         }
-        return listBankEmployers;
+        return listBankEmployees;
     }
 }
