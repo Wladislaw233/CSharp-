@@ -12,22 +12,12 @@ namespace PracticeWithTypes
         public static void Main(string[] args)
         {
             // пункт а.
-            var person1 = new Person { FirstName = "Ivan", LastName = "Ivanov", DateOfBirth = DateTime.Now };
-            var person2 = new Person { FirstName = "Stas", LastName = "Petrov", DateOfBirth = DateTime.Now };
-            var person3 = new Person { FirstName = "Oleg", LastName = "Zubrov", DateOfBirth = DateTime.Now };
+            
+            var owners = new List<Employee>();
 
-            var employees = new List<Employee>();
-            employees.Add(new Employee
-                { Person = person1, Owner = true, Contract = person1.FirstName + " " + person1.LastName });
-            employees.Add(new Employee
-                { Person = person2, Owner = false, Contract = person2.FirstName + " " + person2.LastName });
-            employees.Add(new Employee
-                { Person = person3, Owner = true, Contract = person3.FirstName + " " + person3.LastName });
-
-            List<Employee> owners = (from employee in employees
-                where employee.Owner
-                select employee).ToList();
-
+            owners.Add(new Owner("Иван", "Иванов", DateTime.Now, 22, "Иван Иванов, дата рождения: " + DateTime.Now));
+            owners.Add(new Owner("Петр", "Петров", DateTime.Now, 45, "Петр Петров, дата рождения: " + DateTime.Now));
+            
             var bankService = new BankService();
 
             Console.WriteLine("Введите прибыль банка:");
@@ -37,15 +27,14 @@ namespace PracticeWithTypes
             var expenses = double.Parse(Console.ReadLine());
 
             bankService.CalculateSalaryOfBankOwners(profit, expenses, owners);
-            foreach (var employee in owners)
+            foreach (var owner in owners)
                 Console.WriteLine(
-                    $"У владельца {employee.Person.FirstName} {employee.Person.LastName} зарплата: {employee.Salary} $");
+                    $"У владельца {owner.FirstName} {owner.LastName} зарплата: {owner.Salary} $");
             // пункт б.
-            var client = new Client
-            {
-                FirstName = "Petya", LastName = "Petrov", Address = "Tiraspol, str. Lenina, 12/2",
-                Email = "test@mail.ru", PhoneNumber = "123456789"
-            };
+
+            var client = new Client("Василий", "Пупкин", DateTime.Now, 34, "+8775532112", "test@mail.ru",
+                "Tiraspol, str. Lenina, 12/2");
+           
             var convertedEmployee = (Employee)client;
 
             Console.WriteLine(
@@ -55,7 +44,7 @@ namespace PracticeWithTypes
                 $"\n\t адрес: {client.Address}," +
                 $"\n\t номер телефона: {client.PhoneNumber} " +
                 $"\n Сотрудник банка полученный путем преобразования клиента: " +
-                $"\n\t {convertedEmployee.Person.FirstName} {convertedEmployee.Person.LastName}, " +
+                $"\n\t {convertedEmployee.FirstName} {convertedEmployee.LastName}, " +
                 $"\n\t e-mail: {convertedEmployee.Email}, " +
                 $"\n\t адрес: {convertedEmployee.Address}, " +
                 $"\n\t номер телефона: {convertedEmployee.PhoneNumber}");

@@ -7,7 +7,7 @@ namespace Services
         public void CalculateSalaryOfBankOwners(double profit, double expenses, List<Employee> owners)
         {
             double salary = (profit - expenses) / owners.Count;
-            foreach (var employee in owners) employee.Salary = (int)salary;
+            foreach (var owner in owners) owner.Salary = (int)salary;
         }
     }
 }

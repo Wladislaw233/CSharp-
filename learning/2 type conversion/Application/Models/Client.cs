@@ -1,13 +1,16 @@
-﻿using System;
+﻿namespace Models;
 
-namespace Models
+public class Client : Person
 {
-    public class Client
+    public string PhoneNumber { get; set; }
+    public string Email { get; set; }
+    public string Address { get; set; }
+
+    public Client(string firstName, string lastName, DateTime dateOfBirth, int age, string phoneNumber = "",
+        string email = "", string address = "") : base(firstName, lastName, dateOfBirth, age)
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
+        PhoneNumber = phoneNumber;
+        Email = email;
+        Address = address;
     }
 }

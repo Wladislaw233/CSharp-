@@ -1,34 +1,40 @@
-﻿
-namespace Models
+﻿namespace Models
 {
-    public class Employee
+    public class Employee : Person
     {
-        public Person Person { get; set; }
+        
         public string Contract { get; set; }
-        public bool Owner { get; set; }
         public int Salary { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
 
+        public Employee(string firstName, string lastName, DateTime dateOfBirth, int age, string contract, int salary = 0, string address = "", string email = "", string phoneNumber = "")
+            :base(firstName, lastName, dateOfBirth, age)
+        {
+            Contract = contract;
+            Salary = salary;
+            Address = address;
+            Email = email;
+            PhoneNumber = phoneNumber;
+        }
+        
         // explicit - при явном преобразовании
         // implicit - при не явном преобразовании
         public static explicit operator Employee(Client client)
         {
-            var person = new Person();
-            person.FirstName = client.FirstName;
-            person.LastName = client.LastName;
-            person.DateOfBirth = DateTime.Now;
-            return new Employee
-            {
-                Person = person,
-                Owner = false,
-                Salary = 0,
-                Contract = person.FirstName + "" + person.LastName + ", дата рождения: " + person.DateOfBirth,
-                Address = client.Address,
-                PhoneNumber = client.PhoneNumber,
-                Email = client.Email
-            };
+            DateTime dateOfBirth = DateTime.Now;
+            return new Employee(
+                client.FirstName,
+                client.LastName,
+                client.DateOfBirth,
+                client.Age,
+                client.FirstName + " " + client.LastName + ", дата рождения: " + client.DateOfBirth.ToString(),
+                0,
+                client.Address,
+                client.Email,
+                client.PhoneNumber
+            );
         }
     }
 }

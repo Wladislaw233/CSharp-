@@ -71,14 +71,15 @@ public class TestDataGenerator
         var firstName = GenerateRandomFirstName();
         var lastName = GenerateRandomLastName();
         return new Client
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Address = GenerateRandomAddress(),
-            Email = GenerateRandomEmail(firstName, lastName),
-            PhoneNumber = GenerateRandomPhoneNumber(),
-            Age = Rnd.Next(18, 70)
-        };
+        (
+            firstName,
+            lastName,
+            GenerateRandomDateOfBirth(),
+            Rnd.Next(18, 70),
+            GenerateRandomPhoneNumber(),
+            GenerateRandomEmail(firstName, lastName),
+            GenerateRandomAddress()
+        );
     }
 
     private static Employee GenerateRandomEmployee()
@@ -87,17 +88,15 @@ public class TestDataGenerator
         var lastName = GenerateRandomLastName();
         var dateOfBirth = GenerateRandomDateOfBirth();
         return new Employee
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Address = GenerateRandomAddress(),
-            DateOfBirth = dateOfBirth,
-            Contract = firstName + " " + lastName + ", дата рождения: " + dateOfBirth,
-            Email = GenerateRandomEmail(firstName, lastName),
-            Owner = false,
-            PhoneNumber = GenerateRandomPhoneNumber(),
-            Salary = Rnd.Next(10000, 99999)
-        };
+        (firstName,
+            lastName,
+            dateOfBirth,
+            Rnd.Next(18, 60),
+            firstName + " " + lastName + ", дата рождения: " + dateOfBirth,
+            Rnd.Next(10000, 99999),
+            GenerateRandomAddress(),
+            GenerateRandomEmail(firstName, lastName),
+            GenerateRandomPhoneNumber());
     }
 
     public static List<Client> GenerateListWitchThousandBankClients()
