@@ -1,22 +1,20 @@
-﻿using System;
-using Services;
+﻿using Services;
 
-namespace Events
+namespace Events;
+
+internal class Program
 {
-    internal class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            /* реализовать очередь, которая генерирует событие, когда кол-во
-            объектов в ней превышает n и событие, когда становится пустой */
-            
-            Queue queue = new Queue();
-            EventHandlerEmptyArray eventHandlerEmptyArray = new EventHandlerEmptyArray();
-            EventHandlerQuantityArrayElementsBiggerN eventHandlerQuantityArrayElementsBiggerN =
-                new EventHandlerQuantityArrayElementsBiggerN();
-            queue.EmptyQueue += eventHandlerEmptyArray.Message;
-            queue.QuantityInQueueBiggerN += eventHandlerQuantityArrayElementsBiggerN.Message;
-            queue.QueueControl();
-        }
+        /* реализовать очередь, которая генерирует событие, когда кол-во
+        объектов в ней превышает n и событие, когда становится пустой */
+
+        var queue = new Queue();
+        var eventHandlerEmptyArray = new EventHandlerEmptyArray();
+        var eventHandlerQuantityArrayElementsBiggerN =
+            new EventHandlerQuantityArrayElementsBiggerN();
+        queue.EmptyQueue += eventHandlerEmptyArray.Message;
+        queue.QuantityInQueueBiggerN += eventHandlerQuantityArrayElementsBiggerN.Message;
+        queue.QueueControl();
     }
 }

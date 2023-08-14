@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Services;
 
-namespace Services
+public class EventHandlerNumberBiggerXPrecent
 {
-    public class EventHandlerNumberBiggerXPrecent
+    public void Message(int number, double precent, int inputNumber, double precentLimit)
     {
-        public void Message(int Number, double Precent, int InputNumber, double PrecentLimit)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"{InputNumber} > {Number} на {Precent}%, что больше лимита ({PrecentLimit}%).");
-            Console.ResetColor();
-        }
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"{inputNumber} > {number} на {precent}%, что больше лимита ({precentLimit}%).");
+        Console.ResetColor();
     }
 }

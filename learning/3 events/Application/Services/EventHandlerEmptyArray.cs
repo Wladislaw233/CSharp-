@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace Services;
 
-namespace Services
+public class EventHandlerEmptyArray
 {
-    public class EventHandlerEmptyArray
+    public void Message()
     {
-        public void Message()
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Список пуст!");
-            Console.ResetColor();
-        }
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Список пуст!");
+        Console.ResetColor();
     }
 }

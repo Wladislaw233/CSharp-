@@ -1,19 +1,17 @@
-﻿using System;
-using Services;
+﻿using Services;
 
-namespace Events
+namespace Events;
+
+internal class Program
 {
-    internal class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            /* реализовать класс анализирующий поток чисел, и если число
-            отличается более чем x - процентов выбрасывает событие */
-            
-            NumberAnalis numberAnalis = new NumberAnalis();
-            EventHandlerNumberBiggerXPrecent eventHandlerNumberBiggerXPrecent = new EventHandlerNumberBiggerXPrecent();
-            numberAnalis.numberAnalis += eventHandlerNumberBiggerXPrecent.Message;
-            numberAnalis.StartAnalis();
-        }
+        /* реализовать класс анализирующий поток чисел, и если число
+        отличается более чем x - процентов выбрасывает событие */
+
+        var numberAnalis = new NumberAnalis();
+        var eventHandlerNumberBiggerXPrecent = new EventHandlerNumberBiggerXPrecent();
+        numberAnalis.NumberBiggerXPrecent += eventHandlerNumberBiggerXPrecent.Message;
+        numberAnalis.StartAnalis();
     }
 }
