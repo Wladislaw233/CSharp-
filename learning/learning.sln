@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "3 events\Applic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsListNumbers", "3 events\Tools\EventsListNumbers\EventsListNumbers.csproj", "{EA177B80-96AB-4230-BD0B-2FA08907FDBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsThreedNumbers", "3 events\Tools\EventsThreedNumbers\EventsThreedNumbers.csproj", "{CF184BA7-851D-4D46-91AF-343CB1C58CAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsStreamNumbers", "3 events\Tools\EventsStreamNumbers\EventsStreamNumbers.csproj", "{CF184BA7-851D-4D46-91AF-343CB1C58CAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "List and dictionary", "List and dictionary", "{7D8ADCE2-16B5-4872-B3BE-52C1827E4375}"
 EndProject
@@ -29,6 +29,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "4 list and dictionary\Application\Services\Services.csproj", "{F6E33B7F-98E3-4A1A-9BB1-9D767C680D14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeWithListAndDictionary", "4 list and dictionary\Tools\PracticeWithListAndDictionary\PracticeWithListAndDictionary.csproj", "{D67F8D9D-C02A-4465-BFE5-8232D58E366E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Equals and GetHashCode", "Equals and GetHashCode", "{B489360D-BBCE-4104-B7B8-F3FA49506AB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "5 equals and getHashCode\Application\Models\Models.csproj", "{FAE3E796-0146-45AE-B2F5-7F2AB717691C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "5 equals and getHashCode\Application\Services\Services.csproj", "{2B728165-44C8-474A-A7C5-31BC15FB3538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeWithEqualsAndGetHashCode", "5 equals and getHashCode\Tools\PracticeWithEqualsAndGetHashCode\PracticeWithEqualsAndGetHashCode.csproj", "{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTests", "5 equals and getHashCode\Application\ServiceTests\ServiceTests.csproj", "{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +57,10 @@ Global
 		{3EA9E373-7658-4C02-9B9B-0DB9174E3398} = {7D8ADCE2-16B5-4872-B3BE-52C1827E4375}
 		{F6E33B7F-98E3-4A1A-9BB1-9D767C680D14} = {7D8ADCE2-16B5-4872-B3BE-52C1827E4375}
 		{D67F8D9D-C02A-4465-BFE5-8232D58E366E} = {7D8ADCE2-16B5-4872-B3BE-52C1827E4375}
+		{FAE3E796-0146-45AE-B2F5-7F2AB717691C} = {B489360D-BBCE-4104-B7B8-F3FA49506AB7}
+		{2B728165-44C8-474A-A7C5-31BC15FB3538} = {B489360D-BBCE-4104-B7B8-F3FA49506AB7}
+		{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59} = {B489360D-BBCE-4104-B7B8-F3FA49506AB7}
+		{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383} = {B489360D-BBCE-4104-B7B8-F3FA49506AB7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DA7DDD26-7303-4BB2-893C-1AEE2FE9F7A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -93,5 +107,21 @@ Global
 		{D67F8D9D-C02A-4465-BFE5-8232D58E366E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D67F8D9D-C02A-4465-BFE5-8232D58E366E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D67F8D9D-C02A-4465-BFE5-8232D58E366E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAE3E796-0146-45AE-B2F5-7F2AB717691C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAE3E796-0146-45AE-B2F5-7F2AB717691C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAE3E796-0146-45AE-B2F5-7F2AB717691C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAE3E796-0146-45AE-B2F5-7F2AB717691C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B728165-44C8-474A-A7C5-31BC15FB3538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B728165-44C8-474A-A7C5-31BC15FB3538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B728165-44C8-474A-A7C5-31BC15FB3538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B728165-44C8-474A-A7C5-31BC15FB3538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BDB56D9-7428-4CDE-9D0F-5015CAD3CF59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C45E5D27-7A88-4BFE-A9F8-AC0D1CD8E383}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
