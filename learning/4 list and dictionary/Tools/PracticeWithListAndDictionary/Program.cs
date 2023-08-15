@@ -36,9 +36,8 @@ internal class Program
                           $") в словаре по номеру телефона - {stopWatch.Elapsed.TotalMilliseconds} мс.");
 
         // 2.в
-        var numberOfFoundClientsInListByAge = listBankClients.Where(bankClient => bankClient.Age < 42).Count();
         Console.WriteLine(
-            $"Количество клиентов в списке возраст которых меньше 42 - {numberOfFoundClientsInListByAge}");
+            $"Количество клиентов в списке возраст которых меньше 42 - {listBankClients.Where(bankClient => bankClient.Age < 42).Count()}");
 
         // 2.г
         var foundEmployeeInListWithMinimumSalary = listBankEmployees.MinBy(bankEmployee => bankEmployee.Salary);
