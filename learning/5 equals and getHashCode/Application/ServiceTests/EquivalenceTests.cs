@@ -16,7 +16,7 @@ public class EquivalenceTests
         Console.WriteLine(accountsFound
             ? "В результате переопределения метода GetHashCode класса Client появилась возможность " +
               $"получать аккаунты разных объектов с одинаковыми свойствами:\n Клиент: {copiedClient.FirstName} {copiedClient.LastName}, аккаунт(-ы):\n" +
-              string.Join(',',
+              string.Join('\n',
                   foundAccounts.Select(account =>
                       $"Курс: {account.Currency.Name} {account.Currency.Course} р., баланс: {account.Amount}"))
             : "Аккаунты клиента не найдены!");
@@ -26,15 +26,18 @@ public class EquivalenceTests
         accountsFound = clientsAccounts.TryGetValue(copiedClient, out foundAccounts);
         Console.WriteLine(accountsFound
             ? $"Ситуация когда у клиента несколько аккаунтов:\nКлиент: {copiedClient.FirstName} {copiedClient.LastName}, аккаунты:\n" +
-              string.Join(',',
+              string.Join('\n',
                   foundAccounts.Select(account =>
                       $"Курс: {account.Currency.Name} {account.Currency.Course} р., баланс: {account.Amount}"))
             : "Аккаунт клиента не найден!");
 
         //list.
+        Console.WriteLine();
 
         var bankEmployees = TestDataGenerator.GenerateListWithEmployees();
-        var copiedEmployee = bankEmployees.FirstOrDefault();
-        
+        var copiedEmployee = Employee.CopyEmployee(bankEmployees.LastOrDefault());
+        Console.WriteLine(
+            $"В списке есть скопированный сотрудник ({copiedEmployee.FirstName} {copiedEmployee.LastName}) - " +
+            (bankEmployees.Contains(copiedEmployee) ? "да" : "нет"));
     }
 }

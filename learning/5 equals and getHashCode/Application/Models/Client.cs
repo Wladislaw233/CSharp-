@@ -35,14 +35,15 @@ public class Client : Person
                client.DateOfBirth == DateOfBirth &&
                client.Age == Age;
     }
-
+    
     public override int GetHashCode()
     {
         var convertedString = FirstName + LastName + PhoneNumber + Address + Email + DateOfBirth + Age;
+        byte[] hashBytes;
         using (var sha256 = SHA256.Create())
         {
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(convertedString));
-            return BitConverter.ToInt32(hashBytes);
+            hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(convertedString));
         }
+        return BitConverter.ToInt32(hashBytes);
     }
 }
