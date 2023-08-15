@@ -23,7 +23,6 @@
         // implicit - при не явном преобразовании
         public static explicit operator Employee(Client client)
         {
-            DateTime dateOfBirth = DateTime.Now;
             return new Employee(
                 client.FirstName,
                 client.LastName,

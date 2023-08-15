@@ -2,10 +2,10 @@
 
 public class Person
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public int Age { get; set; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public DateTime DateOfBirth { get; init; }
+    public int Age { get; init; }
 
     protected Person(string firstName, string lastName, DateTime dateOfBirth, int age)
     {
