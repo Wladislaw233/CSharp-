@@ -2,7 +2,8 @@
 {
     public struct Currency
     {
-        public string Name;
-        public double Course;
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public double ExchangeRate { get; set; } 
     }
 }

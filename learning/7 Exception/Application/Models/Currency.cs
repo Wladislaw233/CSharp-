@@ -1,8 +1,15 @@
-﻿namespace Models
+﻿namespace Models;
+
+public struct Currency
 {
-    public struct Currency
+    public string Code { get; set; }
+    public string Name { get; set; }
+    public double ExchangeRate { get; set; }
+
+    public Currency(string code, string name, double exchangeRate)
     {
-        public string Name;
-        public double Course;
+        Code = code;
+        Name = name;
+        ExchangeRate = exchangeRate;
     }
 }

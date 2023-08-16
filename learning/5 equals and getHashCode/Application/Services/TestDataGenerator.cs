@@ -110,7 +110,7 @@ public class TestDataGenerator
 
     private static Account GenerateRandomAccount()
     {
-        return new Account("USD-RUB",101.93, Rnd.Next(1000,100000));
+        return new Account("USD","United States Dollar",1, Rnd.Next(1000,100000));
     }
 
     public static List<Client> GenerateListWitchBankClients(int numberOfClients = 10)

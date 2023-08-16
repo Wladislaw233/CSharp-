@@ -18,7 +18,7 @@ public class EquivalenceTests
               $"получать аккаунты разных объектов с одинаковыми свойствами:\n Клиент: {copiedClient.FirstName} {copiedClient.LastName}, аккаунт(-ы):\n" +
               string.Join('\n',
                   foundAccounts.Select(account =>
-                      $"Курс: {account.Currency.Name} {account.Currency.Course} р., баланс: {account.Amount}"))
+                      $"Валюта: {account.Currency.Code}, обменный курс: {account.Currency.ExchangeRate}, баланс: {account.Amount}"))
             : "Аккаунты клиента не найдены!");
 
         TestDataGenerator.AddClientAccount(ref clientsAccounts, copiedClient);
@@ -28,7 +28,7 @@ public class EquivalenceTests
             ? $"Ситуация когда у клиента несколько аккаунтов:\nКлиент: {copiedClient.FirstName} {copiedClient.LastName}, аккаунты:\n" +
               string.Join('\n',
                   foundAccounts.Select(account =>
-                      $"Курс: {account.Currency.Name} {account.Currency.Course} р., баланс: {account.Amount}"))
+                      $"Валюта: {account.Currency.Code}, обменный курс: {account.Currency.ExchangeRate}, баланс: {account.Amount}"))
             : "Аккаунт клиента не найден!");
 
         //list.

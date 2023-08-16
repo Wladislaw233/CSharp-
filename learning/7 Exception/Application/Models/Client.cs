@@ -9,7 +9,7 @@ public class Client : Person
     public string Email { get; init; }
     public string Address { get; init; }
 
-    public Client(string firstName, string lastName, DateTime? dateOfBirth, int age, string phoneNumber,
+    public Client(string firstName, string lastName, DateTime dateOfBirth, int age, string phoneNumber,
         string email, string address) : base(firstName, lastName, dateOfBirth, age)
     {
         PhoneNumber = phoneNumber;

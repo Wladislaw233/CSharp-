@@ -69,11 +69,11 @@ public class TestDataGenerator
     private static int CalculateAge(DateTime dateOfBirth)
     {
         return DateTime.Now.Year - dateOfBirth.Year - (dateOfBirth >
-               DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year))
+                                                       DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year))
             ? 1
             : 0);
     }
-    
+
     private static Client GenerateRandomClient()
     {
         var firstName = GenerateRandomFirstName();
@@ -110,34 +110,70 @@ public class TestDataGenerator
 
     private static Account GenerateRandomAccount()
     {
-        return new Account("USD-RUB",101.93, Rnd.Next(1000,100000));
+        return new Account("123456789");
     }
 
-    public static List<Client> GenerateListWitchBankClients(int numberOfClients = 10)
+    public static List<Client> GenerateListWitchBankClients(int numberOfClients = 10, bool addInvalidClient = false)
     {
         var listBankClients = new List<Client>();
-        for (var index = 0; index < numberOfClients; index++) 
+        for (var index = 0; index < numberOfClients; index++)
             listBankClients.Add(GenerateRandomClient());
-
+        if (addInvalidClient)
+            AddInvalidClientToList(ref listBankClients);
         return listBankClients;
+    }
+
+    private static void AddInvalidClientToList(ref List<Client> listBankClients)
+    {
+        var firstName = "";
+        var lastName = "";
+        var dateOfBirth = GenerateRandomDateOfBirth();
+        listBankClients.Add(new Client
+        (
+            firstName,
+            lastName,
+            dateOfBirth,
+            CalculateAge(dateOfBirth),
+            GenerateRandomPhoneNumber(),
+            GenerateRandomEmail(firstName, lastName),
+            GenerateRandomAddress()
+        ));
     }
 
     public static Dictionary<string, Client> GenerateDictionaryWithBankClients(List<Client> listBankClients)
     {
         var dictionaryBankClients = new Dictionary<string, Client>();
-        foreach (var bankClient in listBankClients) 
+        foreach (var bankClient in listBankClients)
             dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
         dictionaryBankClients.Add("00000000", GenerateRandomClient());
         return dictionaryBankClients;
     }
 
-    public static List<Employee> GenerateListWithEmployees(int numberOfEmployees = 10)
+    public static List<Employee> GenerateListWithEmployees(int numberOfEmployees = 10, bool addInvalidEmployee = false)
     {
         var listBankEmployees = new List<Employee>();
-        for (var index = 0; index < numberOfEmployees; index++) 
+        for (var index = 0; index < numberOfEmployees; index++)
             listBankEmployees.Add(GenerateRandomEmployee());
-
+        if (addInvalidEmployee)
+            AddInvalidEmployeeToList(ref listBankEmployees);
         return listBankEmployees;
+    }
+
+    private static void AddInvalidEmployeeToList(ref List<Employee> listBankEmployees)
+    {
+        var firstName = "";
+        var lastName = "";
+        var dateOfBirth = GenerateRandomDateOfBirth();
+        listBankEmployees.Add(new Employee
+        (firstName,
+            lastName,
+            dateOfBirth,
+            CalculateAge(dateOfBirth),
+            firstName + " " + lastName + ", дата рождения: " + dateOfBirth,
+            Rnd.Next(10000, 99999),
+            GenerateRandomAddress(),
+            GenerateRandomEmail(firstName, lastName),
+            GenerateRandomPhoneNumber()));
     }
 
     public static Dictionary<Client, List<Account>> GenerateDictionaryWithClientsAccounts(int numberOfClients = 10)
@@ -151,7 +187,7 @@ public class TestDataGenerator
 
     public static void AddClientAccount(ref Dictionary<Client, List<Account>> clientsAccounts, Client client)
     {
-        if (clientsAccounts.ContainsKey(client)) 
+        if (clientsAccounts.ContainsKey(client))
             clientsAccounts[client].Add(GenerateRandomAccount());
     }
 }

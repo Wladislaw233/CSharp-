@@ -2,12 +2,17 @@
 
 public class Account
 {
-    public Currency Currency { get; init; }
-    public double Amount { get; init; }
+    public Currency Currency { get; set; }
+    public double Amount { get; set; }
 
-    public Account(string name = "USD-RUB", double course = 101.93, double amount = 0)
+    public Account(string code = "USD", string name = "USD", double exchangeRate = 1, double amount = 0)
     {
-        Currency = new Currency { Name = name, Course = course };
+        Currency = new Currency
+        {
+            Code = code,
+            Name = name,
+            ExchangeRate = exchangeRate
+        };
         Amount = amount;
     }
 }
