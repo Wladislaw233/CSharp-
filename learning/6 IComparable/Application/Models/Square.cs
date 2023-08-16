@@ -13,7 +13,8 @@ public class Square : IComparable<Square>
 
     public int CompareTo(Square? square)
     {
-        if (square is null) throw new ArgumentException("Некорректное значение параметра");
+        if (square is null) 
+            throw new ArgumentException("Некорректное значение параметра");
         return Lenght * Width - square.Lenght * square.Width;
     }
 }
