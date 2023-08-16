@@ -116,7 +116,8 @@ public class TestDataGenerator
     public static List<Client> GenerateListWitchBankClients(int numberOfClients = 10)
     {
         var listBankClients = new List<Client>();
-        for (var index = 0; index < numberOfClients; index++) listBankClients.Add(GenerateRandomClient());
+        for (var index = 0; index < numberOfClients; index++) 
+            listBankClients.Add(GenerateRandomClient());
 
         return listBankClients;
     }
@@ -124,7 +125,8 @@ public class TestDataGenerator
     public static Dictionary<string, Client> GenerateDictionaryWithBankClients(List<Client> listBankClients)
     {
         var dictionaryBankClients = new Dictionary<string, Client>();
-        foreach (var bankClient in listBankClients) dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
+        foreach (var bankClient in listBankClients) 
+            dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
         dictionaryBankClients.Add("00000000", GenerateRandomClient());
         return dictionaryBankClients;
     }
@@ -132,7 +134,8 @@ public class TestDataGenerator
     public static List<Employee> GenerateListWithEmployees(int numberOfEmployees = 10)
     {
         var listBankEmployees = new List<Employee>();
-        for (var index = 0; index < numberOfEmployees; index++) listBankEmployees.Add(GenerateRandomEmployee());
+        for (var index = 0; index < numberOfEmployees; index++) 
+            listBankEmployees.Add(GenerateRandomEmployee());
 
         return listBankEmployees;
     }
@@ -148,6 +151,7 @@ public class TestDataGenerator
 
     public static void AddClientAccount(ref Dictionary<Client, List<Account>> clientsAccounts, Client client)
     {
-        if (clientsAccounts.ContainsKey(client)) clientsAccounts[client].Add(GenerateRandomAccount());
+        if (clientsAccounts.ContainsKey(client)) 
+            clientsAccounts[client].Add(GenerateRandomAccount());
     }
 }

@@ -5,7 +5,7 @@ namespace ServiceTests;
 
 public class EquivalenceTests
 {
-    public static void GetHashCodeNecessityPositivTest()
+    public static void GetHashCodeNecessityPositiveTest()
     {
         // dictionary.
         var clientsAccounts = TestDataGenerator.GenerateDictionaryWithClientsAccounts();

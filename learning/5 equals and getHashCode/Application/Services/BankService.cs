@@ -7,11 +7,9 @@ namespace Services
     {
         public void CalculateSalary(double profit, double expenses, List<Employee> employees)
         {
-            double Salary = (profit - expenses) / employees.Count;
-            foreach (Employee employee in employees)
-            {
-                employee.Salary = (int)Salary;
-            }
+            var salary = (profit - expenses) / employees.Count;
+            foreach (var employee in employees) 
+                employee.Salary = (int)salary;
         }
     }
 }

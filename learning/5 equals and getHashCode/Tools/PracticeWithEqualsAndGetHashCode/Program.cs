@@ -9,7 +9,7 @@ namespace PracticeWithEqualsAndGetHashCode
     {
         public static void Main(string[] args)
         {
-            EquivalenceTests.GetHashCodeNecessityPositivTest();
+            EquivalenceTests.GetHashCodeNecessityPositiveTest();
         }
     }
 }

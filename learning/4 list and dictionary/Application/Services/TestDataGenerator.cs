@@ -111,7 +111,8 @@ public class TestDataGenerator
     public static List<Client> GenerateListWitchThousandBankClients()
     {
         var listBankClients = new List<Client>();
-        for (var index = 0; index < 1000; index++) listBankClients.Add(GenerateRandomClient());
+        for (var index = 0; index < 1000; index++) 
+            listBankClients.Add(GenerateRandomClient());
 
         return listBankClients;
     }
@@ -119,7 +120,8 @@ public class TestDataGenerator
     public static Dictionary<string, Client> GenerateDictionaryWithBankClients(List<Client> listBankClients)
     {
         var dictionaryBankClients = new Dictionary<string, Client>();
-        foreach (var bankClient in listBankClients) dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
+        foreach (var bankClient in listBankClients) 
+            dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
         dictionaryBankClients.Add("00000000", GenerateRandomClient());
         return dictionaryBankClients;
     }
@@ -127,7 +129,8 @@ public class TestDataGenerator
     public static List<Employee> GenerateListWithThousandEmployees()
     {
         var listBankEmployees = new List<Employee>();
-        for (var index = 0; index < 1000; index++) listBankEmployees.Add(GenerateRandomEmployee());
+        for (var index = 0; index < 1000; index++) 
+            listBankEmployees.Add(GenerateRandomEmployee());
 
         return listBankEmployees;
     }
