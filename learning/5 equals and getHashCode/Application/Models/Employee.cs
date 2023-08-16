@@ -54,7 +54,8 @@ public class Employee : Person
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || !(obj is Employee)) return false;
+        if (obj == null || !(obj is Employee)) 
+            return false;
 
         var employee = (Employee)obj;
 

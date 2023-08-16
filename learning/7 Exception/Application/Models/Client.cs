@@ -23,7 +23,8 @@ public class Client : Person
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || !(obj is Client)) return false;
+        if (obj == null || !(obj is Client))
+            return false;
 
         var client = (Client)obj;
 
