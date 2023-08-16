@@ -18,9 +18,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeWithTypes", "2 type
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "3 events\Application\Services\Services.csproj", "{B35FF826-5966-4A34-B90A-2C85DFDDF22A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsListNumbers", "3 events\Tools\EventsListNumbers\EventsListNumbers.csproj", "{EA177B80-96AB-4230-BD0B-2FA08907FDBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsQueueNumber", "3 events\Tools\EventsQueueNumber\EventsQueueNumber.csproj", "{EA177B80-96AB-4230-BD0B-2FA08907FDBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsStreamNumbers", "3 events\Tools\EventsStreamNumbers\EventsStreamNumbers.csproj", "{CF184BA7-851D-4D46-91AF-343CB1C58CAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsStreamNumber", "3 events\Tools\EventsStreamNumber\EventsStreamNumber.csproj", "{CF184BA7-851D-4D46-91AF-343CB1C58CAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "List and dictionary", "List and dictionary", "{7D8ADCE2-16B5-4872-B3BE-52C1827E4375}"
 EndProject
@@ -48,6 +48,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "6 IComparable\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "6 IComparable\Application\Models\Models.csproj", "{B6767A5B-3E49-4EC2-A418-1EDF85D1DC06}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exception", "Exception", "{405EB230-8E25-4416-AFA8-A4A16A0A9151}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{05E6E7C3-2923-4F41-A5B4-C0D2FB3688CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{8F9E2279-2EE6-4292-8C6D-8F412AC1A571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "7 Exception\Application\Services\Services.csproj", "{07869885-7A47-482A-BBDB-EEFCB19E97EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "7 Exception\Application\Models\Models.csproj", "{A7FD2327-4071-4C50-89E2-60DA71302D2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeWithException", "7 Exception\Tools\PracticeWithException\PracticeWithException.csproj", "{8AD4C215-37D8-436B-ABF3-F5B78050AF2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +84,11 @@ Global
 		{A0F273AF-488A-41C8-88C3-85395CB8E330} = {F8363610-2D21-447A-AD15-8245E636B7B5}
 		{99979489-A751-4C5D-A39C-FFB796D8913B} = {F8363610-2D21-447A-AD15-8245E636B7B5}
 		{B6767A5B-3E49-4EC2-A418-1EDF85D1DC06} = {F8363610-2D21-447A-AD15-8245E636B7B5}
+		{05E6E7C3-2923-4F41-A5B4-C0D2FB3688CE} = {405EB230-8E25-4416-AFA8-A4A16A0A9151}
+		{8F9E2279-2EE6-4292-8C6D-8F412AC1A571} = {405EB230-8E25-4416-AFA8-A4A16A0A9151}
+		{07869885-7A47-482A-BBDB-EEFCB19E97EE} = {8F9E2279-2EE6-4292-8C6D-8F412AC1A571}
+		{A7FD2327-4071-4C50-89E2-60DA71302D2F} = {8F9E2279-2EE6-4292-8C6D-8F412AC1A571}
+		{8AD4C215-37D8-436B-ABF3-F5B78050AF2E} = {05E6E7C3-2923-4F41-A5B4-C0D2FB3688CE}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DA7DDD26-7303-4BB2-893C-1AEE2FE9F7A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -146,5 +163,17 @@ Global
 		{B6767A5B-3E49-4EC2-A418-1EDF85D1DC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6767A5B-3E49-4EC2-A418-1EDF85D1DC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6767A5B-3E49-4EC2-A418-1EDF85D1DC06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07869885-7A47-482A-BBDB-EEFCB19E97EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07869885-7A47-482A-BBDB-EEFCB19E97EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07869885-7A47-482A-BBDB-EEFCB19E97EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07869885-7A47-482A-BBDB-EEFCB19E97EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7FD2327-4071-4C50-89E2-60DA71302D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7FD2327-4071-4C50-89E2-60DA71302D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7FD2327-4071-4C50-89E2-60DA71302D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7FD2327-4071-4C50-89E2-60DA71302D2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AD4C215-37D8-436B-ABF3-F5B78050AF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AD4C215-37D8-436B-ABF3-F5B78050AF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AD4C215-37D8-436B-ABF3-F5B78050AF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AD4C215-37D8-436B-ABF3-F5B78050AF2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

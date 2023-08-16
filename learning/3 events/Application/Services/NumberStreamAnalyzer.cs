@@ -1,21 +1,21 @@
 ﻿namespace Services;
 
-public class StreamNumbersAnalysis
+public class NumberStreamAnalyzer
 {
     private int _numberLimit;
     private double _percentLimit;
     private readonly List<int> _streamOfNumbers = new();
 
-    public delegate void MethodContainerEventHandlerIsGreaterThanByPercentage(int numberLimit, double percent, int inputNumber,
+    public delegate void IsGreaterThanByPercentageDelegate(int numberLimit, double percent, int inputNumber,
         double percentLimit);
 
-    public event MethodContainerEventHandlerIsGreaterThanByPercentage? EventIsGreaterThanByPercentage;
+    public event IsGreaterThanByPercentageDelegate? EventIsGreaterThanByPercentage;
 
     private void InputNumberIsGreaterThanByPercentage(int inputNumber)
     {
-        var percent = inputNumber / (_numberLimit <= 0 ? 1 : _numberLimit) * 100 - 100;
+        var percent = (double)inputNumber / (_numberLimit <= 0 ? 1 : _numberLimit) * 100 - 100;
         if (percent > _percentLimit && EventIsGreaterThanByPercentage != null)
-            EventIsGreaterThanByPercentage(_numberLimit, percent, inputNumber, _percentLimit);
+            EventIsGreaterThanByPercentage(_numberLimit, (int)percent, inputNumber, _percentLimit);
     }
 
     public void StartStreamNumbersAnalysis()
