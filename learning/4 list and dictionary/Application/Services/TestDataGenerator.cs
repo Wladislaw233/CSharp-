@@ -35,7 +35,7 @@ public class TestDataGenerator
 
     private static string GenerateRandomPhoneNumber()
     {
-        return string.Format("{0:8}", Rnd.Next(10000000, 99999999));
+        return Rnd.Next(10000000, 99999999).ToString();
     }
 
     private static string GenerateRandomFirstName()
@@ -68,10 +68,8 @@ public class TestDataGenerator
 
     private static int CalculateAge(DateTime dateOfBirth)
     {
-        return DateTime.Now.Year - dateOfBirth.Year - (dateOfBirth >
-               DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year))
-            ? 1
-            : 0);
+        var subtractedMonth = dateOfBirth > DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year)) ? 1 : 0;
+        return DateTime.Now.Year - dateOfBirth.Year - subtractedMonth;
     }
     
     private static Client GenerateRandomClient()

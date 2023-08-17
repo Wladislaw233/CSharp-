@@ -1,5 +1,6 @@
 ﻿using Models;
 using Services.Exceptions;
+using Services.Storage;
 
 namespace Services;
 
@@ -10,9 +11,9 @@ public class ClientService
 
     private readonly List<Currency> _listOfCurrencies = new()
     {
-        new("USD", "US Dollar", 1),
-        new("EUR", "Euro", 0.97),
-        new("RUB", "Russian ruble", 96.64)
+        new Currency("USD", "US Dollar", 1),
+        new Currency("EUR", "Euro", 0.97),
+        new Currency("RUB", "Russian ruble", 96.64)
     };
 
     private string GenerateAccountNumber(Currency currency)
@@ -45,6 +46,7 @@ public class ClientService
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
         return _clientsAccounts[client];
     }
+
     public List<Account> UpdateClientAccount(Client client, string accountNumber, string currencyCode,
         double amount)
     {
@@ -108,9 +110,28 @@ public class ClientService
         Console.WriteLine("\nВалюты банка:\n" + string.Join('\n',
             _listOfCurrencies.Select(currency => $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));
     }
+
     private int CalculateAge(DateTime dateOfBirth)
     {
         var subtractedMonth = dateOfBirth > DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year)) ? 1 : 0;
         return DateTime.Now.Year - dateOfBirth.Year - subtractedMonth;
+    }
+
+    public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
+        string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
+        DateTime? maxDateOfBirth = null)
+    {
+        IEnumerable<Client> filteredClients = clientStorage;
+        if (!string.IsNullOrWhiteSpace(firstNameFilter))
+            filteredClients = filteredClients.Where(client => client.FirstName.Contains(firstNameFilter));
+        if (!string.IsNullOrWhiteSpace(lastNameFilter))
+            filteredClients = filteredClients.Where(client => client.LastName.Contains(lastNameFilter));
+        if (!string.IsNullOrWhiteSpace(phoneNumberFilter))
+            filteredClients = filteredClients.Where(client => client.PhoneNumber.Contains(phoneNumberFilter));
+        if (minDateOfBirth.HasValue)
+            filteredClients = filteredClients.Where(client => client.DateOfBirth >= minDateOfBirth);
+        if (maxDateOfBirth.HasValue)
+            filteredClients = filteredClients.Where(client => client.DateOfBirth <= maxDateOfBirth);
+        return filteredClients;
     }
 }
