@@ -10,9 +10,9 @@ public class ClientService
 
     private readonly List<Currency> _listOfCurrencies = new()
     {
-        new("USD", "US Dollar", 1),
-        new("EUR", "Euro", 0.97),
-        new("RUB", "Russian ruble", 96.64)
+        new Currency("USD", "US Dollar", 1),
+        new Currency("EUR", "Euro", 0.97),
+        new Currency("RUB", "Russian ruble", 96.64)
     };
 
     private string GenerateAccountNumber(Currency currency)
@@ -45,6 +45,7 @@ public class ClientService
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
         return _clientsAccounts[client];
     }
+
     public List<Account> UpdateClientAccount(Client client, string accountNumber, string currencyCode,
         double amount)
     {
@@ -93,12 +94,14 @@ public class ClientService
             client.DateOfBirth == DateTime.MaxValue)
             throw new CustomException("Дата рождения клиента указана неверно!", nameof(client.DateOfBirth));
 
-        if (CalculateAge(client.DateOfBirth) < 18)
+        var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
+
+        if (age < 18)
             throw new CustomException("Клиенту меньше 18 лет!", nameof(client.Age));
 
-        if (CalculateAge(client.DateOfBirth) != client.Age || client.Age <= 0)
+        if (age != client.Age || client.Age <= 0)
         {
-            client.Age = CalculateAge(client.DateOfBirth);
+            client.Age = age;
             Console.WriteLine("Возраст клиента указан неверно и был скорректирован по дате его рождения!");
         }
     }
@@ -108,9 +111,14 @@ public class ClientService
         Console.WriteLine("\nВалюты банка:\n" + string.Join('\n',
             _listOfCurrencies.Select(currency => $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));
     }
-    private int CalculateAge(DateTime dateOfBirth)
+
+    public static void WithdrawClientAccounts(Client client, IEnumerable<Account> clientAccounts)
     {
-        var subtractedMonth = dateOfBirth > DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year)) ? 1 : 0;
-        return DateTime.Now.Year - dateOfBirth.Year - subtractedMonth;
+        Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:" +
+                          $"\n" + string.Join('\n',
+                              clientAccounts.Select(clientAccount =>
+                                  $"Номер счета: {clientAccount.AccountNumber} валюта: {clientAccount.Currency.Name} " +
+                                  $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")) +
+                          "\n");
     }
 }

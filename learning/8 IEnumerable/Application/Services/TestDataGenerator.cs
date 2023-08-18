@@ -66,7 +66,7 @@ public class TestDataGenerator
         return new DateTime(year, month, day);
     }
 
-    private static int CalculateAge(DateTime dateOfBirth)
+    public static int CalculateAge(DateTime dateOfBirth)
     {
         var subtractedMonth = dateOfBirth > DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year)) ? 1 : 0;
         return DateTime.Now.Year - dateOfBirth.Year - subtractedMonth;

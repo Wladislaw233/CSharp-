@@ -40,22 +40,16 @@ public class EmployeeService
             employee.DateOfBirth == DateTime.MaxValue)
             throw new CustomException("Дата рождения сотрудника указана неверно!", nameof(employee.DateOfBirth));
 
-        if (CalculateAge(employee.DateOfBirth) < 18)
+        var age = TestDataGenerator.CalculateAge(employee.DateOfBirth);
+        
+        if (age < 18)
             throw new CustomException("сотрудника меньше 18 лет!", nameof(employee.Age));
 
-        if (CalculateAge(employee.DateOfBirth) != employee.Age || employee.Age <= 0)
+        if (age != employee.Age || employee.Age <= 0)
         {
-            employee.Age = CalculateAge(employee.DateOfBirth);
+            employee.Age = age;
             Console.WriteLine("Возраст сотрудника указан неверно и был скорректирован по дате его рождения!");
         }
-    }
-
-    private int CalculateAge(DateTime dateOfBirth)
-    {
-        return DateTime.Now.Year - dateOfBirth.Year - (dateOfBirth >
-                                                       DateTime.Now.AddYears(-(DateTime.Now.Year - dateOfBirth.Year))
-            ? 1
-            : 0);
     }
     
     public static IEnumerable<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage, string firstNameFilter = "",

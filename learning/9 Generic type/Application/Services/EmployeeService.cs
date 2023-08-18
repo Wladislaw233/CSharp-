@@ -1,21 +1,14 @@
 ﻿using Models;
 using Services.Exceptions;
+using Services.Storage;
 
 namespace Services;
 
 public class EmployeeService
 {
-    public readonly List<Employee> BankEmployees = new();
-
-    public void AddBankEmployee(Employee employee)
+    public static void ValidationEmployee(List<Employee> bankEmployees,Employee employee)
     {
-        ValidationEmployee(employee);
-        BankEmployees.Add(employee);
-    }
-
-    private void ValidationEmployee(Employee employee)
-    {
-        if (BankEmployees.Contains(employee))
+        if (bankEmployees.Contains(employee))
             throw new CustomException("Данный сотрудник уже добавлен в банковскую систему!", nameof(employee));
         if (string.IsNullOrWhiteSpace(employee.FirstName))
             throw new CustomException("Не указано имя сотрудника!", nameof(employee.FirstName));
@@ -49,5 +42,33 @@ public class EmployeeService
             employee.Age = age;
             Console.WriteLine("Возраст сотрудника указан неверно и был скорректирован по дате его рождения!");
         }
+    }
+
+    public static void BeforeDeletingEmployee(List<Employee> bankEmployees, Employee employee)
+    {
+        if (!bankEmployees.Contains(employee))
+            throw new CustomException("Данного сотрудника не существует в банковской системе!", nameof(employee)); 
+    }
+
+    public static IEnumerable<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage, string firstNameFilter = "",
+        string lastNameFilter = "", string phoneNumberFilter = "", string contractFilter = "", int? salaryFilter = null, DateTime? minDateOfBirth = null,
+        DateTime? maxDateOfBirth = null)
+    {
+        IEnumerable<Employee> filteredEmployees = employeeStorage.Data;
+        if (!string.IsNullOrWhiteSpace(firstNameFilter))
+            filteredEmployees = filteredEmployees.Where(employee  => employee.FirstName.Contains(firstNameFilter));
+        if (!string.IsNullOrWhiteSpace(lastNameFilter))
+            filteredEmployees = filteredEmployees.Where(employee  => employee.LastName.Contains(lastNameFilter));
+        if (!string.IsNullOrWhiteSpace(phoneNumberFilter))
+            filteredEmployees = filteredEmployees.Where(employee  => employee.PhoneNumber.Contains(phoneNumberFilter));
+        if (!string.IsNullOrWhiteSpace(contractFilter))
+            filteredEmployees = filteredEmployees.Where(employee  => employee.Contract.Contains(contractFilter));
+        if (salaryFilter.HasValue)
+            filteredEmployees = filteredEmployees.Where(employee  => employee.Salary == salaryFilter);
+        if (minDateOfBirth.HasValue)
+            filteredEmployees = filteredEmployees.Where(employee  => employee.DateOfBirth >= minDateOfBirth);
+        if (maxDateOfBirth.HasValue)
+            filteredEmployees = filteredEmployees.Where(employee  => employee.DateOfBirth <= maxDateOfBirth);
+        return filteredEmployees;
     }
 }

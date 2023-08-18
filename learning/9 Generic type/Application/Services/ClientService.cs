@@ -6,58 +6,57 @@ namespace Services;
 
 public class ClientService
 {
-    private int _accountCounter;
-    private readonly Dictionary<Client, List<Account>> _clientsAccounts = new();
-
-    private readonly List<Currency> _listOfCurrencies = new()
+    public static string GenerateAccountNumber(Currency currency, int accountCounter)
     {
-        new Currency("USD", "US Dollar", 1),
-        new Currency("EUR", "Euro", 0.97),
-        new Currency("RUB", "Russian ruble", 96.64)
-    };
-
-    private string GenerateAccountNumber(Currency currency)
-    {
-        _accountCounter++;
-        return "ACC" + _accountCounter.ToString("D10") + currency.Code;
+        return "ACC" + accountCounter.ToString("D10") + currency.Code;
     }
 
-    public List<Account> AddClient(Client client)
+    public static void BeforeDeletingClient(Dictionary<Client, List<Account>> clientsAccounts, Client client)
     {
-        ValidateClient(client);
-        CreateDefaultAccount(client);
-        return _clientsAccounts[client];
-    }
-
-    public List<Account> AddClientAccount(Client client, string currencyCode = "USD", double amount = 0)
-    {
-        if (!_clientsAccounts.ContainsKey(client))
+        if (!clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
+    }
+
+    public static Account BeforeDeletingAccount(Dictionary<Client, List<Account>> clientsAccounts, Client client,
+        string accountNumber)
+    {
+        if (!clientsAccounts.ContainsKey(client))
+            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
+        var clientAccount = clientsAccounts[client].Find(account => account.AccountNumber == accountNumber);
+        if (clientAccount == null)
+            throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
+        return clientAccount;
+    }
+
+    public static Currency BeforeAddingClientAccount(Dictionary<Client, List<Account>> clientsAccounts, Client client,
+        List<Currency> listOfCurrencies, string currencyCode = "USD")
+    {
+        if (!clientsAccounts.ContainsKey(client))
+            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
+        var currency = listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
         if (currency.Code == null)
             throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
-        _clientsAccounts[client].Add(new Account(GenerateAccountNumber(currency), currency, amount));
-        return _clientsAccounts[client];
+        return currency;
     }
 
-    public List<Account> GetClientAccounts(Client client)
+    public static List<Account> GetClientAccounts(Dictionary<Client, List<Account>> clientsAccounts, Client client)
     {
-        if (!_clientsAccounts.ContainsKey(client))
+        if (!clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        return _clientsAccounts[client];
+        return clientsAccounts[client];
     }
 
-    public List<Account> UpdateClientAccount(Client client, string accountNumber, string currencyCode,
-        double amount)
+    public static void UpdateClientAccount(Dictionary<Client, List<Account>> clientsAccounts, Client client,
+        string accountNumber, List<Currency> listOfCurrencies, string currencyCode = "", double amount = 0)
     {
-        if (!_clientsAccounts.ContainsKey(client))
+        if (!clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        var account = _clientsAccounts[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
+        var account = clientsAccounts[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
         if (account == null)
             throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
-            var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
+            var currency = listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
             if (currency.Code == null)
                 throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
             account.AccountNumber = account.AccountNumber.Replace(account.Currency.Code, currencyCode);
@@ -65,20 +64,26 @@ public class ClientService
         }
 
         account.Amount = amount;
-        return _clientsAccounts[client];
     }
 
-    private void CreateDefaultAccount(Client client)
+    public static List<Account> CreateDefaultAccount(int accountCounter, Currency currency)
     {
-        var clientAccounts = new List<Account>();
-        var currency = _listOfCurrencies.FirstOrDefault();
-        clientAccounts.Add(new Account(GenerateAccountNumber(currency), currency));
-        _clientsAccounts.Add(client, clientAccounts);
+        return new List<Account>
+            { new(GenerateAccountNumber(currency, accountCounter), currency) };
     }
 
-    private void ValidateClient(Client client)
+    public static void WithdrawClientAccounts(Client client, IEnumerable<Account> clientAccounts)
     {
-        if (_clientsAccounts.ContainsKey(client))
+        Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:" +
+                          $"\n" + string.Join('\n',
+                              clientAccounts.Select(clientAccount =>
+                                  $"Номер счета: {clientAccount.AccountNumber} валюта: {clientAccount.Currency.Name} " +
+                                  $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")) +
+                          "\n");
+    }
+    public static void ValidateClient(Dictionary<Client, List<Account>> clientsAccounts, Client client)
+    {
+        if (clientsAccounts.ContainsKey(client))
             throw new CustomException("Данный клиент уже добавлен в банковскую систему!", nameof(client));
         if (string.IsNullOrWhiteSpace(client.FirstName))
             throw new CustomException("Не указано имя клиента!", nameof(client.FirstName));
@@ -96,27 +101,22 @@ public class ClientService
             throw new CustomException("Дата рождения клиента указана неверно!", nameof(client.DateOfBirth));
 
         var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
+
         if (age < 18)
             throw new CustomException("Клиенту меньше 18 лет!", nameof(client.Age));
 
         if (age != client.Age || client.Age <= 0)
         {
-            client.Age = age;
+            client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
             Console.WriteLine("Возраст клиента указан неверно и был скорректирован по дате его рождения!");
         }
     }
 
-    public void WithdrawBankCurrencies()
-    {
-        Console.WriteLine("\nВалюты банка:\n" + string.Join('\n',
-            _listOfCurrencies.Select(currency => $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));
-    }
-    
     public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
-        IEnumerable<Client> filteredClients = clientStorage;
+        IEnumerable<Client> filteredClients = clientStorage.Data.Keys;
         if (!string.IsNullOrWhiteSpace(firstNameFilter))
             filteredClients = filteredClients.Where(client => client.FirstName.Contains(firstNameFilter));
         if (!string.IsNullOrWhiteSpace(lastNameFilter))
@@ -128,15 +128,5 @@ public class ClientService
         if (maxDateOfBirth.HasValue)
             filteredClients = filteredClients.Where(client => client.DateOfBirth <= maxDateOfBirth);
         return filteredClients;
-    }
-    
-    public static void WithdrawClientAccounts(Client client, IEnumerable<Account> clientAccounts)
-    {
-        Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:" +
-                          $"\n" + string.Join('\n',
-                              clientAccounts.Select(clientAccount =>
-                                  $"Номер счета: {clientAccount.AccountNumber} валюта: {clientAccount.Currency.Name} " +
-                                  $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")) +
-                          "\n");
     }
 }

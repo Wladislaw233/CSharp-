@@ -22,8 +22,16 @@ public class CustomException : Exception
         ParameterOfException = parameterOfException;
     }
 
-    protected CustomException(SerializationInfo info, StreamingContext context, string parameterOfException) : base(info, context)
+    protected CustomException(SerializationInfo info, StreamingContext context, string parameterOfException) :
+        base(info, context)
     {
         ParameterOfException = parameterOfException;
+    }
+
+    public static void ExceptionHandling(string description, CustomException exception)
+    {
+        Console.WriteLine(description + exception.Message + (string.IsNullOrWhiteSpace(exception.ParameterOfException)
+            ? ""
+            : $"\nПараметр: {exception.ParameterOfException}"));
     }
 }
