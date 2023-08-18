@@ -8,6 +8,8 @@ public class EnumerableTests
 {
     public static void GetClientsByFiltersTest()
     {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("запуск тестов IEnumerable для клиентов и сотрудников.");
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Клиенты");
         Console.ResetColor();

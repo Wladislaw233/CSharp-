@@ -17,6 +17,7 @@ public class ClientServiceTests
         // Клиент без возвраста.
         _bankClients[1].Age = 0;
         Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Тесты сервисов для клиентов и сотрудников.");
         Console.WriteLine("КЛИЕНТЫ");
         try
         {
