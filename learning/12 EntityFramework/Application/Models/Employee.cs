@@ -1,18 +1,41 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Models;
 
 public class Employee : Person
 {
+    [Required]
+    [Column("id")]
+    public Guid EmployeeId { get; set; }
+    
+    [Required]
+    [Column("contract")]
     public string Contract { get; set; }
-    public int Salary { get; set; }
-    public string Address { get; init; }
-    public string Email { get; init; }
-    public string PhoneNumber { get; init; }
+    
+    [Required]
+    [Column("salary")]
+    public double Salary { get; set; }
+    
+    [Required]
+    [Column("address")]
+    public string Address { get; set; }
+    
+    [Required]
+    [Column("email")]
+    public string Email { get; set; }
+    
+    [Required]
+    [Column("phone_number")]
+    public string PhoneNumber { get; set; }
+    
+    [Column("is_owner")]
+    public bool IsOwner { get; set; }
 
-    public Employee(string firstName, string lastName, DateTime dateOfBirth, int age, string contract, int salary = 0,
-        string address = "", string email = "", string phoneNumber = "")
+    public Employee(string firstName, string lastName, DateTime dateOfBirth, int age, string contract, double salary = 0,
+        string address = "", string email = "", string phoneNumber = "", bool isOwner = false)
         : base(firstName, lastName, dateOfBirth, age)
     {
         Contract = contract;
@@ -20,6 +43,8 @@ public class Employee : Person
         Address = address;
         Email = email;
         PhoneNumber = phoneNumber;
+        EmployeeId = Guid.NewGuid();
+        IsOwner = isOwner;
     }
 
     // explicit - при явном преобразовании
@@ -41,8 +66,7 @@ public class Employee : Person
 
     public static Employee CopyEmployee(Employee employee)
     {
-        return new Employee(
-            employee.FirstName,
+        return new Employee(employee.FirstName,
             employee.LastName,
             employee.DateOfBirth,
             employee.Age,
