@@ -26,9 +26,12 @@ public class ExportToolTests
 
         var readableClients = exportService.ReadClientsDataFromScvFile();
         
-        Console.WriteLine("Прочитаем клиентов из файла:" +
+        Console.WriteLine("Прочитаем клиентов из файла и добавим их в базу:" +
                           "\n" + string.Join("\n",
                               readableClients.Select(client =>
                                   $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}.")));
+
+        foreach (var client in readableClients)
+            clientService.AddClient(client);
     }
 }
