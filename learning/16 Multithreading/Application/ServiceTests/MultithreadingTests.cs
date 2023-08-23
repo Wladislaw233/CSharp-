@@ -20,7 +20,6 @@ public class MultithreadingTests
                     clientService.AddClient(bankClient);
                     Console.WriteLine(
                         $"Добавляем клиента ID: {bankClient.ClientId}, {bankClient.FirstName} {bankClient.LastName}, дата рождения {bankClient.DateOfBirth.ToString("D")}");
-                    
                 },
                 () =>
                 {
@@ -77,7 +76,6 @@ public class MultithreadingTests
                     clientService.Mutex.ReleaseMutex();
                 });
         }
-
         bankingSystemDbContext.Dispose();
     }
 }
