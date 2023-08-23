@@ -1,28 +1,26 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
-using CsvHelper.Configuration;
 
 namespace Models;
 
 public class Client : Person
 {
-    [Required] 
-    [Column("id")] 
+    [Required]
+    [Column("id")]
     public Guid ClientId { get; set; }
-
-    [Required] 
-    [Column("phone_number")] 
+    
+    [Required]
+    [Column("phone_number")]
     public string PhoneNumber { get; set; }
-
-    [Required] 
-    [Column("email")] 
+    
+    [Required]
+    [Column("email")]
     public string Email { get; set; }
-
-    [Required] 
-    [Column("address")] 
+    
+    [Required]
+    [Column("address")]
     public string Address { get; set; }
 
     public Client(string firstName, string lastName, DateTime dateOfBirth, int age, string phoneNumber,
@@ -33,11 +31,9 @@ public class Client : Person
         Address = address;
         ClientId = Guid.NewGuid();
     }
-
     public static Client CopyClient(Client client)
     {
-        return new Client(client.FirstName, client.LastName, client.DateOfBirth, client.Age, client.PhoneNumber,
-            client.Email, client.Address);
+        return new Client(client.FirstName, client.LastName, client.DateOfBirth, client.Age, client.PhoneNumber, client.Email, client.Address);
     }
 
     public override bool Equals(object? obj)
@@ -55,7 +51,7 @@ public class Client : Person
                client.DateOfBirth == DateOfBirth &&
                client.Age == Age;
     }
-
+    
     public override int GetHashCode()
     {
         var convertedString = FirstName + LastName + PhoneNumber + Address + Email + DateOfBirth + Age;
@@ -64,7 +60,6 @@ public class Client : Person
         {
             hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(convertedString));
         }
-
         return BitConverter.ToInt32(hashBytes);
     }
 }
