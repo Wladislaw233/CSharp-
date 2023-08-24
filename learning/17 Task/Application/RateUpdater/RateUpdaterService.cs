@@ -26,6 +26,6 @@ public class RateUpdaterService : IRateUpdaterService
 
         await bankingSystemDbContext.SaveChangesAsync();
         await bankingSystemDbContext.DisposeAsync();
-        Console.WriteLine("Конец обработки. Проценты начислены.");
+        Console.WriteLine("Конец обработки. Проценты начислены.\nСледующая обработка через 30 дней.");
     }
 }

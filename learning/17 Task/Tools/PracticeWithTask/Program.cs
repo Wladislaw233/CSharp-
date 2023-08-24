@@ -5,8 +5,10 @@ namespace PracticeWithTask;
 
 internal class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
-        await RateUpdaterTests.RateUpdaterTest();
+        var updateRatesTask = Task.Run(async () => await RateUpdaterTests.RateUpdaterTest());
+        Console.WriteLine("Продолжение выполнения Main..");
+        updateRatesTask.Wait();
     }
 }
