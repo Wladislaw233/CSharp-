@@ -13,7 +13,8 @@ public class RateUpdaterTests
 
         var rateUpdaterService = serviceCollection.GetRequiredService<IRateUpdaterService>();
         Console.WriteLine("Старт фоновой задачи.");
-        var updateRatesTask = Task.Run(async () => await rateUpdaterService.UpdateRatesAsync());
-        await updateRatesTask;
+        
+        await rateUpdaterService.UpdateRatesAsync();
+        
     }
 }
