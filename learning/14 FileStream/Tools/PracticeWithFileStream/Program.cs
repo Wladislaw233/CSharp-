@@ -7,6 +7,6 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        ExportToolTests.ExportServiceTest();
+        ExportToolTests.ExportCsvServiceTest();
     }
 }

@@ -6,7 +6,7 @@ namespace ServiceTests;
 
 public class ExportToolTests
 {
-    public static void ExportServiceTest()
+    public static void ExportCsvServiceTest()
     {
         // Название файла clients.csv, лежит в папке D:\Learning FileStream
         using var bankingSystemDbContext = new BankingSystemDbContext();
