@@ -11,7 +11,7 @@ public class TestDataGenerator
         "Eli", "Lucius", "Stephan", "Kirby", "Barbra", "Ralph", "Karla",
         "Taylor", "Benita", "Lisa", "Roy", "Buck", "Rod", "Colette", "Quinn"
     };
-
+    
     private static readonly List<string> Surnames = new()
     {
         "Ali", "Stout", "Christian", "Bright", "Shelton", "Tapia", "Carr",
@@ -95,7 +95,8 @@ public class TestDataGenerator
         var lastName = GenerateRandomLastName();
         var dateOfBirth = GenerateRandomDateOfBirth();
         return new Employee
-        (firstName,
+        (
+            firstName,
             lastName,
             dateOfBirth,
             CalculateAge(dateOfBirth),
@@ -103,7 +104,8 @@ public class TestDataGenerator
             Rnd.Next(10000, 99999),
             GenerateRandomAddress(),
             GenerateRandomEmail(firstName, lastName),
-            GenerateRandomPhoneNumber());
+            GenerateRandomPhoneNumber()
+        );
     }
 
     public static List<Client> GenerateListWitchThousandBankClients()
