@@ -21,28 +21,30 @@ internal class Program
         stopWatch.Start();
         var foundClientInListByPhone = listBankClients.Find(bankClient => bankClient.PhoneNumber == phoneNumber);
         stopWatch.Stop();
-        Console.WriteLine(
-            $"Время на поиск клиента ({foundClientInListByPhone.FirstName} {foundClientInListByPhone.LastName}) " +
-            $"в списке по номеру телефона - {stopWatch.Elapsed.TotalMilliseconds} мс.");
+        if (foundClientInListByPhone != null)
+            Console.WriteLine(
+                $"Время на поиск клиента ({foundClientInListByPhone.FirstName} {foundClientInListByPhone.LastName}) " +
+                $"в списке по номеру телефона - {stopWatch.Elapsed.TotalMilliseconds} мс.");
 
         // 2.б
         stopWatch.Start();
         var clientFound = dictionaryBankClients.TryGetValue(phoneNumber, out var foundClientInDictionaryByPhone);
         stopWatch.Stop();
-        Console.WriteLine("Время на поиск клиента (" +
-                          (clientFound
-                              ? foundClientInDictionaryByPhone.FirstName + " " + foundClientInDictionaryByPhone.LastName
-                              : "Клиент не найден") +
-                          $") в словаре по номеру телефона - {stopWatch.Elapsed.TotalMilliseconds} мс.");
+        if (clientFound && foundClientInDictionaryByPhone != null)
+            Console.WriteLine("Время на поиск клиента (" +
+                              foundClientInDictionaryByPhone.FirstName + " " + foundClientInDictionaryByPhone.LastName +
+                              $") в словаре по номеру телефона - {stopWatch.Elapsed.TotalMilliseconds} мс.");
 
+        
         // 2.в
         Console.WriteLine(
-            $"Количество клиентов в списке возраст которых меньше 42 - {listBankClients.Where(bankClient => bankClient.Age < 42).Count()}");
+            $"Количество клиентов в списке возраст которых меньше 42 - {listBankClients.Count(bankClient => bankClient.Age < 42)}");
 
         // 2.г
         var foundEmployeeInListWithMinimumSalary = listBankEmployees.MinBy(bankEmployee => bankEmployee.Salary);
-        Console.WriteLine(
-            $"Сотрудник с самой маленькой зарплатой - {foundEmployeeInListWithMinimumSalary.FirstName} {foundEmployeeInListWithMinimumSalary.LastName}, {foundEmployeeInListWithMinimumSalary.Salary} $");
+        if (foundEmployeeInListWithMinimumSalary != null)
+            Console.WriteLine(
+                $"Сотрудник с самой маленькой зарплатой - {foundEmployeeInListWithMinimumSalary.FirstName} {foundEmployeeInListWithMinimumSalary.LastName}, {foundEmployeeInListWithMinimumSalary.Salary} $");
 
         // 2.д.1
         stopWatch.Start();
@@ -58,12 +60,12 @@ internal class Program
 
         // 2.д.2
         stopWatch.Start();
-        dictionaryBankClients.TryGetValue("00000000", out var foundDictionaryElementWithLastClientByKey);
+        dictionaryBankClients.TryGetValue("00000000", out var foundLastDictionaryElementByKey);
         stopWatch.Stop();
         Console.WriteLine("Время на поиск последнего клиента (" +
-                          (foundDictionaryElementWithLastClientByKey != null
-                              ? foundDictionaryElementWithLastClientByKey.FirstName + " " +
-                                foundDictionaryElementWithLastClientByKey.LastName
+                          (foundLastDictionaryElementByKey != null
+                              ? foundLastDictionaryElementByKey.FirstName + " " +
+                                foundLastDictionaryElementByKey.LastName
                               : "Клиент не найден") +
                           $") в словаре по ключу - {stopWatch.Elapsed.TotalMilliseconds} мс.");
 
