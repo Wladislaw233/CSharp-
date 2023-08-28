@@ -28,7 +28,7 @@
                 client.LastName,
                 client.DateOfBirth,
                 client.Age,
-                client.FirstName + " " + client.LastName + ", дата рождения: " + client.DateOfBirth.ToString(),
+                client.FirstName + " " + client.LastName + ", дата рождения: " + client.DateOfBirth.ToString("D"),
                 0,
                 client.Address,
                 client.Email,

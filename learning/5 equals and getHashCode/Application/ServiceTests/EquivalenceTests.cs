@@ -12,7 +12,7 @@ public class EquivalenceTests
         var copiedClient = Client.CopyClient(clientsAccounts.FirstOrDefault().Key);
 
         var accountsFound = clientsAccounts.TryGetValue(copiedClient, out var foundAccounts);
-
+        
         Console.WriteLine(accountsFound
             ? "В результате переопределения метода GetHashCode класса Client появилась возможность " +
               $"получать аккаунты разных объектов с одинаковыми свойствами:\n Клиент: {copiedClient.FirstName} {copiedClient.LastName}, аккаунт(-ы):\n" +

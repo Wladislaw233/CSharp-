@@ -1,6 +1,4 @@
-﻿using System;
-using Services;
-using ServiceTests;
+﻿using ServiceTests;
 
 
 namespace PracticeWithEqualsAndGetHashCode
