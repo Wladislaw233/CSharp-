@@ -1,20 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models;
+namespace BankingSystemServices;
 
 public class Account
 {
     [Required]
     [Column("id")]
-    public Guid AccountId { get; set; }
+    public Guid AccountId { get; set; } = Guid.NewGuid();
 
     [Required] 
     [Column("currency_id")] 
     public Guid CurrencyId { get; set; }
     
     [Column("amount")]
-    public double Amount { get; set; }
+    public decimal Amount { get; set; }
     
     [Required]
     [Column("account_number")]

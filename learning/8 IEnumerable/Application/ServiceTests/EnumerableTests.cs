@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using BankingSystemServices.Services;
+using Services;
 using Services.Storage;
 
 namespace ServiceTests;
@@ -10,14 +11,20 @@ public class EnumerableTests
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Клиенты");
         Console.ResetColor();
+        
         var clientStorage = new ClientStorage();
-        clientStorage.AddBankClients(100);
+        var bankClients = TestDataGenerator.GenerateListWitchBankClients(10000);
+        foreach (var client in bankClients)
+            clientStorage.AddBankClients(client);
+        
+        Console.WriteLine("Поиск клиентов с именем 'Mack' и датой рождения большей 1970 год и меньшей 2000 года:");
+        
         var filteredClients =
             ClientService.GetClientsByFilters(clientStorage,
-                "Stephan",
+                "Mack",
                 minDateOfBirth: new DateTime(1970, 1, 1),
                 maxDateOfBirth: new DateTime(2000, 1, 1));
-        Console.WriteLine("Поиск клиентов с именем 'Stephan' и датой рождения большей 1970 год и меньшей 2000 года:");
+        
         foreach (var client in filteredClients)
             Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, " +
                               $"дата рождения: {client.DateOfBirth.ToString("D")}, " +
@@ -25,6 +32,7 @@ public class EnumerableTests
                               $"почта: {client.Email}");
 
         var sortedByDateOfBirthClients = clientStorage.OrderByDescending(client => client.DateOfBirth).ToList();
+        
         var youngestClient = sortedByDateOfBirthClients.First();
         Console.WriteLine($"\nСамый молододой клиент: {youngestClient.FirstName} {youngestClient.LastName}, " +
                           $"дата рождения {youngestClient.DateOfBirth.ToString("D")}");
@@ -42,14 +50,20 @@ public class EnumerableTests
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Сотрудники");
         Console.ResetColor();
+        
         var employeeStorage = new EmployeeStorage();
-        employeeStorage.AddBankEmployees(100);
+        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(10000);
+        foreach (var employee in bankEmployees)
+            employeeStorage.AddBankEmployees(employee);
+        
+        Console.WriteLine("Поиск сотрудников с именем 'Al' и датой рождения большей 1970 год и меньшей 2000 года:");
+        
         var filteredEmployees =
             EmployeeService.GetEmployeesByFilters(employeeStorage,
-                "Ralph",
+                "Al",
                 minDateOfBirth: new DateTime(1970, 1, 1),
                 maxDateOfBirth: new DateTime(2000, 1, 1));
-        Console.WriteLine("Поиск сотрудников с именем 'Ralph' и датой рождения большей 1970 год и меньшей 2000 года:");
+        
         foreach (var employee in filteredEmployees)
             Console.WriteLine($"Сотрудник: {employee.FirstName} {employee.LastName}, " +
                               $"дата рождения: {employee.DateOfBirth.ToString("D")}, " +
@@ -57,6 +71,7 @@ public class EnumerableTests
                               $"контракт: {employee.Contract}");
 
         var sortedByDateOfBirthEmployees = employeeStorage.OrderByDescending(employee => employee.DateOfBirth).ToList();
+        
         var youngestEmployee = sortedByDateOfBirthEmployees.First();
         Console.WriteLine($"\nСамый молододой сотрудник: {youngestEmployee.FirstName} {youngestEmployee.LastName}, " +
                           $"дата рождения {youngestEmployee.DateOfBirth.ToString("D")}");

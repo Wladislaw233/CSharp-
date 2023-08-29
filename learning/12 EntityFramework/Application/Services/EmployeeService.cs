@@ -30,7 +30,7 @@ public class EmployeeService
             _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
 
         if (employee == null)
-            throw new CustomException($"Клиента с идентификатором {employeeId} не существует!",
+            throw new CustomException($"Сотрудника с идентификатором {employeeId} не существует!",
                 nameof(employeeId));
         if (firstName != null)
             employee.FirstName = firstName;

@@ -1,21 +1,26 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services;
 using Services.Exceptions;
 using Services.Storage;
 
 namespace ServiceTests;
 
-public class EmployeeServiceTests
+public class EmployeeStorageTests
 {
     private List<Employee> _bankEmployees = new();
     private readonly EmployeeStorage _employeeStorage = new();
     
     public void AddBankEmployeeTest()
     {
-        _bankEmployees = TestDataGenerator.GenerateListWithEmployees(2, true);
-        _bankEmployees[1].Contract = "";
+        _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
+        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
+        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
+        
         Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Запуск тестов хранилища клиентов и сотрудников.");
         Console.WriteLine("СОТРУДНИКИ");
+        
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -34,8 +39,7 @@ public class EmployeeServiceTests
             CustomException.ExceptionHandling("При добавлении сотрудника произошла ошибка: ", exception);
         }
 
-        Console.WriteLine("\nСписок сотрудников после добавления:\n" + string.Join('\n',
-            _employeeStorage.Data.Select(employee =>
-                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
+        Console.WriteLine("\nСписок сотрудников после добавления:");
+        EmployeeService.WithdrawEmployees(_employeeStorage);
     }
 }

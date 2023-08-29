@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Models;
+using BankingSystemServices;
 using Services.Database;
 using Services.Exceptions;
 
@@ -103,7 +103,7 @@ public class ClientService
         await SaveChanges();
     }
 
-    public async Task UpdateClientAccount(Guid accountId, string currencyCode = "", double? amount = null)
+    public async Task UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
         var account = await _bankingSystemDbContext.Accounts.SingleOrDefaultAsync(account => account.AccountId.Equals(accountId));
         if (account == null)
@@ -121,7 +121,7 @@ public class ClientService
         }
 
         if (amount != null)
-            account.Amount += (double)amount;
+            account.Amount += (decimal)amount;
         await SaveChanges();
     }
 

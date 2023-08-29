@@ -6,9 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    
     <ItemGroup>
-      <ProjectReference Include="..\..\Application\Services\Services.csproj" />
+      <ProjectReference Include="..\..\..\banking system library\BankingSystemServices\BankingSystemServices.csproj" />
     </ItemGroup>
-
+    
 </Project>

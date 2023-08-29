@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models;
+namespace BankingSystemServices;
 
 public class Currency
 {
     [Required]
     [Column("id")]
-    public Guid CurrencyId { get; set; }
+    public Guid CurrencyId { get; set; } = Guid.NewGuid();
     
     [Required]
     [Column("code")]
@@ -19,5 +19,5 @@ public class Currency
     
     [Required]
     [Column("exchange_rate")]
-    public double ExchangeRate { get; set; }
+    public decimal ExchangeRate { get; set; }
 }

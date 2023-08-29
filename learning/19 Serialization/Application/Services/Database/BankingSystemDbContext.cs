@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Models;
+using BankingSystemServices;
 
 namespace Services.Database;
 

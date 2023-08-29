@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
-using System.Text;
 
-namespace Models;
+namespace BankingSystemServices;
 
 public class Employee : Person
 {
     [Required] 
     [Column("id")] 
-    public Guid EmployeeId { get; set; }
+    public Guid EmployeeId { get; set; } = Guid.NewGuid();
 
     [Required] 
     [Column("contract")] 
@@ -17,7 +15,7 @@ public class Employee : Person
 
     [Required] 
     [Column("salary")] 
-    public double Salary { get; set; }
+    public decimal Salary { get; set; }
 
     [Required] 
     [Column("address")] 
@@ -51,8 +49,11 @@ public class Employee : Person
         };
     }
 
-    public static Employee CopyEmployee(Employee employee)
+    public static Employee? CopyEmployee(Employee? employee)
     {
+        if (employee is null)
+            return null;
+        
         return new Employee
         {
             FirstName = employee.FirstName,

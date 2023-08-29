@@ -6,9 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Models\Models.csproj" />
-    </ItemGroup>
 
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\banking system library\BankingSystemServices\BankingSystemServices.csproj" />
+    </ItemGroup>
 
 </Project>

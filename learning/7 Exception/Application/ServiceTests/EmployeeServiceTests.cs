@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services;
 using Services.Exceptions;
 
@@ -11,10 +12,13 @@ public class EmployeeServiceTests
     
     public void AddBankEmployeeTest()
     {
-        _bankEmployees = TestDataGenerator.GenerateListWithEmployees(2, true);
-        _bankEmployees[1].Contract = "";
+        _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
+        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
+        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
+        
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("СОТРУДНИКИ");
+        
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -30,17 +34,10 @@ public class EmployeeServiceTests
         }
         catch (CustomException exception)
         {
-            ExceptionHandling("При добавлении сотрудника произошла ошибка: ", exception);
+            CustomException.ExceptionHandling("При добавлении сотрудника произошла ошибка: ", exception);
         }
 
-        Console.WriteLine("\nСписок сотрудников после добавления:\n" + string.Join('\n',
-            _employeeService.BankEmployees.Select(employee =>
-                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
-    }
-    private static void ExceptionHandling(string description, CustomException exception)
-    {
-        Console.WriteLine(description + exception.Message + (string.IsNullOrWhiteSpace(exception.ParameterOfException)
-            ? ""
-            : $"\nПараметр: {exception.ParameterOfException}"));
+        Console.WriteLine("\nСписок сотрудников после добавления:");
+        _employeeService.WithdrawEmployees();
     }
 }

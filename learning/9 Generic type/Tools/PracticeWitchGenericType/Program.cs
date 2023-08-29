@@ -7,12 +7,12 @@ internal class Program
     public static void Main(string[] args)
     {
         // запуск тестов сервисов для клиентов и сотрудников.
-        var clientServiceTests = new ClientServiceTests();
+        var clientServiceTests = new ClientStorageTests();
         clientServiceTests.AddClientTest();
         clientServiceTests.AddClientAccountTest();
         clientServiceTests.UpdateClientAccountTest();
 
-        var employeeServiceTests = new EmployeeServiceTests();
+        var employeeServiceTests = new EmployeeStorageTests();
         employeeServiceTests.AddBankEmployeeTest();
 
         // запуск тестов IEnumerable для клиентов и сотрудников.

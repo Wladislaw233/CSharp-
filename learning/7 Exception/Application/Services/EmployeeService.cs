@@ -1,21 +1,28 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services.Exceptions;
 
 namespace Services;
 
 public class EmployeeService
 {
-    public readonly List<Employee> BankEmployees = new();
+    private readonly List<Employee> _bankEmployees = new();
 
     public void AddBankEmployee(Employee employee)
     {
         ValidationEmployee(employee);
-        BankEmployees.Add(employee);
+        _bankEmployees.Add(employee);
     }
 
+    public void WithdrawEmployees()
+    {
+        Console.WriteLine(string.Join('\n',
+            _bankEmployees.Select(employee =>
+                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
+    }
     private void ValidationEmployee(Employee employee)
     {
-        if (BankEmployees.Contains(employee))
+        if (_bankEmployees.Contains(employee))
             throw new CustomException("Данный сотрудник уже добавлен в банковскую систему!", nameof(employee));
         if (string.IsNullOrWhiteSpace(employee.FirstName))
             throw new CustomException("Не указано имя сотрудника!", nameof(employee.FirstName));
@@ -31,7 +38,7 @@ public class EmployeeService
             throw new CustomException("Не указана зарплата сотрудника!", nameof(employee.Salary));
         if (string.IsNullOrWhiteSpace(employee.Contract))
         {
-            employee.Contract = $"{employee.FirstName} {employee.LastName}, дата рождения: {employee.DateOfBirth}";
+            employee.Contract = TestDataGenerator.GenerateEmployeeContract(employee);
             Console.WriteLine("Контракт сотрудника был создан!");
         }
 

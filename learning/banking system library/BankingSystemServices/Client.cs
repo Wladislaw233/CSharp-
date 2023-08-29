@@ -1,17 +1,13 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
-using System.Text;
-using CsvHelper.Configuration;
 
-namespace Models;
+namespace BankingSystemServices;
 
 public class Client : Person
 {
     [Required] 
     [Column("id")] 
-    public Guid ClientId { get; set; }
+    public Guid ClientId { get; set; } = Guid.NewGuid();
 
     [Required] 
     [Column("phone_number")] 
@@ -25,8 +21,10 @@ public class Client : Person
     [Column("address")] 
     public string Address { get; set; }
     
-    public static Client CopyClient(Client client)
+    public static Client? CopyClient(Client? client)
     {
+        if (client is null)
+            return null;
         return new Client()
             {
                 ClientId = Guid.NewGuid(),

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models;
+namespace BankingSystemServices;
 
 public class Person
 {
@@ -22,5 +22,5 @@ public class Person
     public int Age { get; set; }
     
     [Column("bonus")]
-    public double Bonus { get; set; }
+    public decimal Bonus { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-using Models;
+using BankingSystemServices;
+using BankingSystemServices.Services;
 
 namespace Services.Storage;
 
@@ -7,18 +8,18 @@ public class ClientStorage : IEnumerable<Client>
 {
     private readonly List<Client> _bankClients = new();
 
-    public void AddBankClients(int numberOfClients = 10)
+    public void AddBankClients(Client client)
     {
-        _bankClients.AddRange(TestDataGenerator.GenerateListWitchBankClients(numberOfClients));
+        _bankClients.Add(client);
     }
 
-     public IEnumerator<Client> GetEnumerator()
-     {
-         return _bankClients.GetEnumerator();
-     }
-    
-     IEnumerator IEnumerable.GetEnumerator()
-     {
-         return GetEnumerator();
-     }
+    public IEnumerator<Client> GetEnumerator()
+    {
+        return _bankClients.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

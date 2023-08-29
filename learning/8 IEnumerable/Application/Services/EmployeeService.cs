@@ -1,4 +1,6 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
+
 using Services.Exceptions;
 using Services.Storage;
 
@@ -6,17 +8,24 @@ namespace Services;
 
 public class EmployeeService
 {
-    public readonly List<Employee> BankEmployees = new();
+    private readonly List<Employee> _bankEmployees = new();
 
     public void AddBankEmployee(Employee employee)
     {
         ValidationEmployee(employee);
-        BankEmployees.Add(employee);
+        _bankEmployees.Add(employee);
+    }
+
+    public void WithdrawEmployees()
+    {
+        Console.WriteLine(string.Join('\n',
+            _bankEmployees.Select(employee =>
+                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
     }
 
     private void ValidationEmployee(Employee employee)
     {
-        if (BankEmployees.Contains(employee))
+        if (_bankEmployees.Contains(employee))
             throw new CustomException("Данный сотрудник уже добавлен в банковскую систему!", nameof(employee));
         if (string.IsNullOrWhiteSpace(employee.FirstName))
             throw new CustomException("Не указано имя сотрудника!", nameof(employee.FirstName));
@@ -32,7 +41,7 @@ public class EmployeeService
             throw new CustomException("Не указана зарплата сотрудника!", nameof(employee.Salary));
         if (string.IsNullOrWhiteSpace(employee.Contract))
         {
-            employee.Contract = $"{employee.FirstName} {employee.LastName}, дата рождения: {employee.DateOfBirth}";
+            employee.Contract = TestDataGenerator.GenerateEmployeeContract(employee);
             Console.WriteLine("Контракт сотрудника был создан!");
         }
 
@@ -41,7 +50,7 @@ public class EmployeeService
             throw new CustomException("Дата рождения сотрудника указана неверно!", nameof(employee.DateOfBirth));
 
         var age = TestDataGenerator.CalculateAge(employee.DateOfBirth);
-        
+
         if (age < 18)
             throw new CustomException("сотрудника меньше 18 лет!", nameof(employee.Age));
 
@@ -51,20 +60,20 @@ public class EmployeeService
             Console.WriteLine("Возраст сотрудника указан неверно и был скорректирован по дате его рождения!");
         }
     }
-    
+
     public static IEnumerable<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage, string firstNameFilter = "",
-        string lastNameFilter = "", string phoneNumberFilter = "", string contractFilter = "", int? salaryFilter = null, DateTime? minDateOfBirth = null,
+        string lastNameFilter = "", string phoneNumberFilter = "", string contractFilter = "", decimal? salaryFilter = null, DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
         IEnumerable<Employee> filteredEmployees = employeeStorage;
         if (!string.IsNullOrWhiteSpace(firstNameFilter))
-            filteredEmployees = filteredEmployees.Where(employee  => employee.FirstName.Contains(firstNameFilter));
+            filteredEmployees = filteredEmployees.Where(employee  => employee.FirstName == firstNameFilter);
         if (!string.IsNullOrWhiteSpace(lastNameFilter))
-            filteredEmployees = filteredEmployees.Where(employee  => employee.LastName.Contains(lastNameFilter));
+            filteredEmployees = filteredEmployees.Where(employee  => employee.LastName == lastNameFilter);
         if (!string.IsNullOrWhiteSpace(phoneNumberFilter))
-            filteredEmployees = filteredEmployees.Where(employee  => employee.PhoneNumber.Contains(phoneNumberFilter));
+            filteredEmployees = filteredEmployees.Where(employee  => employee.PhoneNumber == phoneNumberFilter);
         if (!string.IsNullOrWhiteSpace(contractFilter))
-            filteredEmployees = filteredEmployees.Where(employee  => employee.Contract.Contains(contractFilter));
+            filteredEmployees = filteredEmployees.Where(employee  => employee.Contract == contractFilter);
         if (salaryFilter.HasValue)
             filteredEmployees = filteredEmployees.Where(employee  => employee.Salary == salaryFilter);
         if (minDateOfBirth.HasValue)

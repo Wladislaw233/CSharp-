@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using Models;
+using BankingSystemServices;
 
 namespace Services.Storage;
 
@@ -7,9 +7,9 @@ public class EmployeeStorage : IEnumerable<Employee>
 {
     private readonly List<Employee> _bankEmployees = new();
 
-    public void AddBankEmployees(int numberOfClients = 10)
+    public void AddBankEmployees(Employee employee)
     {
-        _bankEmployees.AddRange(TestDataGenerator.GenerateListWithEmployees(numberOfClients));
+        _bankEmployees.Add(employee);
     }
 
     public IEnumerator<Employee> GetEnumerator()

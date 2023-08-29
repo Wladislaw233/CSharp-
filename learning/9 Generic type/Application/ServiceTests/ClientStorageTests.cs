@@ -2,13 +2,14 @@
 using BankingSystemServices.Services;
 using Services;
 using Services.Exceptions;
+using Services.Storage;
 
 namespace ServiceTests;
 
-public class ClientServiceTests
+public class ClientStorageTests
 {
     private List<Client> _bankClients = new();
-    private readonly ClientService _clientService = new();
+    private readonly ClientStorage _clientStorage = new();
 
     public void AddClientTest()
     {
@@ -29,8 +30,8 @@ public class ClientServiceTests
             {
                 Console.WriteLine(
                     $"\nПопытка добавления клиента: Имя: {client.FirstName}, фамилия: {client.LastName}, возраст: {client.Age}");
-                _clientService.AddClient(client);
-                _clientService.WithdrawClientAccounts(client);
+                _clientStorage.Add(client);
+                ClientService.WithdrawClientAccounts(_clientStorage, client);
                 Console.WriteLine("Успешно!");
             }
         }
@@ -42,7 +43,7 @@ public class ClientServiceTests
 
     public void AddClientAccountTest()
     {
-        _clientService.WithdrawBankCurrencies();
+        _clientStorage.WithdrawBankCurrencies();
         try
         {
             var client = _bankClients.FirstOrDefault();
@@ -53,13 +54,13 @@ public class ClientServiceTests
                 Console.ResetColor();
                 Console.WriteLine($"Добавим счет EUR клиенту:");
                 Console.WriteLine("До изменения:");
-                _clientService.WithdrawClientAccounts(client);
-                _clientService.AddClientAccount(client, "EUR", new decimal(124.11));
+                ClientService.WithdrawClientAccounts(_clientStorage, client);
+                _clientStorage.AddAccount(client, "EUR", new decimal(124.11));
                 
                 Console.WriteLine("\nПосле изменения:");
-                _clientService.WithdrawClientAccounts(client);
+                ClientService.WithdrawClientAccounts(_clientStorage, client);
                 Console.WriteLine($"Добавим счет RUP клиенту {client.FirstName} {client.LastName} (такой валюты нет):");
-                _clientService.AddClientAccount(client, "RUP", new decimal(123.1));
+                _clientStorage.AddAccount(client, "RUP", new decimal(123.1));
             }
         }
         catch (CustomException exception)
@@ -79,23 +80,22 @@ public class ClientServiceTests
                 Console.WriteLine("\nРедактирование счета клиента:");
                 Console.ResetColor();
                 
-                var clientAccounts = _clientService.GetClientAccounts(client);
+                var clientAccounts = ClientService.GetClientAccounts(_clientStorage, client);
                 
                 var clientAccount = clientAccounts.LastOrDefault();
                 if (clientAccount != null)
                 {
                     Console.WriteLine($"Изменим счет EUR на счет RUB клиенту:");
                     Console.WriteLine("До изменения:");
-                    _clientService.WithdrawClientAccounts(client);
-                    _clientService.UpdateClientAccount(client, clientAccount.AccountNumber, "RUB", new decimal(45677.23));
+                    ClientService.WithdrawClientAccounts(_clientStorage, client);
+                    _clientStorage.UpdateAccount(client, clientAccount.AccountNumber, "RUB", new decimal(45677.23));
                     Console.WriteLine("\nПосле изменения:");
-                    _clientService.WithdrawClientAccounts(client);
+                    ClientService.WithdrawClientAccounts(_clientStorage, client);
                     
                     Console.WriteLine($"Изменим клиенту счет, которого у него его нет, на счет RUB:");
                     Console.WriteLine("До изменения:");
-                    clientAccounts = _clientService.GetClientAccounts(client);
-                    _clientService.WithdrawClientAccounts(client);
-                    _clientService.UpdateClientAccount(client, "INVALIDNUMBER", "RUB");
+                    ClientService.WithdrawClientAccounts(_clientStorage, client);
+                    _clientStorage.UpdateAccount(client, "INVALIDNUMBER", "RUB");
                 }    
             }
         }
