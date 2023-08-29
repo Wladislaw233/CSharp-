@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services.Database;
 using Services.Exceptions;
 
@@ -24,7 +25,7 @@ public class EmployeeService
 
     public void UpdateEmployee(Guid employeeId, string? firstName = null, string? lastName = null, int? age = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
-        string? contract = null, double? salary = null, bool? isOwner = null)
+        string? contract = null, decimal? salary = null, bool? isOwner = null, decimal? bonus = null)
     {
         var employee =
             _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
@@ -49,9 +50,11 @@ public class EmployeeService
         if (contract != null)
             employee.Contract = contract;
         if (salary != null)
-            employee.Salary = (double)salary;
+            employee.Salary = (decimal)salary;
         if (isOwner != null)
             employee.IsOwner = (bool)isOwner;
+        if (bonus != null)
+            employee.Bonus = (decimal)bonus;
 
         ValidateEmployee(employee, true);
         _bankingSystemDbContext.Employees.Update(employee);

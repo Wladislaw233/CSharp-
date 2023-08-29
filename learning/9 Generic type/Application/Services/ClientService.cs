@@ -11,23 +11,23 @@ public class ClientService
     {
         if (!clientStorage.Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        
+
         return clientStorage.Data[client];
     }
-    
+
     public static void WithdrawClientAccounts(ClientStorage clientStorage, Client client)
     {
         if (!clientStorage.Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        
+
         Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:");
-        
+
         Console.WriteLine(string.Join('\n',
             clientStorage.Data[client].Select(clientAccount =>
                 $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
                 $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")));
     }
-    
+
     public static void ValidateClient(Client client)
     {
         if (string.IsNullOrWhiteSpace(client.FirstName))
@@ -56,7 +56,7 @@ public class ClientService
             Console.WriteLine("Возраст клиента указан неверно и был скорректирован по дате его рождения!");
         }
     }
-    
+
     public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)

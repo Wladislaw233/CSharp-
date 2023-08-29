@@ -1,13 +1,11 @@
 ﻿using ServiceTests;
 
+namespace PracticeWithEqualsAndGetHashCode;
 
-namespace PracticeWithEqualsAndGetHashCode
+internal class Program
 {
-    internal class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            EquivalenceTests.GetHashCodeNecessityPositiveTest();
-        }
+        EquivalenceTests.GetHashCodeNecessityPositiveTest();
     }
 }

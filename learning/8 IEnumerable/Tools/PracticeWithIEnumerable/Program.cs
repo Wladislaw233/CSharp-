@@ -1,6 +1,4 @@
-﻿using Services;
-using Services.Storage;
-using ServiceTests;
+﻿using ServiceTests;
 
 namespace PracticeWithIEnumerable;
 

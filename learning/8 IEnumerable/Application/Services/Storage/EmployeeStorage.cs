@@ -16,7 +16,7 @@ public class EmployeeStorage : IEnumerable<Employee>
     {
         return _bankEmployees.GetEnumerator();
     }
-    
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

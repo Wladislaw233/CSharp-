@@ -7,7 +7,7 @@ public class Employee : Person
 {
     [Required] 
     [Column("id")] 
-    public Guid EmployeeId { get; set; } = Guid.NewGuid();
+    public Guid EmployeeId { get; set; }
 
     [Required] 
     [Column("contract")] 

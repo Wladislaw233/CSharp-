@@ -6,7 +6,6 @@ namespace PracticeWithListAndDictionary;
 
 internal class Program
 {
-    
     private static readonly List<Client> ListBankClients = TestDataGenerator.GenerateListWitchBankClients(1000);
 
     private static readonly Dictionary<string, Client> DictionaryBankClients =

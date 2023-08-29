@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using BankingSystemServices.Services;
+using Services;
 using Services.Database;
 using Services.Exceptions;
 
@@ -18,7 +19,7 @@ public class EmployeeServiceTests
         {
             var employeeService = new EmployeeService(bankingSystemDbContext);
 
-            var addedBankEmployees = TestDataGenerator.GenerateListWithEmployees(100);
+            var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
             foreach (var employee in addedBankEmployees)
                 employeeService.AddEmployee(employee);
             var bankEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5);

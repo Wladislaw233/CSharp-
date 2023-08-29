@@ -15,16 +15,16 @@ public class ClientServiceTests
         _bankClients = TestDataGenerator.GenerateListWitchBankClients(3);
         _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient(true));
         _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient());
-        
+
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("КЛИЕНТЫ");
-        
+
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Добавление клиентов:");
             Console.ResetColor();
-            
+
             foreach (var client in _bankClients)
             {
                 Console.WriteLine(
@@ -51,11 +51,11 @@ public class ClientServiceTests
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("\nДобавление счета клиентам:");
                 Console.ResetColor();
-                Console.WriteLine($"Добавим счет EUR клиенту:");
+                Console.WriteLine("Добавим счет EUR клиенту:");
                 Console.WriteLine("До изменения:");
                 _clientService.WithdrawClientAccounts(client);
                 _clientService.AddClientAccount(client, "EUR", new decimal(124.11));
-                
+
                 Console.WriteLine("\nПосле изменения:");
                 _clientService.WithdrawClientAccounts(client);
                 Console.WriteLine($"Добавим счет RUP клиенту {client.FirstName} {client.LastName} (такой валюты нет):");
@@ -78,25 +78,26 @@ public class ClientServiceTests
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("\nРедактирование счета клиента:");
                 Console.ResetColor();
-                
+
                 var clientAccounts = _clientService.GetClientAccounts(client);
-                
+
                 var clientAccount = clientAccounts.LastOrDefault();
                 if (clientAccount != null)
                 {
-                    Console.WriteLine($"Изменим счет EUR на счет RUB клиенту:");
+                    Console.WriteLine("Изменим счет EUR на счет RUB клиенту:");
                     Console.WriteLine("До изменения:");
                     _clientService.WithdrawClientAccounts(client);
-                    _clientService.UpdateClientAccount(client, clientAccount.AccountNumber, "RUB", new decimal(45677.23));
+                    _clientService.UpdateClientAccount(client, clientAccount.AccountNumber, "RUB",
+                        new decimal(45677.23));
                     Console.WriteLine("\nПосле изменения:");
                     _clientService.WithdrawClientAccounts(client);
-                    
-                    Console.WriteLine($"Изменим клиенту счет, которого у него его нет, на счет RUB:");
+
+                    Console.WriteLine("Изменим клиенту счет, которого у него его нет, на счет RUB:");
                     Console.WriteLine("До изменения:");
                     clientAccounts = _clientService.GetClientAccounts(client);
                     _clientService.WithdrawClientAccounts(client);
                     _clientService.UpdateClientAccount(client, "INVALIDNUMBER", "RUB");
-                }    
+                }
             }
         }
         catch (CustomException exception)

@@ -22,7 +22,7 @@ namespace Services.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.Account", b =>
+            modelBuilder.Entity("BankingSystemServices.Account", b =>
                 {
                     b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
@@ -34,8 +34,8 @@ namespace Services.Migrations
                         .HasColumnType("text")
                         .HasColumnName("account_number");
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double precision")
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
                         .HasColumnName("amount");
 
                     b.Property<Guid>("ClientId")
@@ -55,7 +55,7 @@ namespace Services.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Models.Client", b =>
+            modelBuilder.Entity("BankingSystemServices.Client", b =>
                 {
                     b.Property<Guid>("ClientId")
                         .ValueGeneratedOnAdd()
@@ -71,8 +71,8 @@ namespace Services.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("age");
 
-                    b.Property<double>("Bonus")
-                        .HasColumnType("double precision")
+                    b.Property<decimal>("Bonus")
+                        .HasColumnType("numeric")
                         .HasColumnName("bonus");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -104,7 +104,7 @@ namespace Services.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Models.Currency", b =>
+            modelBuilder.Entity("BankingSystemServices.Currency", b =>
                 {
                     b.Property<Guid>("CurrencyId")
                         .ValueGeneratedOnAdd()
@@ -116,8 +116,8 @@ namespace Services.Migrations
                         .HasColumnType("text")
                         .HasColumnName("code");
 
-                    b.Property<double>("ExchangeRate")
-                        .HasColumnType("double precision")
+                    b.Property<decimal>("ExchangeRate")
+                        .HasColumnType("numeric")
                         .HasColumnName("exchange_rate");
 
                     b.Property<string>("Name")
@@ -130,7 +130,7 @@ namespace Services.Migrations
                     b.ToTable("Currencies");
                 });
 
-            modelBuilder.Entity("Models.Employee", b =>
+            modelBuilder.Entity("BankingSystemServices.Employee", b =>
                 {
                     b.Property<Guid>("EmployeeId")
                         .ValueGeneratedOnAdd()
@@ -146,8 +146,8 @@ namespace Services.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("age");
 
-                    b.Property<double>("Bonus")
-                        .HasColumnType("double precision")
+                    b.Property<decimal>("Bonus")
+                        .HasColumnType("numeric")
                         .HasColumnName("bonus");
 
                     b.Property<string>("Contract")
@@ -183,8 +183,8 @@ namespace Services.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone_number");
 
-                    b.Property<double>("Salary")
-                        .HasColumnType("double precision")
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("numeric")
                         .HasColumnName("salary");
 
                     b.HasKey("EmployeeId");
@@ -192,15 +192,15 @@ namespace Services.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("Models.Account", b =>
+            modelBuilder.Entity("BankingSystemServices.Account", b =>
                 {
-                    b.HasOne("Models.Client", "Client")
+                    b.HasOne("BankingSystemServices.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Currency", "Currency")
+                    b.HasOne("BankingSystemServices.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)

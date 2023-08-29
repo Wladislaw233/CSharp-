@@ -20,6 +20,7 @@ public class EmployeeService
             _bankEmployees.Select(employee =>
                 $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
     }
+
     private void ValidationEmployee(Employee employee)
     {
         if (_bankEmployees.Contains(employee))
@@ -47,7 +48,7 @@ public class EmployeeService
             throw new CustomException("Дата рождения сотрудника указана неверно!", nameof(employee.DateOfBirth));
 
         var age = TestDataGenerator.CalculateAge(employee.DateOfBirth);
-        
+
         if (age < 18)
             throw new CustomException("сотрудника меньше 18 лет!", nameof(employee.Age));
 

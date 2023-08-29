@@ -7,7 +7,7 @@ public class Account
 {
     [Required]
     [Column("id")]
-    public Guid AccountId { get; set; } = Guid.NewGuid();
+    public Guid AccountId { get; set; }
 
     [Required] 
     [Column("currency_id")] 

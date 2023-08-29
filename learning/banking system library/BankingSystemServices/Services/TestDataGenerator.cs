@@ -5,10 +5,11 @@ namespace BankingSystemServices.Services;
 public class TestDataGenerator
 {
     private static readonly Faker<Client> FakerClients = new Faker<Client>()
+        .RuleFor(client => client.ClientId, faker => faker.Random.Guid())
         .RuleFor(client => client.FirstName, faker => faker.Person.FirstName)
         .RuleFor(client => client.LastName, faker => faker.Person.LastName)
         .RuleFor(client => client.DateOfBirth,
-            faker => faker.Date.Between(new DateTime(1960, 1, 1), new DateTime(2002, 12, 30)))
+            faker => faker.Date.Between(new DateTime(1960, 1, 1), new DateTime(2002, 12, 30)).ToUniversalTime())
         .RuleFor(client => client.Age, (_, client) => CalculateAge(client.DateOfBirth))
         .RuleFor(client => client.PhoneNumber, faker => faker.Person.Phone)
         .RuleFor(client => client.Email, faker => faker.Person.Email)
@@ -16,10 +17,11 @@ public class TestDataGenerator
         .RuleFor(client => client.Bonus, faker => faker.Finance.Amount());
     
     private static readonly Faker<Employee> FakerEmployee = new Faker<Employee>()
+        .RuleFor(employee => employee.EmployeeId, faker => faker.Random.Guid())
         .RuleFor(employee => employee.FirstName, faker => faker.Person.FirstName)
         .RuleFor(employee => employee.LastName, faker => faker.Person.LastName)
         .RuleFor(employee => employee.DateOfBirth,
-            faker => faker.Date.Between(new DateTime(1960, 1, 1), new DateTime(2002, 12, 30)))
+            faker => faker.Date.Between(new DateTime(1960, 1, 1), new DateTime(2002, 12, 30)).ToUniversalTime())
         .RuleFor(employee => employee.Age, (_, employee) => CalculateAge(employee.DateOfBirth))
         .RuleFor(employee => employee.PhoneNumber, faker => faker.Person.Phone)
         .RuleFor(employee => employee.Email, faker => faker.Person.Email)
@@ -78,6 +80,7 @@ public class TestDataGenerator
     {
         return new Account
         {
+            AccountId = Guid.NewGuid(),
             CurrencyId = currency.CurrencyId,
             Currency = currency,
             ClientId = client.ClientId,

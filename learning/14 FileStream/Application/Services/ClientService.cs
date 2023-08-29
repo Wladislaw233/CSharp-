@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services.Database;
 using Services.Exceptions;
 
@@ -8,7 +9,6 @@ public class ClientService
 {
     private BankingSystemDbContext _bankingSystemDbContext;
     private readonly Currency? _defaultCurrency;
-    private int _accountCounter;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
     {
@@ -18,27 +18,27 @@ public class ClientService
             if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
             {
                 _bankingSystemDbContext.Currencies.AddRange(
-                    new Currency("USD", "US Dollar", 1),
-                    new Currency("EUR", "Euro", 0.97),
-                    new Currency("RUB", "Russian ruble", 96.64)
+                    new Currency { CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1) },
+                    new Currency { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
+                    new Currency { CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
                 );
                 SaveChanges();
             }
-
-            _accountCounter = _bankingSystemDbContext.Accounts.Count();
+            
             _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
             if (_defaultCurrency == null)
                 throw new CustomException("Не удалось получить валюту по умолчанию!", nameof(_defaultCurrency));
         }
         else
+        {
             throw new CustomException("Не удалось установить соединение с базой данных!");
+        }
     }
 
     public void AddClient(Client client)
     {
         ValidateClient(client);
-        _accountCounter++;
-        var defaultAccount = CreateAccount(client.ClientId, _defaultCurrency);
+        var defaultAccount = CreateAccount(client, _defaultCurrency);
         if (defaultAccount == null)
             throw new CustomException("Не удалось создать аккаунт по умолчанию!", nameof(defaultAccount));
         _bankingSystemDbContext.Clients.Add(client);
@@ -47,7 +47,7 @@ public class ClientService
     }
 
     public void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
+        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null, decimal? bonus = null)
     {
         var client =
             _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
@@ -69,6 +69,8 @@ public class ClientService
             client.Address = address;
         if (email != null)
             client.Email = email;
+        if (bonus != null)
+            client.Bonus = (decimal)bonus;
 
         ValidateClient(client, true);
         _bankingSystemDbContext.Clients.Update(client);
@@ -86,7 +88,7 @@ public class ClientService
         SaveChanges();
     }
 
-    public void AddClientAccount(Guid clientId, string currencyCode, double amount)
+    public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
     {
         var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
         if (client == null)
@@ -94,15 +96,14 @@ public class ClientService
         var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
         if (currency == null)
             throw new CustomException($"Валюты с кодом {currencyCode} не существует!", nameof(currencyCode));
-        _accountCounter++;
-        var account = CreateAccount(clientId, currency, amount);
+        var account = CreateAccount(client, currency, amount);
         if (account == null)
             throw new CustomException("Не удалось создать аккаунт!", nameof(account));
         _bankingSystemDbContext.Accounts.Add(account);
         SaveChanges();
     }
 
-    public void UpdateClientAccount(Guid accountId, string currencyCode = "", double? amount = null)
+    public void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
         var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
         if (account == null)
@@ -120,7 +121,7 @@ public class ClientService
         }
 
         if (amount != null)
-            account.Amount = (double)amount;
+            account.Amount = (decimal)amount;
         SaveChanges();
     }
 
@@ -144,12 +145,7 @@ public class ClientService
             throw new CustomException(exception.Message, nameof(_bankingSystemDbContext));
         }
     }
-
-    private string GenerateAccountNumber(Currency currency, int accountCounter)
-    {
-        return "ACC" + accountCounter.ToString("D10") + currency.Code;
-    }
-
+    
     public List<string> GetPresentationClientAccounts(Guid clientId)
     {
         return (from account in _bankingSystemDbContext.Accounts
@@ -163,12 +159,11 @@ public class ClientService
         return _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId)).ToList();
     }
 
-    private Account? CreateAccount(Guid clientId, Currency? currency, double amount = 0)
+    private Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
     {
         if (currency != null)
         {
-            var accountNumber = GenerateAccountNumber(currency, _accountCounter);
-            return new Account(currency.CurrencyId, clientId, accountNumber, amount);
+            return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
         }
 
         return null;

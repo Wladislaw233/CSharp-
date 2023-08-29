@@ -7,7 +7,7 @@ public class Client : Person
 {
     [Required] 
     [Column("id")] 
-    public Guid ClientId { get; set; } = Guid.NewGuid();
+    public Guid ClientId { get; set; }
 
     [Required] 
     [Column("phone_number")] 

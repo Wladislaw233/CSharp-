@@ -10,17 +10,17 @@ public class EmployeeStorageTests
 {
     private List<Employee> _bankEmployees = new();
     private readonly EmployeeStorage _employeeStorage = new();
-    
+
     public void AddBankEmployeeTest()
     {
         _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
-        
+
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Запуск тестов хранилища клиентов и сотрудников.");
         Console.WriteLine("СОТРУДНИКИ");
-        
+
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;

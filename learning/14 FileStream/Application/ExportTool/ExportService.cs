@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Models;
+using BankingSystemServices;
 
 namespace ExportTool;
 
@@ -28,14 +28,13 @@ public class ExportService
             {
                 using (var csvWriter = new CsvWriter(streamWriter, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    csvWriter.Context.RegisterClassMap<ClientMapper>();
                     csvWriter.WriteRecords(clients);
                     csvWriter.Flush();
                 }
             }
         }
     }
-    
+
     public List<Client> ReadClientsDataFromScvFile()
     {
         var fullPath = GetFullPathToFile();
@@ -45,15 +44,15 @@ public class ExportService
             {
                 using (var csvReader = new CsvReader(streamReader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
-                    csvReader.Context.RegisterClassMap<ClientMapper>();
                     csvReader.Read();
                     csvReader.ReadHeader();
                     return csvReader.GetRecords<Client>().ToList();
+                    
                 }
             }
         }
     }
-    
+
     private string GetFullPathToFile()
     {
         return Path.Combine(PathToDirectory, CsvFileName);

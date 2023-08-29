@@ -10,23 +10,23 @@ public class ClientService
     private readonly Dictionary<Client, List<Account>> _clientsAccounts = new();
 
     private readonly List<Currency> _listOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
-    
+
     public List<Account> AddClient(Client client)
     {
         ValidateClient(client);
         CreateDefaultAccount(client);
         return _clientsAccounts[client];
     }
-    
+
     public void AddClientAccount(Client client, string currencyCode = "USD", decimal amount = 0)
     {
         if (!_clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        
+
         var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
         if (currency == null)
             throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
-        
+
         _clientsAccounts[client].Add(TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount));
     }
 
@@ -42,12 +42,12 @@ public class ClientService
     {
         if (!_clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        
+
         var account = _clientsAccounts[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
-        
+
         if (account == null)
             throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
-        
+
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
             var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
@@ -56,10 +56,10 @@ public class ClientService
             account.CurrencyId = currency.CurrencyId;
             account.Currency = currency;
         }
-        
+
         if (amount != null)
             account.Amount += (decimal)amount;
-        
+
         return _clientsAccounts[client];
     }
 
@@ -116,15 +116,15 @@ public class ClientService
     {
         if (!_clientsAccounts.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        
+
         Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:");
-        
+
         Console.WriteLine(string.Join('\n',
-                              _clientsAccounts[client].Select(clientAccount =>
-                                  $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
-                                  $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")));
+            _clientsAccounts[client].Select(clientAccount =>
+                $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
+                $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")));
     }
-    
+
     public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)

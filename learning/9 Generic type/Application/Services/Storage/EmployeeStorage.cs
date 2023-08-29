@@ -12,7 +12,7 @@ public class EmployeeStorage : IEmployeeStorage, IEnumerable<Employee>
     {
         if (Data.Contains(employee))
             throw new CustomException("Данный сотрудник уже добавлен в банковскую систему!", nameof(employee));
-        
+
         EmployeeService.ValidationEmployee(employee);
         Data.Add(employee);
     }
@@ -22,9 +22,10 @@ public class EmployeeStorage : IEmployeeStorage, IEnumerable<Employee>
         string? contract = null, decimal? salary = null, bool? isOwner = null, decimal? bonus = null)
     {
         if (!Data.Contains(employee))
-            throw new CustomException($"Сотрудника {employee.FirstName} {employee.LastName} не существует в банковской системе!",
+            throw new CustomException(
+                $"Сотрудника {employee.FirstName} {employee.LastName} не существует в банковской системе!",
                 nameof(employee));
-        
+
         if (firstName != null)
             employee.FirstName = firstName;
         if (lastName != null)
@@ -54,15 +55,15 @@ public class EmployeeStorage : IEmployeeStorage, IEnumerable<Employee>
     public void Delete(Employee employee)
     {
         if (!Data.Contains(employee))
-            throw new CustomException("Данного сотрудника не существует в банковской системе!", nameof(employee)); 
+            throw new CustomException("Данного сотрудника не существует в банковской системе!", nameof(employee));
         Data.Remove(employee);
     }
-    
+
     public IEnumerator<Employee> GetEnumerator()
     {
         return Data.GetEnumerator();
     }
-    
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

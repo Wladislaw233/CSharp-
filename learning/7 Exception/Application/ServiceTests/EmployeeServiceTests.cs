@@ -9,16 +9,16 @@ public class EmployeeServiceTests
 {
     private List<Employee> _bankEmployees = new();
     private readonly EmployeeService _employeeService = new();
-    
+
     public void AddBankEmployeeTest()
     {
         _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
-        
+
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("СОТРУДНИКИ");
-        
+
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;

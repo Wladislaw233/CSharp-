@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using BankingSystemServices.Services;
+using Services;
 using Services.Database;
 using Services.Exceptions;
 
@@ -28,7 +29,7 @@ public class ClientServiceTests
                 Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:" +
                                   $"\n" + string.Join('\n', presentationBankClientAccounts));
                 Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
-                clientService.AddClientAccount(bankClient.ClientId, "EUR", 1455.23);
+                clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
                 presentationBankClientAccounts =
                     clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
                 Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:" +
