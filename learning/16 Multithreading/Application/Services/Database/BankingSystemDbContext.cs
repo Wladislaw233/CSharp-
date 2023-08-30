@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Models;
+using BankingSystemServices;
 
 namespace Services.Database;
 
@@ -13,12 +13,11 @@ public class BankingSystemDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder.Entity<Account>()
             .HasOne(accounts => accounts.Client)
             .WithMany()
             .HasForeignKey(accounts => accounts.ClientId);
-        
+
         modelBuilder.Entity<Account>()
             .HasOne(accounts => accounts.Currency)
             .WithMany()

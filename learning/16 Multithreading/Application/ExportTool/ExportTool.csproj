@@ -7,8 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ExportTool\ExportTool.csproj" />
+      <ProjectReference Include="..\..\..\banking system library\BankingSystemServices\BankingSystemServices.csproj" />
       <ProjectReference Include="..\Services\Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CsvHelper" Version="30.0.1" />
     </ItemGroup>
 
 </Project>

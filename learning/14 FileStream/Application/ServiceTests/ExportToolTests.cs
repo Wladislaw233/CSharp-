@@ -1,8 +1,8 @@
-﻿using BankingSystemServices;
-using BankingSystemServices.Services;
+﻿using BankingSystemServices.Services;
 using ExportTool;
 using Services;
 using Services.Database;
+using Services.Exceptions;
 
 namespace ServiceTests;
 
@@ -10,36 +10,51 @@ public class ExportToolTests
 {
     public static void ExportCsvServiceTest()
     {
-        // Название файла clients.csv, лежит в папке D:\Learning FileStream
-        var recordableClients = TestDataGenerator.GenerateListWitchBankClients();
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Название файла clients.csv, лежит в папке D:/Learning FileStream");
+        Console.ResetColor();
         
         var pathToDirectory = Path.Combine("D:", "Learning FileStream");
         var fileName = "clients.csv";
         var exportService = new ExportService(pathToDirectory, fileName);
 
-        Console.WriteLine("Запишем следующих клиентов:" +
-                          "\n" + string.Join("\n",
-                              recordableClients.Select(client =>
-                                  $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}")));
+        try
+        {
+            WriteClientsDataToScvFileTest(exportService);
+            ReadClientsDataFromScvFileTest(exportService);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время работы с файлами произошла ошибка: ", e);
+        }
         
+    }
+
+    private static void WriteClientsDataToScvFileTest(ExportService exportService)
+    {
+        var recordableClients = TestDataGenerator.GenerateListWitchBankClients(5);
+        Console.WriteLine("Запишем следующих клиентов:");
+        Console.WriteLine(string.Join("\n",
+            recordableClients.Select(client =>
+                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}")));
+
         exportService.WriteClientsDataToScvFile(recordableClients);
+    }
+
+    private static void ReadClientsDataFromScvFileTest(ExportService exportService)
+    {
+        Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
 
         var readableClients = exportService.ReadClientsDataFromScvFile();
-        
-        Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:" +
-                          "\n" + string.Join("\n",
-                              readableClients.Select(client =>
-                                  $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}.")));
-        
+
+        Console.WriteLine(string.Join("\n",
+            readableClients.Select(client =>
+                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}.")));
+
         using var bankingSystemDbContext = new BankingSystemDbContext();
         var clientService = new ClientService(bankingSystemDbContext);
-        
         foreach (var client in readableClients)
-        {
-            client.DateOfBirth = client.DateOfBirth.ToUniversalTime();
             clientService.AddClient(client);
-        }
-
         bankingSystemDbContext.Dispose();
     }
 }

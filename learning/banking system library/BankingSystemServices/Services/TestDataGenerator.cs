@@ -32,6 +32,12 @@ public class TestDataGenerator
         .RuleFor(employee => employee.Bonus, faker => faker.Finance.Amount())
         .RuleFor(employee => employee.Contract, (_, employee) => GenerateEmployeeContract(employee));
 
+    private static readonly Faker<Currency> FakerCurrency = new Faker<Currency>()
+        .RuleFor(currency => currency.CurrencyId, faker => faker.Random.Guid())
+        .RuleFor(currency => currency.Code, faker => faker.Finance.Currency().Code)
+        .RuleFor(currency => currency.Name, faker => faker.Finance.Currency().Description)
+        .RuleFor(currency => currency.ExchangeRate, faker => faker.Random.Decimal());
+    
     private static readonly Faker FakerAccounts = new();
 
     public static string GenerateEmployeeContract(Employee employee)
@@ -122,13 +128,17 @@ public class TestDataGenerator
         return FakerEmployee.Generate(numberOfEmployees);
     }
 
+    public static Currency GenerateRandomCurrency()
+    {
+        return FakerCurrency.Generate();
+    }
     public static List<Currency> GenerateListOfCurrencies()
     {
         return new List<Currency>()
         {
-            new Currency(){Code = "USD", Name = "US Dollar", ExchangeRate = 1 },
-            new Currency(){Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
-            new Currency(){Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
+            new Currency(){CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = 1 },
+            new Currency(){CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
+            new Currency(){CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
         };
     }
 }

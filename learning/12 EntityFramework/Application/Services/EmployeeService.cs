@@ -128,21 +128,21 @@ public class EmployeeService
     {
         IQueryable<Employee> query = _bankingSystemDbContext.Employees;
         if (firstName != null)
-            query = query.Where(employee => employee.FirstName.Contains(firstName));
+            query = query.Where(employee => employee.FirstName == firstName);
         if (lastName != null)
-            query = query.Where(employee => employee.LastName.Contains(lastName));
+            query = query.Where(employee => employee.LastName== lastName);
         if (age != null)
             query = query.Where(employee => employee.Age.Equals((int)age));
         if (dateOfBirth != null)
             query = query.Where(employee => employee.DateOfBirth.Equals(((DateTime)dateOfBirth).ToUniversalTime()));
         if (phoneNumber != null)
-            query = query.Where(employee => employee.PhoneNumber.Contains(phoneNumber));
+            query = query.Where(employee => employee.PhoneNumber == phoneNumber);
         if (address != null)
-            query = query.Where(employee => employee.Address.Contains(address));
+            query = query.Where(employee => employee.Address == address);
         if (email != null)
-            query = query.Where(employee => employee.Email.Contains(email));
+            query = query.Where(employee => employee.Email == email);
         if (contract != null)
-            query = query.Where(employee => employee.Contract.Contains(contract));
+            query = query.Where(employee => employee.Contract == contract);
         if (salary != null)
             query = query.Where(employee => employee.Salary.Equals(salary));
         if (isOwner != null)

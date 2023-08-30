@@ -6,12 +6,20 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        int seconds = 5;
-        TimeSpan timeSpan = seconds.Seconds();
-        Console.WriteLine($"TimeSpan: {timeSpan}");
+        var seconds = 5;
+        var timeSpan = seconds.Seconds();
+        Console.WriteLine($"Секунды: {timeSpan}");
 
-        int minutes = 10;
+        var minutes = 10;
         timeSpan = minutes.Minutes();
-        Console.WriteLine($"TimeSpan: {timeSpan}"); 
+        Console.WriteLine($"Минуты: {timeSpan}");
+
+        var hours = 22;
+        timeSpan = hours.Hours();
+        Console.WriteLine($"Часы: {timeSpan}");
+
+        var days = 12;
+        timeSpan = days.Days();
+        Console.WriteLine($"Дни: {timeSpan}");
     }
 }

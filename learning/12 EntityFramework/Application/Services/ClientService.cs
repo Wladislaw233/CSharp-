@@ -18,13 +18,21 @@ public class ClientService
             if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
             {
                 _bankingSystemDbContext.Currencies.AddRange(
-                    new Currency { CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1) },
-                    new Currency { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
-                    new Currency { CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
+                    new Currency
+                    {
+                        CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1)
+                    },
+                    new Currency
+                        { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
+                    new Currency
+                    {
+                        CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble",
+                        ExchangeRate = new decimal(96.64)
+                    }
                 );
                 SaveChanges();
             }
-            
+
             _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
             if (_defaultCurrency == null)
                 throw new CustomException("Не удалось получить валюту по умолчанию!", nameof(_defaultCurrency));
@@ -47,7 +55,8 @@ public class ClientService
     }
 
     public void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null, decimal? bonus = null)
+        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
+        decimal? bonus = null)
     {
         var client =
             _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
@@ -145,13 +154,15 @@ public class ClientService
             throw new CustomException(exception.Message, nameof(_bankingSystemDbContext));
         }
     }
-    
-    public List<string> GetPresentationClientAccounts(Guid clientId)
+
+    public string GetPresentationClientAccounts(Guid clientId)
     {
-        return (from account in _bankingSystemDbContext.Accounts
+        var clientAccounts = (from account in _bankingSystemDbContext.Accounts
             join currency in _bankingSystemDbContext.Currencies on account.CurrencyId equals currency.CurrencyId
             where account.ClientId.Equals(clientId)
             select $"Номер счета: {account.AccountNumber}, остаток: {account.Amount} {currency.Code}").ToList();
+
+        return string.Join("\n", clientAccounts);
     }
 
     public List<Account> GetClientAccounts(Guid clientId)
@@ -161,10 +172,7 @@ public class ClientService
 
     private Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
     {
-        if (currency != null)
-        {
-            return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
-        }
+        if (currency != null) return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
 
         return null;
     }
@@ -206,19 +214,19 @@ public class ClientService
     {
         IQueryable<Client> query = _bankingSystemDbContext.Clients;
         if (firstName != null)
-            query = query.Where(client => client.FirstName.Contains(firstName));
+            query = query.Where(client => client.FirstName == firstName);
         if (lastName != null)
-            query = query.Where(client => client.LastName.Contains(lastName));
+            query = query.Where(client => client.LastName == lastName);
         if (age != null)
             query = query.Where(client => client.Age.Equals((int)age));
         if (dateOfBirth != null)
             query = query.Where(client => client.DateOfBirth.Equals(((DateTime)dateOfBirth).ToUniversalTime()));
         if (phoneNumber != null)
-            query = query.Where(client => client.PhoneNumber.Contains(phoneNumber));
+            query = query.Where(client => client.PhoneNumber == phoneNumber);
         if (address != null)
-            query = query.Where(client => client.Address.Contains(address));
+            query = query.Where(client => client.Address == address);
         if (email != null)
-            query = query.Where(client => client.Email.Contains(email));
+            query = query.Where(client => client.Email == email);
 
         query = query.OrderBy(client => client.FirstName);
 

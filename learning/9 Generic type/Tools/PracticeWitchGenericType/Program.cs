@@ -1,4 +1,6 @@
-﻿using ServiceTests;
+﻿using Services;
+using Services.Storage;
+using ServiceTests;
 
 namespace PracticeWitchGenericType;
 
@@ -7,13 +9,8 @@ internal class Program
     public static void Main(string[] args)
     {
         // запуск тестов сервисов для клиентов и сотрудников.
-        var clientServiceTests = new ClientStorageTests();
-        clientServiceTests.AddClientTest();
-        clientServiceTests.AddClientAccountTest();
-        clientServiceTests.UpdateClientAccountTest();
-
-        var employeeServiceTests = new EmployeeStorageTests();
-        employeeServiceTests.AddBankEmployeeTest();
+        ClientStorageTests.ClientStorageTest();
+        EmployeeStorageTests.EmployeeStorageTest();
 
         // запуск тестов IEnumerable для клиентов и сотрудников.
         EnumerableTests.GetClientsByFiltersTest();

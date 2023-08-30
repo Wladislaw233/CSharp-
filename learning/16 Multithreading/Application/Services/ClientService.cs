@@ -1,4 +1,6 @@
-﻿using Models;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
+using Microsoft.EntityFrameworkCore;
 using Services.Database;
 using Services.Exceptions;
 
@@ -8,8 +10,6 @@ public class ClientService
 {
     private BankingSystemDbContext _bankingSystemDbContext;
     private readonly Currency? _defaultCurrency;
-    private int _accountCounter;
-    public readonly Mutex Mutex = new();
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
     {
@@ -19,14 +19,21 @@ public class ClientService
             if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
             {
                 _bankingSystemDbContext.Currencies.AddRange(
-                    new Currency("USD", "US Dollar", 1),
-                    new Currency("EUR", "Euro", 0.97),
-                    new Currency("RUB", "Russian ruble", 96.64)
+                    new Currency
+                    {
+                        CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1)
+                    },
+                    new Currency
+                        { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
+                    new Currency
+                    {
+                        CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble",
+                        ExchangeRate = new decimal(96.64)
+                    }
                 );
                 SaveChanges();
             }
 
-            _accountCounter = _bankingSystemDbContext.Accounts.Count();
             _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
             if (_defaultCurrency == null)
                 throw new CustomException("Не удалось получить валюту по умолчанию!", nameof(_defaultCurrency));
@@ -37,22 +44,19 @@ public class ClientService
 
     public void AddClient(Client client)
     {
-        Mutex.WaitOne();
         ValidateClient(client);
-        _accountCounter++;
-        var defaultAccount = CreateAccount(client.ClientId, _defaultCurrency);
+        var defaultAccount = CreateAccount(client, _defaultCurrency);
         if (defaultAccount == null)
             throw new CustomException("Не удалось создать аккаунт по умолчанию!", nameof(defaultAccount));
         _bankingSystemDbContext.Clients.Add(client);
         _bankingSystemDbContext.Accounts.Add(defaultAccount);
         SaveChanges();
-        Mutex.ReleaseMutex();
     }
 
     public void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
+        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
+        decimal? bonus = null)
     {
-        Mutex.WaitOne();
         var client =
             _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
 
@@ -73,6 +77,8 @@ public class ClientService
             client.Address = address;
         if (email != null)
             client.Email = email;
+        if (bonus != null)
+            client.Bonus = (decimal)bonus;
 
         ValidateClient(client, true);
         _bankingSystemDbContext.Clients.Update(client);
@@ -90,7 +96,7 @@ public class ClientService
         SaveChanges();
     }
 
-    public void AddClientAccount(Guid clientId, string currencyCode, double amount)
+    public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
     {
         var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
         if (client == null)
@@ -98,17 +104,15 @@ public class ClientService
         var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
         if (currency == null)
             throw new CustomException($"Валюты с кодом {currencyCode} не существует!", nameof(currencyCode));
-        _accountCounter++;
-        var account = CreateAccount(clientId, currency, amount);
+        var account = CreateAccount(client, currency, amount);
         if (account == null)
             throw new CustomException("Не удалось создать аккаунт!", nameof(account));
         _bankingSystemDbContext.Accounts.Add(account);
         SaveChanges();
     }
 
-    public void UpdateClientAccount(Guid accountId, string currencyCode = "", double? amount = null)
+    public void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
-        Mutex.WaitOne();
         var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
         if (account == null)
             throw new CustomException($"Лицевого счета с идентификатором {accountId} не существует!");
@@ -125,7 +129,7 @@ public class ClientService
         }
 
         if (amount != null)
-            account.Amount += (double)amount;
+            account.Amount = (decimal)amount;
         SaveChanges();
     }
 
@@ -149,21 +153,15 @@ public class ClientService
             throw new CustomException(exception.Message, nameof(_bankingSystemDbContext));
         }
     }
-
-    private string GenerateAccountNumber(Currency currency, int accountCounter)
+    
+    public string GetPresentationClientAccounts(Guid clientId)
     {
-        return "ACC" + accountCounter.ToString("D10") + currency.Code;
-    }
-
-    public List<string> GetPresentationClientAccounts(Guid clientId)
-    {
-        
-        var presentationClientAccounts =  (from account in _bankingSystemDbContext.Accounts
+        var clientAccounts = (from account in _bankingSystemDbContext.Accounts
             join currency in _bankingSystemDbContext.Currencies on account.CurrencyId equals currency.CurrencyId
             where account.ClientId.Equals(clientId)
             select $"Номер счета: {account.AccountNumber}, остаток: {account.Amount} {currency.Code}").ToList();
-        
-        return presentationClientAccounts;
+
+        return string.Join("\n", clientAccounts);
     }
 
     public List<Account> GetClientAccounts(Guid clientId)
@@ -171,14 +169,10 @@ public class ClientService
         return _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId)).ToList();
     }
 
-    private Account? CreateAccount(Guid clientId, Currency? currency, double amount = 0)
+    private Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
     {
-        if (currency != null)
-        {
-            var accountNumber = GenerateAccountNumber(currency, _accountCounter);
-            return new Account(currency.CurrencyId, clientId, accountNumber, amount);
-        }
-
+        if (currency != null) 
+            return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
         return null;
     }
 
@@ -217,22 +211,21 @@ public class ClientService
         string? lastName = null, int? age = null, Guid? clientId = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
     {
-        Mutex.WaitOne();
         IQueryable<Client> query = _bankingSystemDbContext.Clients;
         if (firstName != null)
-            query = query.Where(client => client.FirstName.Contains(firstName));
+            query = query.Where(client => client.FirstName == firstName);
         if (lastName != null)
-            query = query.Where(client => client.LastName.Contains(lastName));
+            query = query.Where(client => client.LastName == lastName);
         if (age != null)
             query = query.Where(client => client.Age.Equals((int)age));
         if (dateOfBirth != null)
             query = query.Where(client => client.DateOfBirth.Equals(((DateTime)dateOfBirth).ToUniversalTime()));
         if (phoneNumber != null)
-            query = query.Where(client => client.PhoneNumber.Contains(phoneNumber));
+            query = query.Where(client => client.PhoneNumber == phoneNumber);
         if (address != null)
-            query = query.Where(client => client.Address.Contains(address));
+            query = query.Where(client => client.Address == address);
         if (email != null)
-            query = query.Where(client => client.Email.Contains(email));
+            query = query.Where(client => client.Email == email);
         if (clientId != null)
             query = query.Where(client => client.ClientId.Equals(clientId));
 
@@ -240,7 +233,6 @@ public class ClientService
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
         var resultQuery = query.ToList();
-        Mutex.ReleaseMutex();
         return resultQuery;
     }
 }

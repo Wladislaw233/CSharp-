@@ -1,4 +1,5 @@
-﻿using BankingSystemServices.Services;
+﻿using BankingSystemServices;
+using BankingSystemServices.Services;
 using Services;
 using Services.Database;
 using Services.Exceptions;
@@ -24,41 +25,81 @@ public class ClientServiceTests
             var bankClient = bankClients.FirstOrDefault();
             if (bankClient != null)
             {
-                var presentationBankClientAccounts =
-                    clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
-                Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:" +
-                                  $"\n" + string.Join('\n', presentationBankClientAccounts));
-                Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
-                clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
-                presentationBankClientAccounts =
-                    clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
-                Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:" +
-                                  $"\n" + string.Join('\n', presentationBankClientAccounts));
-                Console.WriteLine("Удалим счет EUR с балансом 1455,23:");
-                var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
-                clientService.DeleteClientAccount(bankClientAccounts[1].AccountId);
-                presentationBankClientAccounts =
-                    clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
-                Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:" +
-                                  $"\n" + string.Join('\n', presentationBankClientAccounts));
-                Console.WriteLine("Изменим клиенту имя и фамилию:" +
-                                  $"\nДо изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
-                clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
-                Console.WriteLine(
-                    $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
-                Console.WriteLine($"Удаление клиента с id - {bankClient.ClientId}");
-                clientService.DeleteClient(bankClient.ClientId);
-
-                Console.WriteLine("Выведем клиентов с именем Stephan:");
-                var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Stephan");
-                Console.WriteLine("Клиенты:\n" + string.Join("\n",
-                    filteredClients.Select(client =>
-                        $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}")));
+                AddingClientAccountTest(clientService, bankClient);
+                DeletingClientAccountTest(clientService, bankClient);
+                UpdatingClientTest(clientService, bankClient);
+                DeletingClientTest(clientService, bankClient);
+                GettingClientsWithFilterTest(clientService, bankClient);
             }
         }
         catch (CustomException exception)
         {
             CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
         }
+    }
+
+    private static void AddingClientAccountTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+
+        var presentationBankClientAccounts =
+            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+
+        Console.WriteLine(presentationBankClientAccounts);
+        Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
+
+        clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
+
+        presentationBankClientAccounts =
+            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+
+        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+        Console.WriteLine(presentationBankClientAccounts);
+    }
+
+    private static void DeletingClientAccountTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine("Удалим счет EUR с балансом 1455,23:");
+
+        var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
+
+        var account = bankClientAccounts.Last();
+
+        clientService.DeleteClientAccount(account.AccountId);
+
+        var presentationBankClientAccounts =
+            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+
+        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+        Console.WriteLine(presentationBankClientAccounts);
+    }
+
+    private static void UpdatingClientTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine("Изменим клиенту имя и фамилию:");
+        Console.WriteLine(
+            $"До изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+
+        clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
+        Console.WriteLine(
+            $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+    }
+
+    private static void DeletingClientTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine($"Удаление клиента с id - {bankClient.ClientId}");
+        clientService.DeleteClient(bankClient.ClientId);
+    }
+
+    private static void GettingClientsWithFilterTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine("Выведем клиентов с именем Al:");
+        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Al");
+
+        Console.WriteLine("Клиенты:");
+
+        Console.WriteLine(string.Join("\n",
+            filteredClients.Select(client =>
+                $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}")));
     }
 }

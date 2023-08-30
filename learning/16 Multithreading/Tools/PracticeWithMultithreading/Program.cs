@@ -7,6 +7,6 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        MultithreadingTests.MultithreadingTest();
+        ThreadAndTaskTests.ThreadTest();
     }
 }

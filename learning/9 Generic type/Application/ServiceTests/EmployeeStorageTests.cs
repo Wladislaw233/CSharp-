@@ -8,19 +8,23 @@ namespace ServiceTests;
 
 public class EmployeeStorageTests
 {
-    private List<Employee> _bankEmployees = new();
-    private readonly EmployeeStorage _employeeStorage = new();
+    private static List<Employee> _bankEmployees = new();
+    private static readonly EmployeeStorage EmployeeStorage = new();
 
-    public void AddBankEmployeeTest()
+    public static void EmployeeStorageTest()
     {
         _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
 
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Запуск тестов хранилища клиентов и сотрудников.");
         Console.WriteLine("СОТРУДНИКИ");
 
+        AddingEmployeeTest();
+    }
+    
+    private static void AddingEmployeeTest()
+    {
         try
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -30,7 +34,7 @@ public class EmployeeStorageTests
             {
                 Console.WriteLine(
                     $"\nПопытка добавления сотрудника: Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}");
-                _employeeStorage.Add(employee);
+                EmployeeStorage.Add(employee);
                 Console.WriteLine("Успешно!");
             }
         }
@@ -40,6 +44,6 @@ public class EmployeeStorageTests
         }
 
         Console.WriteLine("\nСписок сотрудников после добавления:");
-        EmployeeService.WithdrawEmployees(_employeeStorage);
+        EmployeeService.WithdrawEmployees(EmployeeStorage);
     }
 }

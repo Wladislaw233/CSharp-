@@ -1,5 +1,4 @@
-﻿
-using ServiceTests;
+﻿using ServiceTests;
 
 namespace PracticeWithFileStream;
 
