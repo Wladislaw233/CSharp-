@@ -57,6 +57,7 @@ public class Employee : Person
         
         return new Employee
         {
+            EmployeeId = Guid.NewGuid(),
             FirstName = employee.FirstName,
             LastName = employee.LastName,
             DateOfBirth = employee.DateOfBirth,
@@ -66,7 +67,8 @@ public class Employee : Person
             Address = employee.Address,
             Email = employee.Email,
             PhoneNumber = employee.PhoneNumber,
-            Bonus = employee.Bonus
+            Bonus = employee.Bonus,
+            IsOwner = employee.IsOwner
         };
     }
 
