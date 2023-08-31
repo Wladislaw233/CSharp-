@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Models;
-using Services;
-using System.Linq;
+﻿using BankingSystemServices.Models;
+using BankingSystemServices.Services;
+
 
 namespace PracticeWithTypes
 {
@@ -13,27 +10,23 @@ namespace PracticeWithTypes
         {
             // пункт а.
             
-            var owners = new List<Employee>();
-
-            owners.Add(new Owner("Иван", "Иванов", DateTime.Now, 22, "Иван Иванов, дата рождения: " + DateTime.Now));
-            owners.Add(new Owner("Петр", "Петров", DateTime.Now, 45, "Петр Петров, дата рождения: " + DateTime.Now));
+            var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees();
+            var owners = bankEmployees.FindAll(employee => employee.IsOwner);
             
-            var bankService = new BankService();
-
             Console.WriteLine("Введите прибыль банка:");
             var profit = double.Parse(Console.ReadLine());
             
             Console.WriteLine("Введите расход банка:");
             var expenses = double.Parse(Console.ReadLine());
 
-            bankService.CalculateSalaryOfBankOwners(profit, expenses, owners);
+            BankService.CalculateSalary(profit, expenses, owners);
             foreach (var owner in owners)
                 Console.WriteLine(
                     $"У владельца {owner.FirstName} {owner.LastName} зарплата: {owner.Salary} $");
+            
             // пункт б.
 
-            var client = new Client("Василий", "Пупкин", DateTime.Now, 34, "+8775532112", "test@mail.ru",
-                "Tiraspol, str. Lenina, 12/2");
+            var client = TestDataGenerator.GenerateRandomBankClient();
            
             var convertedEmployee = (Employee)client;
 

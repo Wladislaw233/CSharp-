@@ -7,11 +7,9 @@ internal class Program
     public static void Main(string[] args)
     {
         var clientServiceTests = new ClientServiceTests();
-        clientServiceTests.AddClientTest();
-        clientServiceTests.AddClientAccountTest();
-        clientServiceTests.UpdateClientAccountTest();
+        clientServiceTests.ClientServiceTest();
         
         var employeeServiceTests = new EmployeeServiceTests();
-        employeeServiceTests.AddBankEmployeeTest();
+        employeeServiceTests.EmployeeServiceTest();
     }
 }

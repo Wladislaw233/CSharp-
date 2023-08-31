@@ -10,7 +10,14 @@ public class ClientServiceTests
     private List<Client> _bankClients = new();
     private readonly ClientService _clientService = new();
 
-    public void AddClientTest()
+    public void ClientServiceTest()
+    {
+        AddClientTest();
+        AddClientAccountTest();
+        UpdateClientAccountTest();
+    }
+    
+    private void AddClientTest()
     {
         _bankClients = TestDataGenerator.GenerateListWithBankClients(3);
         _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient(true));
@@ -40,7 +47,7 @@ public class ClientServiceTests
         }
     }
 
-    public void AddClientAccountTest()
+    private void AddClientAccountTest()
     {
         _clientService.WithdrawBankCurrencies();
         try
@@ -68,7 +75,7 @@ public class ClientServiceTests
         }
     }
 
-    public void UpdateClientAccountTest()
+    private void UpdateClientAccountTest()
     {
         try
         {

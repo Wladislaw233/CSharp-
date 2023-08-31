@@ -10,7 +10,12 @@ public class EmployeeServiceTests
     private List<Employee> _bankEmployees = new();
     private readonly EmployeeService _employeeService = new();
 
-    public void AddBankEmployeeTest()
+    public void EmployeeServiceTest()
+    {
+        AddBankEmployeeTest();
+    }
+    
+    private void AddBankEmployeeTest()
     {
         _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
         _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));

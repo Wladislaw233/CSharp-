@@ -6,7 +6,12 @@ namespace ServiceTests;
 
 public class EnumerableTests
 {
-    public static void GetClientsByFiltersTest()
+    public static void EnumerableTest()
+    {
+        GetClientsByFiltersTest();
+        GetEmployeesByFiltersTest();
+    }
+    private static void GetClientsByFiltersTest()
     {
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Клиенты");
@@ -45,7 +50,7 @@ public class EnumerableTests
         Console.WriteLine($"\nСредний возраст клиентов - {averageAge}");
     }
 
-    public static void GetEmployeesByFiltersTest()
+    private static void GetEmployeesByFiltersTest()
     {
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Сотрудники");
