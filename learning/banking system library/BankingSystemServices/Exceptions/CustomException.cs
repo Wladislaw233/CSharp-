@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Services.Exceptions;
+namespace BankingSystemServices.Exceptions;
 
 [Serializable]
 public class CustomException : Exception
@@ -30,8 +30,9 @@ public class CustomException : Exception
 
     public static void ExceptionHandling(string description, CustomException exception)
     {
-        Console.WriteLine(description + exception.Message + (string.IsNullOrWhiteSpace(exception.ParameterOfException)
+        Console.WriteLine(description + exception.Message);
+        Console.WriteLine(string.IsNullOrWhiteSpace(exception.ParameterOfException)
             ? ""
-            : $"\nПараметр: {exception.ParameterOfException}"));
+            : $"Параметр: {exception.ParameterOfException}");
     }
 }

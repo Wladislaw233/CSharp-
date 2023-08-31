@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BankingSystemServices;
-using Services.Database;
-using Services.Exceptions;
+using BankingSystemServices.Models;
+using BankingSystemServices.Database;
+using BankingSystemServices.Exceptions;
 
 namespace Services;
 

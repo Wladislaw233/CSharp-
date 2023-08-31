@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using BankingSystemServices.Models;
+using Bogus;
 
 namespace BankingSystemServices.Services;
 

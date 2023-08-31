@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ExportTool\ExportTool.csproj" />
       <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 

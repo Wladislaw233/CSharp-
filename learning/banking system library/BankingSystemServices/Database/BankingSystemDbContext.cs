@@ -1,8 +1,7 @@
-﻿using BankingSystemServices;
+﻿using BankingSystemServices.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace Services.Database;
+namespace BankingSystemServices.Database;
 
 public class BankingSystemDbContext : DbContext
 {

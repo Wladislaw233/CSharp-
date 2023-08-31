@@ -1,6 +1,4 @@
-﻿using Services;
-using Services.Exceptions;
-using ServiceTests;
+﻿using ServiceTests;
 
 namespace PracticeWithException;
 

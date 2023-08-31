@@ -1,8 +1,7 @@
-﻿using BankingSystemServices;
+﻿using BankingSystemServices.Models;
 using BankingSystemServices.Services;
-using Microsoft.EntityFrameworkCore;
-using Services.Database;
-using Services.Exceptions;
+using BankingSystemServices.Database;
+using BankingSystemServices.Exceptions;
 
 namespace Services;
 

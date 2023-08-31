@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Services.Database;
+using BankingSystemServices.Database;
 
 #nullable disable
 
 namespace Services.Migrations
 {
     [DbContext(typeof(BankingSystemDbContext))]
-    [Migration("20230821123844_initialcreate")]
-    partial class initialcreate
+    partial class BankingSystemDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,12 +42,15 @@ namespace Services.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("client_id");
 
-                    b.Property<string>("CurrencyName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("currency_name");
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_id");
 
                     b.HasKey("AccountId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CurrencyId");
 
                     b.ToTable("Accounts");
                 });
@@ -102,6 +102,32 @@ namespace Services.Migrations
                     b.HasKey("ClientId");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Models.Currency", b =>
+                {
+                    b.Property<Guid>("CurrencyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<double>("ExchangeRate")
+                        .HasColumnType("double precision")
+                        .HasColumnName("exchange_rate");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("CurrencyId");
+
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Models.Employee", b =>
@@ -157,13 +183,32 @@ namespace Services.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone_number");
 
-                    b.Property<int>("Salary")
-                        .HasColumnType("integer")
+                    b.Property<double>("Salary")
+                        .HasColumnType("double precision")
                         .HasColumnName("salary");
 
                     b.HasKey("EmployeeId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Models.Account", b =>
+                {
+                    b.HasOne("Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Currency");
                 });
 #pragma warning restore 612, 618
         }

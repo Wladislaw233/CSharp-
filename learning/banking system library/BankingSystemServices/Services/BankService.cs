@@ -1,4 +1,6 @@
 ﻿
+using BankingSystemServices.Models;
+
 namespace BankingSystemServices.Services;
 
 public class BankService

@@ -1,6 +1,6 @@
-﻿using BankingSystemServices;
+﻿using BankingSystemServices.Models;
 using BankingSystemServices.Services;
-using ExportTool;
+using BankingSystemServices.ExportTool;
 
 namespace ServiceTests;
 
@@ -30,8 +30,7 @@ public class ThreadAndTaskTests
         {
             var pathToDirectory = Path.Combine("D:", "Learning thread");
             var importFileName = "ClientsForImport.csv";
-            var exportService = new ExportService();
-            exportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
+            ExportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
 
             object locker = new();
 
@@ -40,7 +39,7 @@ public class ThreadAndTaskTests
                     lock (locker)
                     {
                         var importBankClients =
-                            exportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
+                            ExportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
                         bankClients.AddRange(importBankClients);
                         Console.WriteLine("Импортированные клиенты");
                         PrintClients(importBankClients);
@@ -53,7 +52,7 @@ public class ThreadAndTaskTests
                         Console.WriteLine("Экспортированные клиенты");
                         PrintClients(bankClients);
                         var exportFileName = "ExportClients.csv";
-                        exportService.WriteClientsDataToScvFile(bankClients, pathToDirectory, exportFileName);
+                        ExportService.WriteClientsDataToScvFile(bankClients, pathToDirectory, exportFileName);
                     }
                 });
         }
