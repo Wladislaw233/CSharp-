@@ -5,12 +5,7 @@ namespace ServiceTests;
 
 public class EquivalenceTests
 {
-    private static readonly Currency Currency = new()
-    {
-        Code = "USD",
-        Name = "United state dollar",
-        ExchangeRate = 1
-    };
+    private static readonly Currency Currency = TestDataGenerator.GenerateRandomCurrency();
 
     public static void GetHashCodeNecessityPositiveTest()
     {

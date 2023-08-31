@@ -18,7 +18,7 @@ internal class Program
     public static void Main(string[] args)
     {
         // номер телефона для осуществления тестов.
-        var randomNumber = TestDataGenerator.RandomNumber(0, 999);
+        var randomNumber = TestDataGenerator.RandomNumber(0, ListBankClients.Count - 1);
         var phoneNumber = ListBankClients.Skip(randomNumber).Last().PhoneNumber;
         
         // добавление последнего клиента в словарь для осуществления тестов.
