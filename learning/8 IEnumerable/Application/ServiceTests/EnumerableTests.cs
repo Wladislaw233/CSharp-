@@ -13,7 +13,7 @@ public class EnumerableTests
         Console.ResetColor();
 
         var clientStorage = new ClientStorage();
-        var bankClients = TestDataGenerator.GenerateListWitchBankClients(10000);
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(10000);
         foreach (var client in bankClients)
             clientStorage.AddBankClients(client);
 

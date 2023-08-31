@@ -32,7 +32,7 @@ public class ExportToolTests
 
     private static void WriteClientsDataToScvFileTest(ExportService exportService)
     {
-        var recordableClients = TestDataGenerator.GenerateListWitchBankClients(5);
+        var recordableClients = TestDataGenerator.GenerateListWithBankClients(5);
         Console.WriteLine("Запишем следующих клиентов:");
         Console.WriteLine(string.Join("\n",
             recordableClients.Select(client =>

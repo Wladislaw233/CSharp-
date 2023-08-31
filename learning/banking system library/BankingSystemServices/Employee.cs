@@ -45,7 +45,8 @@ public class Employee : Person
             Salary = 0,
             Address = client.Address,
             Email = client.Email,
-            PhoneNumber = client.PhoneNumber
+            PhoneNumber = client.PhoneNumber,
+            Bonus = client.Bonus
         };
     }
 
@@ -64,7 +65,8 @@ public class Employee : Person
             Salary = employee.Salary,
             Address = employee.Address,
             Email = employee.Email,
-            PhoneNumber = employee.PhoneNumber
+            PhoneNumber = employee.PhoneNumber,
+            Bonus = employee.Bonus
         };
     }
 
@@ -84,7 +86,8 @@ public class Employee : Person
                employee.Age == Age &&
                employee.Contract == Contract &&
                employee.Salary.Equals(Salary) &&
-               employee.IsOwner == IsOwner;
+               employee.IsOwner == IsOwner &&
+               employee.Bonus == Bonus;
     }
 
     public override int GetHashCode()
@@ -100,6 +103,7 @@ public class Employee : Person
         hash = hash * 17 + Contract?.GetHashCode() ?? 0;
         hash = hash * 17 + Salary.GetHashCode();
         hash = hash * 17 + IsOwner.GetHashCode();
+        hash = hash * 17 + Bonus.GetHashCode();
         
         return hash;
     }

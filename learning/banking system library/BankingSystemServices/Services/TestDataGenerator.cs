@@ -29,7 +29,6 @@ public class TestDataGenerator
         .RuleFor(employee => employee.Bonus, faker => faker.Finance.Amount())
         .RuleFor(employee => employee.Salary, faker => faker.Finance.Amount())
         .RuleFor(employee => employee.IsOwner, faker => faker.Random.Bool())
-        .RuleFor(employee => employee.Bonus, faker => faker.Finance.Amount())
         .RuleFor(employee => employee.Contract, (_, employee) => GenerateEmployeeContract(employee));
 
     private static readonly Faker<Currency> FakerCurrency = new Faker<Currency>()
@@ -38,8 +37,13 @@ public class TestDataGenerator
         .RuleFor(currency => currency.Name, faker => faker.Finance.Currency().Description)
         .RuleFor(currency => currency.ExchangeRate, faker => faker.Random.Decimal());
     
-    private static readonly Faker FakerAccounts = new();
+    private static readonly Faker Faker = new();
 
+    public static int RandomNumber(int minValue, int maxValue)
+    {
+        return Faker.Random.Int(minValue, maxValue);
+    }
+    
     public static string GenerateEmployeeContract(Employee employee)
     {
         return $"{employee.FirstName} {employee.LastName}, дата рождения: {employee.DateOfBirth.ToString("D")}";
@@ -76,12 +80,7 @@ public class TestDataGenerator
     {
         return FakerClients.Generate();
     }
-
-    public static Employee GenerateRandomBankEmployee()
-    {
-        return FakerEmployee.Generate();
-    }
-
+    
     public static Account GenerateRandomBankClientAccount(Currency currency, Client client, decimal? amount = null)
     {
         return new Account
@@ -91,8 +90,8 @@ public class TestDataGenerator
             Currency = currency,
             ClientId = client.ClientId,
             Client = client,
-            Amount = amount != null ? (decimal)amount : FakerAccounts.Finance.Amount(),
-            AccountNumber = FakerAccounts.Finance.Account(25)
+            Amount = amount != null ? (decimal)amount : Faker.Finance.Amount(),
+            AccountNumber = Faker.Finance.Account(25)
         };
     }
 
@@ -109,7 +108,7 @@ public class TestDataGenerator
         return clientsAccounts;
     }
 
-    public static List<Client> GenerateListWitchBankClients(int numberOfClients = 10)
+    public static List<Client> GenerateListWithBankClients(int numberOfClients = 10)
     {
         return FakerClients.Generate(numberOfClients);
     }

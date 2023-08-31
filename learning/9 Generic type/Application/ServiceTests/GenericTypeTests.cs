@@ -12,7 +12,7 @@ public class GenericTypeTests
         Console.ResetColor();
         var bankService = new BankService();
 
-        var bankClients = TestDataGenerator.GenerateListWitchBankClients(100);
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(100);
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
 
         Console.WriteLine(

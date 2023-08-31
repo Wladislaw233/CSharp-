@@ -11,7 +11,7 @@ public class NumberQueueAnalyzer
 
     private int _numberLimit;
     private ConsoleKey _pressedKey;
-    private Queue<int> _queue;
+    private Queue<int> _queue = new();
     private readonly Random _random = new();
 
     private void AddInQueue(int quantityPlus)
@@ -40,7 +40,7 @@ public class NumberQueueAnalyzer
 
     public void RecursiveQueueInput()
     {
-        if (!(_queue == null || _queue.Count == 0))
+        if (_queue.Count == 0)
             Console.WriteLine($"Количество элементов в очереди - {_queue.Count}" +
                               $"\nОчередь: {string.Join(", ", _queue)} " +
                               $"\nОграничение - {_numberLimit}");
@@ -49,7 +49,6 @@ public class NumberQueueAnalyzer
         {
             if (_numberLimit == 0)
             {
-                _queue = new Queue<int>();
                 Console.WriteLine("Введите ограничение количества элементов в очереди:");
                 _numberLimit = int.Parse(Console.ReadLine());
                 Console.Clear();

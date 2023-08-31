@@ -12,7 +12,7 @@ public class ClientServiceTests
 
     public void AddClientTest()
     {
-        _bankClients = TestDataGenerator.GenerateListWitchBankClients(3);
+        _bankClients = TestDataGenerator.GenerateListWithBankClients(3);
         _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient(true));
         _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient());
 

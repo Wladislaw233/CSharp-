@@ -34,7 +34,8 @@ public class Client : Person
                 Age = client.Age, 
                 PhoneNumber = client.PhoneNumber, 
                 Email = client.Email, 
-                Address = client.Address
+                Address = client.Address,
+                Bonus = client.Bonus
             };
     }
 

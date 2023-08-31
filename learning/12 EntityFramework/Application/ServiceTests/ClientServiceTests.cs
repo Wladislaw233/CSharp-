@@ -18,7 +18,7 @@ public class ClientServiceTests
         try
         {
             var clientService = new ClientService(bankingSystemDbContext);
-            var bankClients = TestDataGenerator.GenerateListWitchBankClients(5);
+            var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
             foreach (var client in bankClients)
                 clientService.AddClient(client);
 

@@ -21,10 +21,10 @@ public class ThreadAndTaskTests
     private static void ParallelExportAndImportClientsTest()
     {
         // клиенты.
-        var bankClients = TestDataGenerator.GenerateListWitchBankClients(5);
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
 
         // Создание файла для импорта клиентов.
-        var bankClientsForImport = TestDataGenerator.GenerateListWitchBankClients(5);
+        var bankClientsForImport = TestDataGenerator.GenerateListWithBankClients(5);
 
         try
         {
