@@ -15,6 +15,10 @@ public class Square : IComparable<Square>
     {
         if (square is null) 
             throw new ArgumentException("Некорректное значение параметра");
-        return Lenght * Width - square.Lenght * square.Width;
+        
+        var thisSquareArea = Lenght * Width;
+        var otherSquareArea = square.Lenght * square.Width;
+        
+        return otherSquareArea.CompareTo(thisSquareArea);
     }
 }
