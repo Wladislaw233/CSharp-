@@ -67,7 +67,8 @@ public class ExportService
         }
     }
 
-    public static void WritePersonsDataToJsonFile<T>(T persons, string pathToDirectory, string jsonFileName)
+    public static void WritePersonsDataToJsonFile<T>(List<T> persons, string pathToDirectory, string jsonFileName)
+        where T : Person
     {
         var directoryInfo = new DirectoryInfo(pathToDirectory);
         if (!directoryInfo.Exists)
@@ -80,7 +81,7 @@ public class ExportService
         }
     }
 
-    public static List<T> ReadPersonsDataFromJsonFile<T>(string pathToDirectory, string jsonFileName)
+    public static List<T> ReadPersonsDataFromJsonFile<T>(string pathToDirectory, string jsonFileName) where T : Person
     {
         var fullPath = GetFullPathToFile(pathToDirectory, jsonFileName);
 

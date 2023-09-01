@@ -1,5 +1,4 @@
-﻿
-using BankingSystemServices.Models;
+﻿using BankingSystemServices.Models;
 
 namespace BankingSystemServices.Services;
 
@@ -32,6 +31,7 @@ public class BankService
     {
         Console.WriteLine("Черный список:");
         foreach (var person in _blackList)
-            Console.WriteLine($"Имя: {person.FirstName}, фамилия: {person.LastName}, дата рождения: {person.DateOfBirth.ToString("D")}");
+            Console.WriteLine(
+                $"Имя: {person.FirstName}, фамилия: {person.LastName}, дата рождения: {person.DateOfBirth.ToString("D")}");
     }
 }
