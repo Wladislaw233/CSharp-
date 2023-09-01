@@ -71,6 +71,8 @@ public class ClientStorageTests
                 Console.WriteLine($"Добавим счет RUP клиенту {client.FirstName} {client.LastName} (такой валюты нет):");
                 ClientStorage.AddAccount(client, "RUP", new decimal(123.1));
             }
+            else
+                Console.WriteLine("Клиент не найден!");
         }
         catch (CustomException exception)
         {
@@ -106,7 +108,11 @@ public class ClientStorageTests
                     ClientService.WithdrawClientAccounts(ClientStorage, client);
                     ClientStorage.UpdateAccount(client, "INVALIDNUMBER", "RUB");
                 }
+                else
+                    Console.WriteLine("Аккаунт клиента не найден!");
             }
+            else
+                Console.WriteLine("Клиент не найден!");
         }
         catch (CustomException exception)
         {

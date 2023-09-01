@@ -31,6 +31,8 @@ public class ClientServiceTests
                 DeletingClientTest(clientService, bankClient);
                 GettingClientsWithFilterTest(clientService, bankClient);
             }
+            else
+                Console.WriteLine("Клиент для тестов не найден!");
         }
         catch (CustomException exception)
         {

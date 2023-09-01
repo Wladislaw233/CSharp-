@@ -38,6 +38,8 @@ public class EmployeeServiceTests
                 DeletingEmployeeTest(employeeService, bankEmployee);
                 GettingEmployeesWithFilterTest(employeeService, bankEmployee);
             }
+            else
+                Console.WriteLine("Сотрудник для тестов не найден!");
         }
         catch (CustomException exception)
         {

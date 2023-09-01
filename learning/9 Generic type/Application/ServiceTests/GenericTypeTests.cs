@@ -32,6 +32,8 @@ public class GenericTypeTests
             Console.WriteLine(
                 $"\nЕсть ли сотрудник {employeeInBlackList.FirstName} {employeeInBlackList.LastName} в черном списке? " +
                 $"- {bankService.IsPersonInBlackList(employeeInBlackList)}");
+        else
+            Console.WriteLine("Сотрудник из черного листа не найден!");
 
         Console.WriteLine("\nНачисление бонуса сотруднику в размере 569.12:");
         var employeeWithBonus = bankEmployees.FirstOrDefault();
@@ -41,5 +43,7 @@ public class GenericTypeTests
             Console.WriteLine(
                 $"Сотрудник: {employeeWithBonus.FirstName} {employeeWithBonus.LastName},бонус: {employeeWithBonus.Bonus}");
         }
+        else
+            Console.WriteLine("Сотрудник с бонусом не найден!");
     }
 }
