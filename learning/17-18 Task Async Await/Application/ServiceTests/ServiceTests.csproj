@@ -7,8 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Models\Models.csproj" />
-      <ProjectReference Include="..\RateUpdater\RateUpdater.csproj" />
       <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 

@@ -5,10 +5,10 @@ namespace BankingSystemServices.Database;
 
 public class BankingSystemDbContext : DbContext
 {
-    public DbSet<Client> Clients { get; }
-    public DbSet<Employee> Employees { get; }
-    public DbSet<Account> Accounts { get; }
-    public DbSet<Currency> Currencies { get; }
+    public DbSet<Client> Clients { get; init; }
+    public DbSet<Employee> Employees { get; init; }
+    public DbSet<Account> Accounts { get; init; }
+    public DbSet<Currency> Currencies { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

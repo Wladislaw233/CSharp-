@@ -1,4 +1,5 @@
 ﻿
+using Services;
 using ServiceTests;
 
 namespace PracticeWithTask;
@@ -8,13 +9,18 @@ internal class Program
     public static void Main(string[] args)
     {
         // task 16
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Фоновая задача на начисление процентов. (16)");
-        Console.ResetColor();
-        var updateRatesTask = RateUpdaterTests.RateUpdaterTest();
-        Thread.Sleep(2000);
+        var updateRatesTask = RateUpdaterServiceTests.RateUpdaterTest();
+
+        Thread.Sleep(1000);
         
-        // task 17 a.
+        var cashDispenserServiceTask = CashDispenserServiceTests.CashDispenserServiceTest();
+
+        cashDispenserServiceTask.Wait();
+        updateRatesTask.Wait();
+        
+        
+        
+       /* // task 17 a.
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("17 пункт а. разбор работы ассинхроного запуска задач.");
         Console.ResetColor();
@@ -27,8 +33,8 @@ internal class Program
         Console.ResetColor();
         var clientServiceTest = ClientServiceTests.ClientServiceTest();
         
-        updateRatesTask.Wait();
+        
         clientServiceTest.Wait();
-        threadPoolTest.Wait();
+        threadPoolTest.Wait();*/
     }
 }

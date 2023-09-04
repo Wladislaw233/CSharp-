@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Services.Database;
+﻿using BankingSystemServices.Database;
+using Microsoft.EntityFrameworkCore;
 
-namespace RateUpdater;
+namespace Services;
 
-public class RateUpdaterService : IRateUpdaterService
+public class RateUpdaterService
 {
     public async Task UpdateRatesAsync()
     {
@@ -22,7 +22,7 @@ public class RateUpdaterService : IRateUpdaterService
         var accounts = await bankingSystemDbContext.Accounts.ToListAsync();
 
         foreach (var account in accounts)
-            account.Amount *= 1.01;
+            account.Amount *= new decimal(1.01);
 
         await bankingSystemDbContext.SaveChangesAsync();
         await bankingSystemDbContext.DisposeAsync();
