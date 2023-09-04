@@ -8,22 +8,21 @@ namespace ServiceTests;
 
 public class ClientServiceTests
 {
-    public static void ClientServiceTest()
+    public static async void ClientServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Клиенты");
         Console.ResetColor();
-        using var bankingSystemDbContext = new BankingSystemDbContext();
+        await using var bankingSystemDbContext = new BankingSystemDbContext();
 
-        try
-        {
-            var clientService = new ClientService(bankingSystemDbContext);
-            var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
-            foreach (var client in bankClients)
-                clientService.AddClient(client);
+        var clientService = new ClientService(bankingSystemDbContext);
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+        foreach (var client in bankClients)
+            clientService.AddClient(client);
 
-            var bankClient = bankClients.FirstOrDefault();
-            if (bankClient != null)
+        var bankClient = bankClients.FirstOrDefault();
+        if (bankClient != null)
+            try
             {
                 AddingClientAccountTest(clientService, bankClient);
                 DeletingClientAccountTest(clientService, bankClient);
@@ -31,13 +30,12 @@ public class ClientServiceTests
                 DeletingClientTest(clientService, bankClient);
                 GettingClientsWithFilterTest(clientService);
             }
-            else
-                Console.WriteLine("Клиент для тестов не найден!");
-        }
-        catch (CustomException exception)
-        {
-            CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
-        }
+            catch (CustomException exception)
+            {
+                CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
+            }
+        else
+            Console.WriteLine("Клиент для тестов не найден!");
     }
 
     private static void AddingClientAccountTest(ClientService clientService, Client bankClient)
@@ -96,7 +94,7 @@ public class ClientServiceTests
     private static void GettingClientsWithFilterTest(ClientService clientService)
     {
         Console.WriteLine("Выведем клиентов с именем Al:");
-        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Al");
+        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Al").Result;
 
         Console.WriteLine("Клиенты:");
 

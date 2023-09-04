@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using Models;
+using Services;
 
 namespace PracticeWithIComparable;
 
@@ -14,7 +15,7 @@ internal class Program
             squares.Select(square =>
                 $"Длина - {square.Lenght}, высота - {square.Width}, площадь - {square.Lenght * square.Width}")));
         
-        squares.Sort();
+        squares.Sort(new SquareComparer());
         
         Console.WriteLine("После сортировки:");
         

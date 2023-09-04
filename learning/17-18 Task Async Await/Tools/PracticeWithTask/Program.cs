@@ -8,33 +8,26 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        // task 16
+        /*// task 16
         var updateRatesTask = RateUpdaterServiceTests.RateUpdaterTest();
 
         Thread.Sleep(1000);
         
         var cashDispenserServiceTask = CashDispenserServiceTests.CashDispenserServiceTest();
 
-        cashDispenserServiceTask.Wait();
-        updateRatesTask.Wait();
+        Thread.Sleep(500);
         
+        // task 17 a.
         
-        
-       /* // task 17 a.
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("17 пункт а. разбор работы ассинхроного запуска задач.");
-        Console.ResetColor();
-        var threadPoolTest= ThreadPoolTests.ThreadPoolTest();
-        Thread.Sleep(17000);
-        
+        ThreadPoolTests.StartThreadPoolTests();
+        */
         // task 17 b.
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("17 пункт б. проверка ClientService после доработки с учетом async и await.");
-        Console.ResetColor();
-        var clientServiceTest = ClientServiceTests.ClientServiceTest();
         
+        ClientServiceTests.ClientServiceTest();
+        EmployeeServiceTests.EmployeeServiceTest();
+        /*
+        cashDispenserServiceTask.Wait();
+        updateRatesTask.Wait();*/
         
-        clientServiceTest.Wait();
-        threadPoolTest.Wait();*/
     }
 }

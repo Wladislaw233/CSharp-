@@ -18,19 +18,7 @@ public class ClientService
         {
             if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
             {
-                _bankingSystemDbContext.Currencies.AddRange(
-                    new Currency
-                    {
-                        CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1)
-                    },
-                    new Currency
-                        { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
-                    new Currency
-                    {
-                        CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble",
-                        ExchangeRate = new decimal(96.64)
-                    }
-                );
+                _bankingSystemDbContext.Currencies.AddRange(TestDataGenerator.GenerateListOfCurrencies());
                 SaveChanges();
             }
 
@@ -42,23 +30,22 @@ public class ClientService
             throw new CustomException("Не удалось установить соединение с базой данных!");
     }
 
-    public void AddClient(Client client)
+    public async void AddClient(Client client)
     {
         ValidateClient(client);
         var defaultAccount = CreateAccount(client, _defaultCurrency);
         if (defaultAccount == null)
             throw new CustomException("Не удалось создать аккаунт по умолчанию!", nameof(defaultAccount));
-        _bankingSystemDbContext.Clients.Add(client);
-        _bankingSystemDbContext.Accounts.Add(defaultAccount);
+        await _bankingSystemDbContext.Clients.AddAsync(client);
+        await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
         SaveChanges();
     }
 
-    public void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
+    public async void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         decimal? bonus = null)
     {
-        var client =
-            _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        var client = await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
 
         if (client == null)
             throw new CustomException($"Клиента с идентификатором {clientId} не существует!",
@@ -85,42 +72,42 @@ public class ClientService
         SaveChanges();
     }
 
-    public void DeleteClient(Guid clientId)
+    public async void DeleteClient(Guid clientId)
     {
-        var bankClient = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        var bankClient = await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
         if (bankClient == null)
             throw new CustomException($"Клиента с идентификатором {clientId} не существует!", nameof(clientId));
-        var clientAccounts = _bankingSystemDbContext.Accounts.Where(account => account.ClientId == clientId).ToList();
+        var clientAccounts = await _bankingSystemDbContext.Accounts.Where(account => account.ClientId == clientId).ToListAsync();
         _bankingSystemDbContext.Accounts.RemoveRange(clientAccounts);
         _bankingSystemDbContext.Clients.Remove(bankClient);
         SaveChanges();
     }
 
-    public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
+    public async void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
     {
-        var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        var client = await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
         if (client == null)
             throw new CustomException($"Клиента с идентификатором {clientId} не существует!", nameof(clientId));
-        var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
+        var currency = await _bankingSystemDbContext.Currencies.SingleOrDefaultAsync(currency => currency.Code == currencyCode);
         if (currency == null)
             throw new CustomException($"Валюты с кодом {currencyCode} не существует!", nameof(currencyCode));
         var account = CreateAccount(client, currency, amount);
         if (account == null)
             throw new CustomException("Не удалось создать аккаунт!", nameof(account));
-        _bankingSystemDbContext.Accounts.Add(account);
+        await _bankingSystemDbContext.Accounts.AddAsync(account);
         SaveChanges();
     }
 
-    public void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
+    public async void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
-        var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
+        var account = await _bankingSystemDbContext.Accounts.SingleOrDefaultAsync(account => account.AccountId.Equals(accountId));
         if (account == null)
             throw new CustomException($"Лицевого счета с идентификатором {accountId} не существует!");
 
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
             var currency =
-                _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
+                await _bankingSystemDbContext.Currencies.SingleOrDefaultAsync(currency => currency.Code == currencyCode);
             if (currency == null)
                 throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
 
@@ -133,20 +120,20 @@ public class ClientService
         SaveChanges();
     }
 
-    public void DeleteClientAccount(Guid accountId)
+    public async void DeleteClientAccount(Guid accountId)
     {
-        var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
+        var account = await _bankingSystemDbContext.Accounts.SingleOrDefaultAsync(account => account.AccountId.Equals(accountId));
         if (account == null)
             throw new CustomException($"Лицевого счета с идентификатором {accountId} не существует!");
         _bankingSystemDbContext.Accounts.Remove(account);
         SaveChanges();
     }
 
-    private void SaveChanges()
+    private async void SaveChanges()
     {
         try
         {
-            _bankingSystemDbContext.SaveChanges();
+            await _bankingSystemDbContext.SaveChangesAsync();
         }
         catch (Exception exception)
         {
@@ -176,9 +163,9 @@ public class ClientService
         return null;
     }
 
-    private void ValidateClient(Client client, bool itUpdate = false)
+    private async void ValidateClient(Client client, bool itUpdate = false)
     {
-        if (!itUpdate && _bankingSystemDbContext.Clients.Contains(client))
+        if (!itUpdate && await _bankingSystemDbContext.Clients.ContainsAsync(client))
             throw new CustomException("Данный клиент уже добавлен в банковскую систему!", nameof(client));
         if (string.IsNullOrWhiteSpace(client.FirstName))
             throw new CustomException("Не указано имя клиента!", nameof(client.FirstName));
@@ -207,7 +194,7 @@ public class ClientService
         }
     }
 
-    public List<Client> ClientsWithFilterAndPagination(int page, int pageSize, string? firstName = null,
+    public async Task<List<Client>> ClientsWithFilterAndPagination(int page, int pageSize, string? firstName = null,
         string? lastName = null, int? age = null, Guid? clientId = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
     {
@@ -232,7 +219,7 @@ public class ClientService
         query = query.OrderBy(client => client.FirstName);
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
-        var resultQuery = query.ToList();
+        var resultQuery = await query.ToListAsync();
         return resultQuery;
     }
 }

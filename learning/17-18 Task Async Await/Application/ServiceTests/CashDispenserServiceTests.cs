@@ -8,13 +8,13 @@ public class CashDispenserServiceTests
     public static async Task CashDispenserServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Обналичивание счетов клиентов:");
+        Console.WriteLine("Обналичивание счетов клиентов. (16)");
         Console.ResetColor();
         
         await using (var bankingSystemDbContext = new BankingSystemDbContext())
         {
             var clientService = new ClientService(bankingSystemDbContext);
-            var bankClients = clientService.ClientsWithFilterAndPagination(1, 5);
+            var bankClients = clientService.ClientsWithFilterAndPagination(1, 5).Result;
             
             var tasks = new List<Task>();
             

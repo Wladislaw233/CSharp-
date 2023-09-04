@@ -10,7 +10,6 @@ public class Square : IComparable<Square>
         Lenght = lenght;
         Width = width;
     }
-
     public int CompareTo(Square? square)
     {
         if (square is null) 

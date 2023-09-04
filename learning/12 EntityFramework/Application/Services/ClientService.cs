@@ -17,19 +17,7 @@ public class ClientService
         {
             if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
             {
-                _bankingSystemDbContext.Currencies.AddRange(
-                    new Currency
-                    {
-                        CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = new decimal(1)
-                    },
-                    new Currency
-                        { CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
-                    new Currency
-                    {
-                        CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble",
-                        ExchangeRate = new decimal(96.64)
-                    }
-                );
+                _bankingSystemDbContext.Currencies.AddRange(TestDataGenerator.GenerateListOfCurrencies());
                 SaveChanges();
             }
 
