@@ -11,9 +11,9 @@ public class SquareComparer : IComparer<Square>
         var secondSquareArea = secondSquare.Lenght * secondSquare.Width;
 
         if (firstSquareArea > secondSquareArea)
-            return 1;
-        if (firstSquareArea < secondSquareArea)
             return -1;
+        if (firstSquareArea < secondSquareArea)
+            return 1;
         return 0;
     }
 }

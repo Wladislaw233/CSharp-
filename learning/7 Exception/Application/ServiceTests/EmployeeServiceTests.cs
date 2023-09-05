@@ -7,12 +7,12 @@ namespace ServiceTests;
 
 public class EmployeeServiceTests
 {
-    public void EmployeeServiceTest()
+    public static void EmployeeServiceTest()
     {
         AddBankEmployeeTest();
     }
     
-    private void AddBankEmployeeTest()
+    private static void AddBankEmployeeTest()
     {
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
         var employeeService = new EmployeeService();

@@ -8,9 +8,9 @@ public class ConnectionAndMemory : IDisposable
 {
     public static long TotalFreed { get; private set; }
     public static long TotalAllocated { get; private set; }
-    private NpgsqlConnection _connection;
-    private IntPtr _chunkHandle;
-    private int _chunkSize;
+    private readonly NpgsqlConnection _connection;
+    private readonly IntPtr _chunkHandle;
+    private readonly int _chunkSize;
     private bool _isFreed;
     
     public ConnectionAndMemory(int chunkSize, IConfiguration configuration)

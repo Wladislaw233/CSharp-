@@ -2,8 +2,8 @@
 
 public class Square : IComparable<Square>
 {
-    public int Lenght { get; set; }
-    public int Width { get; set; }
+    public int Lenght { get; }
+    public int Width { get; }
 
     public Square(int lenght, int width)
     {

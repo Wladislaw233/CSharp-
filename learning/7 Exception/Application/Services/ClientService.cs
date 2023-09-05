@@ -22,10 +22,13 @@ public class ClientService
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
 
         var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
+        
         if (currency == null)
             throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
 
-        _clientsAccounts[client].Add(TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount));
+        var clientAccount = TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
+        
+        _clientsAccounts[client].Add(clientAccount);
     }
 
     public List<Account> GetClientAccounts(Client client)
@@ -56,7 +59,7 @@ public class ClientService
         }
 
         if (amount != null)
-            account.Amount += (decimal)amount;
+            account.Amount = (decimal)amount;
     }
 
     private void CreateDefaultAccount(Client client)
@@ -65,9 +68,9 @@ public class ClientService
         if (currency == null)
             throw new CustomException("В банковской системе нет валют!", nameof(currency));
 
-        _clientsAccounts.TryAdd(client,
-            new List<Account>
-                { TestDataGenerator.GenerateRandomBankClientAccount(currency, client) });
+        var defaultAccount = TestDataGenerator.GenerateRandomBankClientAccount(currency, client);
+        var clientAccountList = new List<Account> { defaultAccount };
+        _clientsAccounts.TryAdd(client, clientAccountList);
     }
 
     private void ValidateClient(Client client)

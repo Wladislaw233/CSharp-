@@ -6,10 +6,11 @@ internal class Program
 {
     public static void Main(string[] args)
     {
+        // клиенты.
         var clientServiceTests = new ClientServiceTests();
         clientServiceTests.ClientServiceTest();
         
-        var employeeServiceTests = new EmployeeServiceTests();
-        employeeServiceTests.EmployeeServiceTest();
+        // сотрудники.
+        EmployeeServiceTests.EmployeeServiceTest();
     }
 }

@@ -9,7 +9,7 @@ namespace ServiceTests;
 public class ClientStorageTests
 {
     private static List<Client> _bankClients = new();
-    private static readonly ClientStorage ClientStorage = new();
+    private static ClientStorage _clientStorage = new();
 
     public static void ClientStorageTest()
     {
@@ -38,8 +38,9 @@ public class ClientStorageTests
             {
                 Console.WriteLine(
                     $"\nПопытка добавления клиента: Имя: {client.FirstName}, фамилия: {client.LastName}, возраст: {client.Age}");
-                ClientStorage.Add(client);
-                ClientService.WithdrawClientAccounts(ClientStorage, client);
+                _clientStorage.Add(client);
+                _clientStorage.Update(client, "");
+                ClientService.WithdrawClientAccounts(_clientStorage, client);
                 Console.WriteLine("Успешно!");
             }
         }
@@ -51,7 +52,7 @@ public class ClientStorageTests
 
     private static void AddingClientAccountTest()
     {
-        ClientStorage.WithdrawBankCurrencies();
+        _clientStorage.WithdrawBankCurrencies();
         
             var client = _bankClients.FirstOrDefault();
             if (client != null)
@@ -63,13 +64,13 @@ public class ClientStorageTests
                 Console.WriteLine("До изменения:");
                 try
                 {
-                    ClientService.WithdrawClientAccounts(ClientStorage, client);
-                    ClientStorage.AddAccount(client, "EUR", new decimal(124.11));
+                    ClientService.WithdrawClientAccounts(_clientStorage, client);
+                    _clientStorage.AddAccount(client, "EUR", new decimal(124.11));
                     Console.WriteLine("\nПосле изменения:");
-                    ClientService.WithdrawClientAccounts(ClientStorage, client);
+                    ClientService.WithdrawClientAccounts(_clientStorage, client);
                     Console.WriteLine(
                         $"Добавим счет RUP клиенту {client.FirstName} {client.LastName} (такой валюты нет):");
-                    ClientStorage.AddAccount(client, "RUP", new decimal(123.1));
+                    _clientStorage.AddAccount(client, "RUP", new decimal(123.1));
                 }
                 catch (CustomException exception)
                 {
@@ -89,7 +90,7 @@ public class ClientStorageTests
                 Console.WriteLine("\nРедактирование счета клиента:");
                 Console.ResetColor();
 
-                var clientAccounts = ClientService.GetClientAccounts(ClientStorage, client);
+                var clientAccounts = ClientService.GetClientAccounts(_clientStorage, client);
 
                 var clientAccount = clientAccounts.LastOrDefault();
                 if (clientAccount != null)
@@ -98,14 +99,14 @@ public class ClientStorageTests
                     Console.WriteLine("До изменения:");
                     try
                     {
-                        ClientService.WithdrawClientAccounts(ClientStorage, client);
-                        ClientStorage.UpdateAccount(client, clientAccount.AccountNumber, "RUB", new decimal(45677.23));
+                        ClientService.WithdrawClientAccounts(_clientStorage, client);
+                        _clientStorage.UpdateAccount(client, clientAccount.AccountNumber, "RUB", new decimal(45677.23));
                         Console.WriteLine("\nПосле изменения:");
-                        ClientService.WithdrawClientAccounts(ClientStorage, client);
+                        ClientService.WithdrawClientAccounts(_clientStorage, client);
                         Console.WriteLine("Изменим клиенту счет, которого у него его нет, на счет RUB:");
                         Console.WriteLine("До изменения:");
-                        ClientService.WithdrawClientAccounts(ClientStorage, client);
-                        ClientStorage.UpdateAccount(client, "INVALIDNUMBER", "RUB");
+                        ClientService.WithdrawClientAccounts(_clientStorage, client);
+                        _clientStorage.UpdateAccount(client, "INVALIDNUMBER", "RUB");
                     }
                     catch (CustomException exception)
                     {

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Transactions;
 using BankingSystemServices.Models;
 using BankingSystemServices.Services;
 using BankingSystemServices.Exceptions;
@@ -34,11 +35,12 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         decimal? bonus = null)
     {
+        
         if (!Data.ContainsKey(client))
             throw new CustomException(
                 $"Клиента {client.FirstName} {client.LastName} не существует в банковской системе!",
                 nameof(client));
-
+        
         if (firstName != null)
             client.FirstName = firstName;
         if (lastName != null)
@@ -55,7 +57,7 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
             client.Email = email;
         if (bonus != null)
             client.Bonus = (decimal)bonus;
-
+        
         ClientService.ValidateClient(client);
     }
 
