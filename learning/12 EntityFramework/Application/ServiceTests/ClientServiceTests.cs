@@ -3,6 +3,7 @@ using BankingSystemServices.Services;
 using Services;
 using BankingSystemServices.Database;
 using BankingSystemServices.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceTests;
 
@@ -14,11 +15,11 @@ public class ClientServiceTests
         Console.WriteLine("Клиенты");
         Console.ResetColor();
         using var bankingSystemDbContext = new BankingSystemDbContext();
-
         try
         {
             var clientService = new ClientService(bankingSystemDbContext);
             var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+            
             foreach (var client in bankClients)
                 clientService.AddClient(client);
 
@@ -46,7 +47,7 @@ public class ClientServiceTests
         Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
 
         var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+            clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine(presentationBankClientAccounts);
         Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
@@ -54,7 +55,7 @@ public class ClientServiceTests
         clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
 
         presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+            clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
         Console.WriteLine(presentationBankClientAccounts);
@@ -71,7 +72,7 @@ public class ClientServiceTests
         clientService.DeleteClientAccount(account.AccountId);
 
         var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+            clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
         Console.WriteLine(presentationBankClientAccounts);

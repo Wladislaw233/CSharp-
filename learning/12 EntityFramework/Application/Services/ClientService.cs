@@ -2,6 +2,7 @@
 using BankingSystemServices.Database;
 using BankingSystemServices.Services;
 using BankingSystemServices.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
@@ -68,9 +69,8 @@ public class ClientService
             client.Email = email;
         if (bonus != null)
             client.Bonus = (decimal)bonus;
-
+        
         ValidateClient(client, true);
-        _bankingSystemDbContext.Clients.Update(client);
         SaveChanges();
     }
 
