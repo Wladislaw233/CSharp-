@@ -14,7 +14,8 @@ internal class Program
         Console.WriteLine(string.Join('\n',
             squares.Select(square =>
                 $"Длина - {square.Lenght}, высота - {square.Width}, площадь - {square.Lenght * square.Width}")));
-        
+
+        //squares.Sort();
         squares.Sort(new SquareComparer());
         
         Console.WriteLine("После сортировки:");
