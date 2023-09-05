@@ -28,10 +28,14 @@ public class GenericTypeTests
 
         bankService.WithdrawPersonInBlackList();
         var employeeInBlackList = blacklistedEmployee.FirstOrDefault();
+
         if (employeeInBlackList != null)
+        {
+            var isEmployeeInBlackList = bankService.IsPersonInBlackList(employeeInBlackList);
             Console.WriteLine(
                 $"\nЕсть ли сотрудник {employeeInBlackList.FirstName} {employeeInBlackList.LastName} в черном списке? " +
-                $"- {bankService.IsPersonInBlackList(employeeInBlackList)}");
+                $"- {isEmployeeInBlackList}");
+        }
         else
             Console.WriteLine("Сотрудник из черного листа не найден!");
 
@@ -41,7 +45,7 @@ public class GenericTypeTests
         {
             BankService.AddBonus(employeeWithBonus, new decimal(569.12));
             Console.WriteLine(
-                $"Сотрудник: {employeeWithBonus.FirstName} {employeeWithBonus.LastName},бонус: {employeeWithBonus.Bonus}");
+                $"Сотрудник: {employeeWithBonus.FirstName} {employeeWithBonus.LastName}, бонус: {employeeWithBonus.Bonus}");
         }
         else
             Console.WriteLine("Сотрудник с бонусом не найден!");

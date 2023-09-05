@@ -28,10 +28,12 @@ public class EnumerableTests
         Console.WriteLine("Поиск клиентов с именем 'Mack' и датой рождения большей 1970 год и меньшей 2000 года:");
 
         var filteredClients =
-            ClientService.GetClientsByFilters(clientStorage,
+            ClientService.GetClientsByFilters(
+                clientStorage,
                 "Mack",
                 minDateOfBirth: new DateTime(1970, 1, 1),
-                maxDateOfBirth: new DateTime(2000, 1, 1));
+                maxDateOfBirth: new DateTime(2000, 1, 1)
+                );
 
         foreach (var client in filteredClients)
             Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, " +
@@ -67,10 +69,12 @@ public class EnumerableTests
         Console.WriteLine("Поиск сотрудников с именем 'Al' и датой рождения большей 1970 год и меньшей 2000 года:");
 
         var filteredEmployees =
-            EmployeeService.GetEmployeesByFilters(employeeStorage,
+            EmployeeService.GetEmployeesByFilters(
+                employeeStorage,
                 "Al",
                 minDateOfBirth: new DateTime(1970, 1, 1),
-                maxDateOfBirth: new DateTime(2000, 1, 1));
+                maxDateOfBirth: new DateTime(2000, 1, 1)
+                );
 
         foreach (var employee in filteredEmployees)
             Console.WriteLine($"Сотрудник: {employee.FirstName} {employee.LastName}, " +

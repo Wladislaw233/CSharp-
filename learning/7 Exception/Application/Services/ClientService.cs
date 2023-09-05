@@ -10,11 +10,10 @@ public class ClientService
 
     private readonly List<Currency> _listOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
 
-    public List<Account> AddClient(Client client)
+    public void AddClient(Client client)
     {
         ValidateClient(client);
         CreateDefaultAccount(client);
-        return _clientsAccounts[client];
     }
 
     public void AddClientAccount(Client client, string currencyCode = "USD", decimal amount = 0)
@@ -36,7 +35,7 @@ public class ClientService
         return _clientsAccounts[client];
     }
 
-    public List<Account> UpdateClientAccount(Client client, string accountNumber, string? currencyCode = null,
+    public void UpdateClientAccount(Client client, string accountNumber, string? currencyCode = null,
         decimal? amount = null)
     {
         if (!_clientsAccounts.ContainsKey(client))
@@ -58,8 +57,6 @@ public class ClientService
 
         if (amount != null)
             account.Amount += (decimal)amount;
-
-        return _clientsAccounts[client];
     }
 
     private void CreateDefaultAccount(Client client)

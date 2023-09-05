@@ -5,20 +5,12 @@ namespace BankingSystemServices.Models;
 
 public class Client : Person
 {
-    [Required] 
-    [Column("id")] 
     public Guid ClientId { get; set; }
-
-    [Required] 
-    [Column("phone_number")] 
+    
     public string PhoneNumber { get; set; }
-
-    [Required] 
-    [Column("email")] 
+    
     public string Email { get; set; }
-
-    [Required] 
-    [Column("address")] 
+    
     public string Address { get; set; }
     
     public static Client? CopyClient(Client? client)

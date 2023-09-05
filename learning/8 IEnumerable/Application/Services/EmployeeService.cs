@@ -60,7 +60,7 @@ public class EmployeeService
         }
     }
 
-    public static IEnumerable<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage,
+    public static List<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage,
         string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", string contractFilter = "",
         decimal? salaryFilter = null, DateTime? minDateOfBirth = null,
@@ -81,6 +81,7 @@ public class EmployeeService
             filteredEmployees = filteredEmployees.Where(employee => employee.DateOfBirth >= minDateOfBirth);
         if (maxDateOfBirth.HasValue)
             filteredEmployees = filteredEmployees.Where(employee => employee.DateOfBirth <= maxDateOfBirth);
-        return filteredEmployees;
+        
+        return filteredEmployees.ToList();
     }
 }

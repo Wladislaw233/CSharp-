@@ -38,6 +38,7 @@ public class ClientServiceTests
         {
             CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
         }
+        bankingSystemDbContext.Dispose();
     }
 
     private static void AddingClientAccountTest(ClientService clientService, Client bankClient)

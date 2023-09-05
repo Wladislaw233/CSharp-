@@ -21,6 +21,7 @@ public class EmployeeServiceTests
             var employeeService = new EmployeeService(bankingSystemDbContext);
 
             var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
+        
             foreach (var employee in addedBankEmployees)
                 employeeService.AddEmployee(employee);
 
@@ -45,6 +46,7 @@ public class EmployeeServiceTests
         {
             CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
         }
+        bankingSystemDbContext.Dispose();
     }
 
     private static void UpdatingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)

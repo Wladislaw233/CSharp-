@@ -5,31 +5,18 @@ namespace BankingSystemServices.Models;
 
 public class Employee : Person
 {
-    [Required] 
-    [Column("id")] 
     public Guid EmployeeId { get; set; }
-
-    [Required] 
-    [Column("contract")] 
+    
     public string Contract { get; set; }
-
-    [Required] 
-    [Column("salary")] 
+    
     public decimal Salary { get; set; }
-
-    [Required] 
-    [Column("address")] 
+    
     public string Address { get; set; }
-
-    [Required] 
-    [Column("email")] 
+    
     public string Email { get; set; }
-
-    [Required] 
-    [Column("phone_number")] 
+    
     public string PhoneNumber { get; set; }
-
-    [Column("is_owner")] 
+    
     public bool IsOwner { get; set; }
 
     public static explicit operator Employee(Client client)

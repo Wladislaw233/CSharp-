@@ -57,7 +57,7 @@ public class ClientService
         }
     }
 
-    public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
+    public static List<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
@@ -72,6 +72,7 @@ public class ClientService
             filteredClients = filteredClients.Where(client => client.DateOfBirth >= minDateOfBirth);
         if (maxDateOfBirth.HasValue)
             filteredClients = filteredClients.Where(client => client.DateOfBirth <= maxDateOfBirth);
-        return filteredClients;
+        
+        return filteredClients.ToList();
     }
 }

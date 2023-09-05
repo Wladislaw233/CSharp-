@@ -7,9 +7,6 @@ namespace ServiceTests;
 
 public class EmployeeServiceTests
 {
-    private List<Employee> _bankEmployees = new();
-    private readonly EmployeeService _employeeService = new();
-
     public void EmployeeServiceTest()
     {
         AddBankEmployeeTest();
@@ -17,23 +14,24 @@ public class EmployeeServiceTests
     
     private void AddBankEmployeeTest()
     {
-        _bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
-        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
-        _bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
+        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
+        var employeeService = new EmployeeService();
+        bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
+        bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
 
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("СОТРУДНИКИ");
-
+        
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Добавление сотрудников:");
+        Console.ResetColor();
         try
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Добавление сотрудников:");
-            Console.ResetColor();
-            foreach (var employee in _bankEmployees)
+            foreach (var employee in bankEmployees)
             {
                 Console.WriteLine(
                     $"\nПопытка добавления сотрудника: Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}");
-                _employeeService.AddBankEmployee(employee);
+                employeeService.AddBankEmployee(employee);
                 Console.WriteLine("Успешно!");
             }
         }
@@ -43,6 +41,6 @@ public class EmployeeServiceTests
         }
 
         Console.WriteLine("\nСписок сотрудников после добавления:");
-        _employeeService.WithdrawEmployees();
+        employeeService.WithdrawEmployees();
     }
 }

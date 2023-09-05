@@ -11,11 +11,10 @@ public class ClientService
 
     private readonly List<Currency> _listOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
 
-    public List<Account> AddClient(Client client)
+    public void AddClient(Client client)
     {
         ValidateClient(client);
         CreateDefaultAccount(client);
-        return _clientsAccounts[client];
     }
 
     public void AddClientAccount(Client client, string currencyCode = "USD", decimal amount = 0)
@@ -37,7 +36,7 @@ public class ClientService
         return _clientsAccounts[client];
     }
 
-    public List<Account> UpdateClientAccount(Client client, string accountNumber, string? currencyCode = null,
+    public void UpdateClientAccount(Client client, string accountNumber, string? currencyCode = null,
         decimal? amount = null)
     {
         if (!_clientsAccounts.ContainsKey(client))
@@ -59,8 +58,6 @@ public class ClientService
 
         if (amount != null)
             account.Amount += (decimal)amount;
-
-        return _clientsAccounts[client];
     }
 
     private void CreateDefaultAccount(Client client)
@@ -125,7 +122,7 @@ public class ClientService
                 $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")));
     }
 
-    public static IEnumerable<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
+    public static List<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
@@ -140,6 +137,7 @@ public class ClientService
             filteredClients = filteredClients.Where(client => client.DateOfBirth >= minDateOfBirth);
         if (maxDateOfBirth.HasValue)
             filteredClients = filteredClients.Where(client => client.DateOfBirth <= maxDateOfBirth);
-        return filteredClients;
+        
+        return filteredClients.ToList();
     }
 }

@@ -22,14 +22,14 @@ public class EmployeeStorageTests
 
         AddingEmployeeTest();
     }
-    
+
     private static void AddingEmployeeTest()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Добавление сотрудников:");
+        Console.ResetColor();
         try
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Добавление сотрудников:");
-            Console.ResetColor();
             foreach (var employee in _bankEmployees)
             {
                 Console.WriteLine(
