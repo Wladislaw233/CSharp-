@@ -26,10 +26,11 @@ public class ThreadAndTaskTests
         // клиенты для импорта.
         var bankClientsForImport = TestDataGenerator.GenerateListWithBankClients(5);
 
+        var pathToDirectory = Path.Combine("D:", "Learning thread");
+        var importFileName = "ClientsForImport.csv";
+        
         try
         {
-            var pathToDirectory = Path.Combine("D:", "Learning thread");
-            var importFileName = "ClientsForImport.csv";
             ExportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
 
             object locker = new();
@@ -55,6 +56,10 @@ public class ThreadAndTaskTests
                         ExportService.WriteClientsDataToScvFile(bankClientsForExport, pathToDirectory, exportFileName);
                     }
                 });
+        }
+        catch (FileNotFoundException e)
+        {
+            Console.WriteLine("Не найден csv файл для чтения!");
         }
         catch (Exception e)
         {

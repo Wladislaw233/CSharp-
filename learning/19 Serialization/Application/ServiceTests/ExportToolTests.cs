@@ -27,18 +27,35 @@ public class ExportToolTests
         Console.WriteLine(mess);
 
         var fileName = "ClientsData.json";
+        try
+        {
+            ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+        }
 
-        ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
+        try
+        {
+            bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
 
-        bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
+            Console.WriteLine("Считанные клиенты из файла ClientsData.json:");
 
-        Console.WriteLine("Считанные клиенты из файла ClientsData.json:");
+            mess = string.Join("\n",
+                bankClients.Select(client =>
+                    $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
 
-        mess = string.Join("\n",
-            bankClients.Select(client =>
-                $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
-
-        Console.WriteLine(mess);
+            Console.WriteLine(mess);
+        }
+        catch (FileNotFoundException e)
+        {
+            Console.WriteLine("Json файл не был найден!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
+        }
     }
 
     private static void ExportEmployeesInJsonTest()
@@ -54,18 +71,35 @@ public class ExportToolTests
         Console.WriteLine(mess);
 
         var fileName = "EmployeesData.json";
+        
+        try
+        {
+            ExportService.WritePersonsDataToJsonFile(bankEmployees, PathToDirectory, fileName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+        }
+        
+        try
+        {
+            bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
 
-        ExportService.WritePersonsDataToJsonFile(bankEmployees, PathToDirectory, fileName);
+            Console.WriteLine("Считанные сотрудники из файла EmployeesData.json:");
 
-        fileName = "EmployeesData.json";
+            mess = string.Join("\n",
+                bankEmployees.Select(employee =>
+                    $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
 
-        bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
-
-        Console.WriteLine("Считанные сотрудники из файла EmployeesData.json:");
-        mess = string.Join("\n",
-            bankEmployees.Select(employee =>
-                $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
-
-        Console.WriteLine(mess);
+            Console.WriteLine(mess);
+        }
+        catch (FileNotFoundException e)
+        {
+            Console.WriteLine("Json файл не был найден!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
+        }
     }
 }

@@ -51,7 +51,10 @@ public class ExportService
 
         var fullPath = GetFullPathToFile(pathToDirectory, csvFileName);
 
-        using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
+        if (!File.Exists(fullPath))
+            throw new FileNotFoundException("CSV файл для чтения не существует!");
+        
+        using (var fileStream = new FileStream(fullPath, FileMode.Open))
         {
             using (var streamReader = new StreamReader(fileStream))
             {
@@ -85,9 +88,13 @@ public class ExportService
     {
         var fullPath = GetFullPathToFile(pathToDirectory, jsonFileName);
 
-        using (var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate))
+        if (!File.Exists(fullPath))
+            throw new FileNotFoundException();
+        
+        using (var fileStream = new FileStream(fullPath, FileMode.Open))
         {
             var jsonTextBytesArray = new byte[fileStream.Length];
+            
             fileStream.Read(jsonTextBytesArray, 0, jsonTextBytesArray.Length);
 
             var jsonText = Encoding.Default.GetString(jsonTextBytesArray);

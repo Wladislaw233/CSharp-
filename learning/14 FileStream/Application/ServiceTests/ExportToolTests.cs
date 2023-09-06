@@ -38,27 +38,45 @@ public class ExportToolTests
         
         Console.WriteLine(mess);
 
-        ExportService.WriteClientsDataToScvFile(recordableClients, PathToDirectory, FileName);
+        try
+        {
+            ExportService.WriteClientsDataToScvFile(recordableClients, PathToDirectory, FileName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+        }
     }
 
     private static void ReadClientsDataFromScvFileTest()
     {
-        Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
-
-        var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
-
-        var mess = string.Join("\n",
-            readableClients.Select(client =>
-                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
-        
-        Console.WriteLine(mess);
-
-        using var bankingSystemDbContext = new BankingSystemDbContext();
+        try
         {
-            var clientService = new ClientService(bankingSystemDbContext);
+            Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
 
-            foreach (var client in readableClients)
-                clientService.AddClient(client);
+            var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
+
+            var mess = string.Join("\n",
+                readableClients.Select(client =>
+                    $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
+
+            Console.WriteLine(mess);
+
+            using var bankingSystemDbContext = new BankingSystemDbContext();
+            {
+                var clientService = new ClientService(bankingSystemDbContext);
+
+                foreach (var client in readableClients)
+                    clientService.AddClient(client);
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            Console.WriteLine("Json файл не был найден!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
         }
     }
 }
