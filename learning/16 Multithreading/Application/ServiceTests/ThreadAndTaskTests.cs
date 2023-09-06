@@ -20,10 +20,10 @@ public class ThreadAndTaskTests
 
     private static void ParallelExportAndImportClientsTest()
     {
-        // клиенты.
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+        // клиенты для экспорта.
+        var bankClientsForExport = TestDataGenerator.GenerateListWithBankClients(5);
 
-        // Создание файла для импорта клиентов.
+        // клиенты для импорта.
         var bankClientsForImport = TestDataGenerator.GenerateListWithBankClients(5);
 
         try
@@ -40,7 +40,7 @@ public class ThreadAndTaskTests
                     {
                         var importBankClients =
                             ExportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
-                        bankClients.AddRange(importBankClients);
+                        bankClientsForExport.AddRange(importBankClients);
                         Console.WriteLine("Импортированные клиенты");
                         PrintClients(importBankClients);
                     }
@@ -50,9 +50,9 @@ public class ThreadAndTaskTests
                     lock (locker)
                     {
                         Console.WriteLine("Экспортированные клиенты");
-                        PrintClients(bankClients);
+                        PrintClients(bankClientsForExport);
                         var exportFileName = "ExportClients.csv";
-                        ExportService.WriteClientsDataToScvFile(bankClients, pathToDirectory, exportFileName);
+                        ExportService.WriteClientsDataToScvFile(bankClientsForExport, pathToDirectory, exportFileName);
                     }
                 });
         }
@@ -93,9 +93,11 @@ public class ThreadAndTaskTests
 
     private static void PrintClients(List<Client> clients)
     {
-        Console.WriteLine(string.Join("\n",
+        var mess = string.Join("\n",
             clients.Select(client =>
-                $"ID {client.ClientId},{client.FirstName} {client.LastName} {client.DateOfBirth.ToString("D")}")));
+                $"ID {client.ClientId},{client.FirstName} {client.LastName} {client.DateOfBirth.ToString("D")}"));
+        
+        Console.WriteLine(mess);
     }
 
     private static void PrintClientAccount(Account account)

@@ -70,10 +70,16 @@ public class EmployeeServiceTests
     private static void GettingEmployeesWithFilterTest(EmployeeService employeeService)
     {
         Console.WriteLine("Выведем первые 5 владельцев банка:");
+        
         var filteredEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5, isOwner: true);
+        
         Console.WriteLine("Владельцы:");
-        Console.WriteLine(string.Join("\n",
+        
+        var mess = string.Join("\n",
             filteredEmployees.Select(employee =>
-                $"Имя {employee.FirstName}, фамилия {employee.LastName}, дата рождения {employee.DateOfBirth.ToString("D")}, зарплата: {employee.Salary} $, владелец: {employee.IsOwner}")));
+                $"Имя {employee.FirstName}, фамилия {employee.LastName}, дата рождения {employee.DateOfBirth.ToString("D")}, " +
+                $"зарплата: {employee.Salary} $, владелец: {employee.IsOwner}"));
+        
+        Console.WriteLine(mess);
     }
 }

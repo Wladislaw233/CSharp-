@@ -16,9 +16,11 @@ public class EmployeeService
 
     public void WithdrawEmployees()
     {
-        Console.WriteLine(string.Join('\n',
+        var mess = string.Join('\n',
             _bankEmployees.Select(employee =>
-                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}")));
+                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}"));
+        
+        Console.WriteLine(mess);
     }
 
     private void ValidationEmployee(Employee employee)

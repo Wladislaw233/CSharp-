@@ -6,8 +6,6 @@ namespace Services;
 
 public class CashDispenserService
 {
-    private readonly object _locker = new();
-
     public static async Task CashOutAsync(Client client)
     {
         await using (var bankingSystemDbContext = new BankingSystemDbContext())

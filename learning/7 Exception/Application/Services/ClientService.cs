@@ -118,9 +118,11 @@ public class ClientService
 
         Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:");
 
-        Console.WriteLine(string.Join('\n',
+        var mess = string.Join('\n',
             _clientsAccounts[client].Select(clientAccount =>
                 $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
-                $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}")));
+                $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}"));
+        
+        Console.WriteLine(mess);
     }
 }

@@ -32,9 +32,11 @@ public class ExportToolTests
     {
         var recordableClients = TestDataGenerator.GenerateListWithBankClients(5);
         Console.WriteLine("Запишем следующих клиентов:");
-        Console.WriteLine(string.Join("\n",
+        var mess = string.Join("\n",
             recordableClients.Select(client =>
-                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}")));
+                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
+        
+        Console.WriteLine(mess);
 
         ExportService.WriteClientsDataToScvFile(recordableClients, PathToDirectory, FileName);
     }
@@ -45,14 +47,18 @@ public class ExportToolTests
 
         var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
 
-        Console.WriteLine(string.Join("\n",
+        var mess = string.Join("\n",
             readableClients.Select(client =>
-                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}.")));
+                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}."));
+        
+        Console.WriteLine(mess);
 
         using var bankingSystemDbContext = new BankingSystemDbContext();
-        var clientService = new ClientService(bankingSystemDbContext);
-        foreach (var client in readableClients)
-            clientService.AddClient(client);
-        bankingSystemDbContext.Dispose();
+        {
+            var clientService = new ClientService(bankingSystemDbContext);
+
+            foreach (var client in readableClients)
+                clientService.AddClient(client);
+        }
     }
 }

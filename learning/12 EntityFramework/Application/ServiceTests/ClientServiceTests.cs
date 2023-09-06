@@ -102,8 +102,10 @@ public class ClientServiceTests
 
         Console.WriteLine("Клиенты:");
 
-        Console.WriteLine(string.Join("\n",
+        var mess = string.Join("\n",
             filteredClients.Select(client =>
-                $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}")));
+                $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}"));
+        
+        Console.WriteLine(mess);
     }
 }
