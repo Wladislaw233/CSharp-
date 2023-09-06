@@ -50,7 +50,7 @@ public class ExportToolTests
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine("Json файл не был найден!");
+            Console.WriteLine($"Json файл не был найден! - {e}");
         }
         catch (Exception e)
         {
@@ -95,7 +95,7 @@ public class ExportToolTests
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine("Json файл не был найден!");
+            Console.WriteLine($"Json файл не был найден! - {e}");
         }
         catch (Exception e)
         {

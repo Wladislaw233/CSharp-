@@ -8,7 +8,7 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        /*// task 16
+        // task 16
         var updateRatesTask = RateUpdaterServiceTests.RateUpdaterTest();
 
         Thread.Sleep(1000);
@@ -20,14 +20,14 @@ internal class Program
         // task 17 a.
         
         ThreadPoolTests.StartThreadPoolTests();
-        */
+        
         // task 17 b.
         
         ClientServiceTests.ClientServiceTest();
         EmployeeServiceTests.EmployeeServiceTest();
-        /*
+        
         cashDispenserServiceTask.Wait();
-        updateRatesTask.Wait();*/
+        updateRatesTask.Wait();
         
     }
 }

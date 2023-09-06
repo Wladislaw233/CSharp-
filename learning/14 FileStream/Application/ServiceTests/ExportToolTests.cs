@@ -16,22 +16,17 @@ public class ExportToolTests
         Console.WriteLine("Название файла clients.csv, лежит в папке D:/Learning FileStream");
         Console.ResetColor();
         
-        try
-        {
-            WriteClientsDataToScvFileTest();
-            ReadClientsDataFromScvFileTest();
-        }
-        catch (CustomException e)
-        {
-            CustomException.ExceptionHandling("Во время работы с файлами произошла ошибка: ", e);
-        }
-        
+        WriteClientsDataToScvFileTest();
+        ReadClientsDataFromScvFileTest();
+            
     }
 
     private static void WriteClientsDataToScvFileTest()
     {
         var recordableClients = TestDataGenerator.GenerateListWithBankClients(5);
+        
         Console.WriteLine("Запишем следующих клиентов:");
+        
         var mess = string.Join("\n",
             recordableClients.Select(client =>
                 $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
@@ -50,10 +45,9 @@ public class ExportToolTests
 
     private static void ReadClientsDataFromScvFileTest()
     {
+        Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
         try
         {
-            Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
-
             var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
 
             var mess = string.Join("\n",
@@ -70,9 +64,13 @@ public class ExportToolTests
                     clientService.AddClient(client);
             }
         }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время добавления клиента возникла ошибка: ", e);
+        }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine("Json файл не был найден!");
+            Console.WriteLine($"Json файл не был найден! - {e}");
         }
         catch (Exception e)
         {

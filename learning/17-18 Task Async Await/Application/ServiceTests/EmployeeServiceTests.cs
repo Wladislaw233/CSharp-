@@ -16,62 +16,114 @@ public class EmployeeServiceTests
 
         using var bankingSystemDbContext = new BankingSystemDbContext();
 
-        try
+        var employeeService = new EmployeeService(bankingSystemDbContext);
+
+        var bankEmployee = AddingEmployeesTest(employeeService).Result;
+
+        if (bankEmployee != null)
         {
-            var employeeService = new EmployeeService(bankingSystemDbContext);
-
-            var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
-            foreach (var employee in addedBankEmployees)
-                employeeService.AddEmployee(employee);
-
-            var bankEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5);
-
-            Console.WriteLine("Добавленные 5 сотрудников:");
-            Console.WriteLine(string.Join("\n",
-                bankEmployees.Select(employee =>
-                    $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, зарплата: {employee.Salary} $, владелец: {employee.IsOwner} ")));
-
-            var bankEmployee = bankEmployees.FirstOrDefault();
-            if (bankEmployee != null)
-            {
-                UpdatingEmployeeTest(employeeService, bankEmployee);
-                DeletingEmployeeTest(employeeService, bankEmployee);
-                GettingEmployeesWithFilterTest(employeeService);
-            }
-            else
-                Console.WriteLine("Сотрудник для тестов не найден!");
+            UpdatingEmployeeTest(employeeService, bankEmployee).Wait();
+            DeletingEmployeeTest(employeeService, bankEmployee).Wait();
+            GettingEmployeesWithFilterTest(employeeService).Wait();
         }
-        catch (CustomException exception)
+        else
         {
-            CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
+            Console.WriteLine("Сотрудник для тестов не найден!");
         }
     }
 
-    private static void UpdatingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
+    private static async Task<Employee?> AddingEmployeesTest(EmployeeService employeeService)
+    {
+        var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
+        
+        Console.WriteLine("Добавляемые 5 сотрудников:");
+        
+        var mess = string.Join("\n",
+            addedBankEmployees.Select(employee =>
+                $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, зарплата: {employee.Salary} $, владелец: {employee.IsOwner} "));
+        
+        Console.WriteLine(mess);
+
+        try
+        {
+            foreach (var employee in addedBankEmployees)
+                await employeeService.AddEmployee(employee);
+            
+            return addedBankEmployees.FirstOrDefault();
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время добавления сотрудников вознилка ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
+
+        return null;
+    }
+
+    private static async Task UpdatingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
     {
         Console.WriteLine("Изменим сотруднику имя и фамилию:");
         Console.WriteLine(
             $"До изменения {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
 
-        employeeService.UpdateEmployee(bankEmployee.EmployeeId, "Иван", "Иванов");
-
-        Console.WriteLine(
-            $"После изменения {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
+        try
+        {
+            await employeeService.UpdateEmployee(bankEmployee.EmployeeId, "Иван", "Иванов");
+            Console.WriteLine(
+                $"После изменения {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время обновления сотрудника вознилка ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
+        
+        
     }
 
-    private static void DeletingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
+    private static async Task DeletingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
     {
         Console.WriteLine($"Удаление сотрудника с id - {bankEmployee.EmployeeId}");
-        employeeService.DeleteEmployee(bankEmployee.EmployeeId);
+        try
+        {
+            await employeeService.DeleteEmployee(bankEmployee.EmployeeId);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время удаления сотрудника вознилка ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
     }
 
-    private static void GettingEmployeesWithFilterTest(EmployeeService employeeService)
+    private static async Task GettingEmployeesWithFilterTest(EmployeeService employeeService)
     {
         Console.WriteLine("Выведем первые 5 владельцев банка:");
-        var filteredEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5, isOwner: true);
-        Console.WriteLine("Владельцы:");
-        Console.WriteLine(string.Join("\n",
-            filteredEmployees.Select(employee =>
-                $"Имя {employee.FirstName}, фамилия {employee.LastName}, дата рождения {employee.DateOfBirth.ToString("D")}, зарплата: {employee.Salary} $, владелец: {employee.IsOwner}")));
+
+        try
+        {
+            var filteredEmployees = await employeeService.EmployeesWithFilterAndPagination(1, 5, isOwner: true);
+
+            Console.WriteLine("Владельцы:");
+
+            var mess = string.Join("\n",
+                filteredEmployees.Select(employee =>
+                    $"Имя {employee.FirstName}, фамилия {employee.LastName}, дата рождения {employee.DateOfBirth.ToString("D")}," +
+                    $" зарплата: {employee.Salary} $, владелец: {employee.IsOwner}"));
+
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла во время выбора сотрудников по фильтрам: {e}");
+        }
     }
 }

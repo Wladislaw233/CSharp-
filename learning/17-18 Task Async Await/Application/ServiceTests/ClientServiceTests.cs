@@ -8,98 +8,197 @@ namespace ServiceTests;
 
 public class ClientServiceTests
 {
-    public static async void ClientServiceTest()
+    public static void ClientServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Клиенты");
         Console.ResetColor();
-        await using var bankingSystemDbContext = new BankingSystemDbContext();
-
+        
+        using var bankingSystemDbContext = new BankingSystemDbContext();
         var clientService = new ClientService(bankingSystemDbContext);
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
-        foreach (var client in bankClients)
-            clientService.AddClient(client);
+        
+        var bankClient = AddingClientTest(clientService).Result;
 
-        var bankClient = bankClients.FirstOrDefault();
         if (bankClient != null)
-            try
-            {
-                AddingClientAccountTest(clientService, bankClient);
-                DeletingClientAccountTest(clientService, bankClient);
-                UpdatingClientTest(clientService, bankClient);
-                DeletingClientTest(clientService, bankClient);
-                GettingClientsWithFilterTest(clientService);
-            }
-            catch (CustomException exception)
-            {
-                CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
-            }
+        {
+            AddingClientAccountTest(clientService, bankClient).Wait();
+            UpdatingClientAccountTest(clientService, bankClient).Wait();
+            DeletingClientAccountTest(clientService, bankClient).Wait();
+            UpdatingClientTest(clientService, bankClient).Wait();
+            DeletingClientTest(clientService, bankClient).Wait();
+            GettingClientsWithFilterTest(clientService).Wait();
+        }
         else
             Console.WriteLine("Клиент для тестов не найден!");
     }
 
-    private static void AddingClientAccountTest(ClientService clientService, Client bankClient)
+    private static async Task<Client?> AddingClientTest(ClientService clientService)
+    {
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+
+        try
+        {
+            foreach (var client in bankClients)
+                await clientService.AddClient(client);
+
+            return bankClients.FirstOrDefault();
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время добавления клиента возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
+
+        return null;
+    }
+    
+    private static async Task AddingClientAccountTest(ClientService clientService, Client bankClient)
     {
         Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
 
         var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+            await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine(presentationBankClientAccounts);
         Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
 
-        clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
+        try
+        {
+            await clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
 
-        presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
+            presentationBankClientAccounts =
+                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-        Console.WriteLine(presentationBankClientAccounts);
+            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine(presentationBankClientAccounts);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время добавления счета клиенту возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
     }
 
-    private static void DeletingClientAccountTest(ClientService clientService, Client bankClient)
+    private static async Task UpdatingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Удалим счет EUR с балансом 1455,23:");
+        Console.WriteLine($"Обновим баланс счета EUR клиенту {bankClient.FirstName} {bankClient.LastName} на 30000:");
 
-        var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
+        try
+        {
+            var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
+
+            var account = bankClientAccounts.Last();
+
+            await clientService.UpdateClientAccount(account.AccountId, amount: new decimal(30000));
+
+            var presentationBankClientAccounts =
+                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+
+            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine(presentationBankClientAccounts);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время обновления счета клиента возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
+    }
+    
+    private static async Task DeletingClientAccountTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine("Удалим счет EUR с балансом 30000:");
+
+        var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
 
         var account = bankClientAccounts.Last();
 
-        clientService.DeleteClientAccount(account.AccountId);
-
-        var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId).ToList();
-
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-        Console.WriteLine(presentationBankClientAccounts);
+        try
+        {
+            await clientService.DeleteClientAccount(account.AccountId);
+            
+            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+            
+            var presentationBankClientAccounts =
+                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+            
+            Console.WriteLine(presentationBankClientAccounts);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время удаления счета клиента возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
     }
 
-    private static void UpdatingClientTest(ClientService clientService, Client bankClient)
+    private static async Task UpdatingClientTest(ClientService clientService, Client bankClient)
     {
         Console.WriteLine("Изменим клиенту имя и фамилию:");
         Console.WriteLine(
             $"До изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
 
-        clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
-        Console.WriteLine(
-            $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+        try
+        {
+            await clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
+            Console.WriteLine(
+                $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время обновления клиента возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
     }
 
-    private static void DeletingClientTest(ClientService clientService, Client bankClient)
+    private static async Task DeletingClientTest(ClientService clientService, Client bankClient)
     {
         Console.WriteLine($"Удаление клиента с id - {bankClient.ClientId}");
-        clientService.DeleteClient(bankClient.ClientId);
+        try
+        {
+            await clientService.DeleteClient(bankClient.ClientId);
+        }
+        catch (CustomException e)
+        {
+            CustomException.ExceptionHandling("Во время удаления клиента возникла ошибка: ", e);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка: {e}");
+        }
     }
 
-    private static void GettingClientsWithFilterTest(ClientService clientService)
+    private static async Task GettingClientsWithFilterTest(ClientService clientService)
     {
         Console.WriteLine("Выведем клиентов с именем Al:");
-        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Al").Result;
+        try
+        {
+            var filteredClients = await clientService.ClientsWithFilterAndPagination(1, 100, "Al");
 
-        Console.WriteLine("Клиенты:");
+            Console.WriteLine("Клиенты:");
 
-        Console.WriteLine(string.Join("\n",
-            filteredClients.Select(client =>
-                $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}")));
+            var mess = string.Join("\n",
+                filteredClients.Select(client =>
+                    $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}"));
+
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Возникла ошибка при получении клиентов по фильтрам: {e}");
+        }
     }
 }

@@ -21,7 +21,7 @@ public class CashDispenserServiceTests
             foreach (var client in bankClients)
             {
                 Console.WriteLine($"Лицевые счита клиента {client.FirstName} {client.LastName} до обналичивания:");
-                Console.WriteLine(clientService.GetPresentationClientAccounts(client.ClientId));
+                Console.WriteLine(await clientService.GetPresentationClientAccounts(client.ClientId));
                 
                 var task = CashDispenserService.CashOutAsync(client);
                 tasks.Add(task);
@@ -34,7 +34,7 @@ public class CashDispenserServiceTests
             foreach (var client in bankClients)
             {
                 Console.WriteLine($"Лицевые счита клиента {client.FirstName} {client.LastName} после обналичивания:");
-                Console.WriteLine(clientService.GetPresentationClientAccounts(client.ClientId));
+                Console.WriteLine(await clientService.GetPresentationClientAccounts(client.ClientId));
             }
         }
     }

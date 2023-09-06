@@ -2,6 +2,7 @@
 using BankingSystemServices.Services;
 using BankingSystemServices.Database;
 using BankingSystemServices.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
@@ -16,19 +17,19 @@ public class EmployeeService
             throw new CustomException("Не удалось установить соединение с базой данных!");
     }
 
-    public void AddEmployee(Employee employee)
+    public async Task AddEmployee(Employee employee)
     {
-        ValidateEmployee(employee);
-        _bankingSystemDbContext.Employees.Add(employee);
-        SaveChanges();
+        await ValidateEmployee(employee);
+        await _bankingSystemDbContext.Employees.AddAsync(employee);
+        await SaveChanges();
     }
 
-    public void UpdateEmployee(Guid employeeId, string? firstName = null, string? lastName = null, int? age = null,
+    public async Task UpdateEmployee(Guid employeeId, string? firstName = null, string? lastName = null, int? age = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         string? contract = null, decimal? salary = null, bool? isOwner = null, decimal? bonus = null)
     {
         var employee =
-            _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
+            await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee => employee.EmployeeId.Equals(employeeId));
 
         if (employee == null)
             throw new CustomException($"Сотрудника с идентификатором {employeeId} не существует!",
@@ -56,24 +57,24 @@ public class EmployeeService
         if (bonus != null)
             employee.Bonus = (decimal)bonus;
 
-        ValidateEmployee(employee, true);
+        await ValidateEmployee(employee, true);
         _bankingSystemDbContext.Employees.Update(employee);
-        SaveChanges();
+        await SaveChanges();
     }
 
-    public void DeleteEmployee(Guid employeeId)
+    public async Task DeleteEmployee(Guid employeeId)
     {
         var bankEmployee =
-            _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
+            await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee => employee.EmployeeId.Equals(employeeId));
         if (bankEmployee == null)
-            throw new CustomException($"Клиента с идентификатором {employeeId} не существует!", nameof(employeeId));
+            throw new CustomException($"Сотрудника с идентификатором {employeeId} не существует!", nameof(employeeId));
         _bankingSystemDbContext.Employees.Remove(bankEmployee);
-        SaveChanges();
+        await SaveChanges();
     }
 
-    private void ValidateEmployee(Employee employee, bool isUpdate = false)
+    private async Task ValidateEmployee(Employee employee, bool isUpdate = false)
     {
-        if (!isUpdate && _bankingSystemDbContext.Employees.Contains(employee))
+        if (!isUpdate && await _bankingSystemDbContext.Employees.ContainsAsync(employee))
             throw new CustomException("Данный сотрудник уже добавлен в банковскую систему!", nameof(employee));
         if (string.IsNullOrWhiteSpace(employee.FirstName))
             throw new CustomException("Не указано имя сотрудника!", nameof(employee.FirstName));
@@ -109,11 +110,11 @@ public class EmployeeService
         }
     }
     
-    private void SaveChanges()
+    private async Task SaveChanges()
     {
         try
         {
-            _bankingSystemDbContext.SaveChanges();
+            await _bankingSystemDbContext.SaveChangesAsync();
         }
         catch (Exception exception)
         {
@@ -121,7 +122,7 @@ public class EmployeeService
         }
     }
     
-    public List<Employee> EmployeesWithFilterAndPagination(int page, int pageSize, string? firstName = null,
+    public async Task<List<Employee>> EmployeesWithFilterAndPagination(int page, int pageSize, string? firstName = null,
         string? lastName = null, int? age = null, Guid? employeeId = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         string? contract = null, double? salary = null, bool? isOwner = null)
@@ -154,6 +155,6 @@ public class EmployeeService
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
 
-        return query.ToList();
+        return await query.ToListAsync();
     }
 }

@@ -59,7 +59,7 @@ public class ThreadAndTaskTests
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine("Не найден csv файл для чтения!");
+            Console.WriteLine($"Не найден csv файл для чтения! - {e}");
         }
         catch (Exception e)
         {

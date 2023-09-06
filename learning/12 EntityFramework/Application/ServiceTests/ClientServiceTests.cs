@@ -19,7 +19,7 @@ public class ClientServiceTests
         {
             var clientService = new ClientService(bankingSystemDbContext);
             var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
-            
+
             foreach (var client in bankClients)
                 clientService.AddClient(client);
 
@@ -27,6 +27,7 @@ public class ClientServiceTests
             if (bankClient != null)
             {
                 AddingClientAccountTest(clientService, bankClient);
+                UpdatingClientAccountTest(clientService, bankClient);
                 DeletingClientAccountTest(clientService, bankClient);
                 UpdatingClientTest(clientService, bankClient);
                 DeletingClientTest(clientService, bankClient);
@@ -38,6 +39,10 @@ public class ClientServiceTests
         catch (CustomException exception)
         {
             CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Во время работы программы возникла следующая ошибка: {e}");
         }
         bankingSystemDbContext.Dispose();
     }
@@ -61,9 +66,26 @@ public class ClientServiceTests
         Console.WriteLine(presentationBankClientAccounts);
     }
 
+    private static void UpdatingClientAccountTest(ClientService clientService, Client bankClient)
+    {
+        Console.WriteLine($"Обновим баланс счета EUR клиенту {bankClient.FirstName} {bankClient.LastName} на 30000:");
+        
+        var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
+
+        var account = bankClientAccounts.Last();
+        
+        clientService.UpdateClientAccount(account.AccountId, amount: new decimal(30000));
+        
+        var presentationBankClientAccounts =
+            clientService.GetPresentationClientAccounts(bankClient.ClientId);
+
+        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+        Console.WriteLine(presentationBankClientAccounts);
+    }
+    
     private static void DeletingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Удалим счет EUR с балансом 1455,23:");
+        Console.WriteLine("Удалим счет EUR с балансом 30000:");
 
         var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
 
