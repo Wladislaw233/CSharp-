@@ -1,71 +1,71 @@
 ﻿using BankingSystemServices.ExportTool;
 using BankingSystemServices.Models;
-using Services;
-using BankingSystemServices.Database;
 using BankingSystemServices.Services;
 
 namespace ServiceTests;
 
 public class ExportToolTests
 {
-    public static void ExportCsvServiceTest()
-    {
-        // Название файла clients.csv, лежит в папке D:\Learning FileStream
-        using var bankingSystemDbContext = new BankingSystemDbContext();
-        var clientService = new ClientService(bankingSystemDbContext);
-        var recordableClients = Task.Run( async () => await clientService.ClientsWithFilterAndPagination(1, 5)).Result;
-        var pathToDirectory = Path.Combine("D:", "Learning FileStream");
-        var fileName = "clients.csv";
-
-        Console.WriteLine("Запишем следующих клиентов:" +
-                          "\n" + string.Join("\n",
-                              recordableClients.Select(client =>
-                                  $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}")));
-        
-        ExportService.WriteClientsDataToScvFile(recordableClients, pathToDirectory, fileName);
-
-        var readableClients = ExportService.ReadClientsDataFromScvFile(pathToDirectory, fileName);
-        
-        Console.WriteLine("Прочитаем клиентов из файла и добавим их в базу:" +
-                          "\n" + string.Join("\n",
-                              readableClients.Select(client =>
-                                  $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}.")));
-
-        foreach (var client in readableClients)
-            clientService.AddClient(client).Wait();
-    }
+    private static readonly string PathToDirectory = Path.Combine("D:", "Learning Serialization");
 
     public static void ExportJsonServiceTest()
     {
+        ExportClientsInJsonTest();
+        ExportEmployeesInJsonTest();
+    }
+
+    private static void ExportClientsInJsonTest()
+    {
         var bankClients = TestDataGenerator.GenerateListWithBankClients(3);
-        Console.WriteLine("Запишем клиентов в файл ClientsData.json:" +
-                          "\n" + string.Join("\n",
-                              bankClients.Select(client =>
-                                  $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}")));
 
-        var pathToDirectory = Path.Combine("D:", "Learning Serialization");
+        Console.WriteLine("Запишем клиентов в файл ClientsData.json:");
+
+        var mess = string.Join("\n",
+            bankClients.Select(client =>
+                $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
+
+        Console.WriteLine(mess);
+
         var fileName = "ClientsData.json";
-        ExportService.WritePersonsDataToJsonFile(bankClients, pathToDirectory, fileName);
 
+        ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
+
+        bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
+
+        Console.WriteLine("Считанные клиенты из файла ClientsData.json:");
+
+        mess = string.Join("\n",
+            bankClients.Select(client =>
+                $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
+
+        Console.WriteLine(mess);
+    }
+
+    private static void ExportEmployeesInJsonTest()
+    {
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
-        Console.WriteLine("Запишем сотрудников в файл EmployeesData.json:" +
-                          "\n" + string.Join("\n",
-                              bankEmployees.Select(employee =>
-                                  $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}")));
-        fileName = "EmployeesData.json";
-        ExportService.WritePersonsDataToJsonFile(bankEmployees, pathToDirectory, fileName);
 
-        fileName = "ClientsData.json";
-        bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(pathToDirectory, fileName);
-        Console.WriteLine("Считанные клиенты из файла ClientsData.json:" +
-                          "\n" + string.Join("\n",
-                              bankClients.Select(client =>
-                                  $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}")));
+        Console.WriteLine("Запишем сотрудников в файл EmployeesData.json:");
+
+        var mess = string.Join("\n",
+            bankEmployees.Select(employee =>
+                $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
+
+        Console.WriteLine(mess);
+
+        var fileName = "EmployeesData.json";
+
+        ExportService.WritePersonsDataToJsonFile(bankEmployees, PathToDirectory, fileName);
+
         fileName = "EmployeesData.json";
-        bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(pathToDirectory, fileName);
-        Console.WriteLine("Считанные сотрудники из файла EmployeesData.json:" +
-                          "\n" + string.Join("\n",
-                              bankEmployees.Select(employee =>
-                                  $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}")));
+
+        bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
+
+        Console.WriteLine("Считанные сотрудники из файла EmployeesData.json:");
+        mess = string.Join("\n",
+            bankEmployees.Select(employee =>
+                $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
+
+        Console.WriteLine(mess);
     }
 }

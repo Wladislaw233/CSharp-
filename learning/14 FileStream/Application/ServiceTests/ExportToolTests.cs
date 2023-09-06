@@ -49,7 +49,7 @@ public class ExportToolTests
 
         var mess = string.Join("\n",
             readableClients.Select(client =>
-                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}."));
+                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
         
         Console.WriteLine(mess);
 
