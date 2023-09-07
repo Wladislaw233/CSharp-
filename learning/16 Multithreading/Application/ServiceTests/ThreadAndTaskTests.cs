@@ -78,24 +78,24 @@ public class ThreadAndTaskTests
         Console.WriteLine($"Счет клиента {bankClient.FirstName} {bankClient.LastName} до изменения:");
         PrintClientAccount(account);
 
-        Parallel.Invoke(() =>
-            {
-                for (var index = 0; index < 10; index++)
-                    account.Amount += 100;
-                Console.WriteLine("Аккаунт после обработки первым потоком:");
-                PrintClientAccount(account);
-            },
-            () =>
-            {
-                for (var index = 0; index < 10; index++)
-                    account.Amount += 100;
-                Console.WriteLine("Аккаунт после обработки вторым потоком:");
-                PrintClientAccount(account);
-            });
-        
+        var accountAccrual = new Action<Account, int>(AccountAccrual);
+
+        Parallel.Invoke(
+            () => accountAccrual(account, 1),
+            () => accountAccrual(account, 2)
+        );
+
         Thread.Sleep(1000);
     }
 
+    private static void AccountAccrual(Account account, int threadIndex)
+    {
+        for (var index = 0; index < 10; index++)
+            account.Amount += 100;
+        Console.WriteLine($"Аккаунт после обработки потоком - {threadIndex}:");
+        PrintClientAccount(account);
+    }
+    
     private static void PrintClients(List<Client> clients)
     {
         var mess = string.Join("\n",
