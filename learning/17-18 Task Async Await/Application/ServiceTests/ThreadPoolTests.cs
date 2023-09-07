@@ -13,7 +13,7 @@ public class ThreadPoolTests
         Console.WriteLine("запуск 15 задач, при доступных 10 потоках (последовательное выполнение).");
         ThreadPoolTest();
         Console.WriteLine("запуск 15 задач, при доступных 10 потоках (асинхронное выполнение).");
-        ThreadPoolAsyncTest().Wait();
+        ThreadPoolAsyncTest().GetAwaiter().GetResult();
     }
     
     private static void ThreadPoolTest()

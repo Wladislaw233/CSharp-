@@ -26,8 +26,8 @@ internal class Program
         ClientServiceTests.ClientServiceTest();
         EmployeeServiceTests.EmployeeServiceTest();
         
-        cashDispenserServiceTask.Wait();
-        updateRatesTask.Wait();
+        cashDispenserServiceTask.GetAwaiter().GetResult();
+        updateRatesTask.GetAwaiter().GetResult();
         
     }
 }
