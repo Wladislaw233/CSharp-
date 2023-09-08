@@ -41,14 +41,14 @@ public class ClientController : ControllerBase
         }
         catch (CustomException ex)
         {
-            var mess = BankApiService.CustomExceptionHandling(ex,
+            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
                 "An error occurred while adding the client to the database: ");
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }
         catch (Exception ex)
         {
-            var mess = BankApiService.ExceptionHandling(ex);
+            var mess = ExceptionHandlingService.ExceptionHandling(ex);
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }
@@ -64,14 +64,14 @@ public class ClientController : ControllerBase
         }
         catch (CustomException ex)
         {
-            var mess = BankApiService.CustomExceptionHandling(ex,
+            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
                 "An error occurred while updating the client in the database: ");
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }
         catch (Exception ex)
         {
-            var mess = BankApiService.ExceptionHandling(ex);
+            var mess = ExceptionHandlingService.ExceptionHandling(ex);
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }
@@ -87,14 +87,14 @@ public class ClientController : ControllerBase
         }
         catch (CustomException ex)
         {
-            var mess = BankApiService.CustomExceptionHandling(ex,
+            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
                 "An error occurred when deleting a client from the database: ");
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }
         catch (Exception ex)
         {
-            var mess = BankApiService.ExceptionHandling(ex);
+            var mess = ExceptionHandlingService.ExceptionHandling(ex);
             _logger.Log(LogLevel.Error, ex, mess);
             return BadRequest(mess);
         }

@@ -2,7 +2,7 @@
 
 namespace Services;
 
-public class BankApiService
+public class ExceptionHandlingService
 {
     public static string CustomExceptionHandling(CustomException exception, string description)
     {
