@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using BankingSystemServices.Database;
 
 var builder = WebApplication.CreateBuilder(args);
