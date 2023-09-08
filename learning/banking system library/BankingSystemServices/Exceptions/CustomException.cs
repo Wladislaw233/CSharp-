@@ -5,7 +5,7 @@ namespace BankingSystemServices.Exceptions;
 [Serializable]
 public class CustomException : Exception
 {
-    public string ParameterOfException;
+    public string ParameterOfException { get; set; }
 
     public CustomException(string parameterOfException)
     {
@@ -28,11 +28,14 @@ public class CustomException : Exception
         ParameterOfException = parameterOfException;
     }
 
-    public static void ExceptionHandling(string description, CustomException exception)
+    public static void ExceptionHandling( string description, CustomException exception)
     {
-        Console.WriteLine(description + exception.Message);
-        Console.WriteLine(string.IsNullOrWhiteSpace(exception.ParameterOfException)
+        var mess = description + exception.Message;
+        
+        mess += string.IsNullOrWhiteSpace(exception.ParameterOfException)
             ? ""
-            : $"Параметр: {exception.ParameterOfException}");
+            : $" Parameter: {exception.ParameterOfException}";
+        
+        Console.WriteLine(mess);
     }
 }
