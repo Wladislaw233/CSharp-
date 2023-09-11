@@ -1,6 +1,6 @@
 ﻿namespace Services.Storage;
 
-public interface IStorage<T>
+public interface IStorage<in T>
 {
     void Add(T item);
 

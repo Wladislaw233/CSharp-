@@ -13,7 +13,7 @@ public class ExportToolTests
     public static void ExportCsvServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Название файла clients.csv, лежит в папке D:/Learning FileStream");
+        Console.WriteLine($"Название файла {FileName}, лежит в папке {PathToDirectory}");
         Console.ResetColor();
         
         WriteClientsDataToScvFileTest();

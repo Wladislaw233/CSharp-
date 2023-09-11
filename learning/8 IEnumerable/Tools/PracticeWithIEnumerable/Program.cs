@@ -6,6 +6,7 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        EnumerableTests.EnumerableTest();
+        EnumerableTests.GetClientsByFiltersTest();
+        EnumerableTests.GetEmployeesByFiltersTest();
     }
 }

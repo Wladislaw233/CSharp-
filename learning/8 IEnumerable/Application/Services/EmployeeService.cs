@@ -7,13 +7,20 @@ namespace Services;
 
 public class EmployeeService
 {
-    public static List<Employee> GetEmployeesByFilters(EmployeeStorage employeeStorage,
+    private readonly EmployeeStorage _employeeStorage;
+
+    public EmployeeService(EmployeeStorage employeeStorage)
+    {
+        _employeeStorage = employeeStorage;
+    }
+    
+    public List<Employee> GetEmployeesByFilters(
         string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", string contractFilter = "",
         decimal? salaryFilter = null, DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
-        IEnumerable<Employee> filteredEmployees = employeeStorage;
+        IEnumerable<Employee> filteredEmployees = _employeeStorage;
         if (!string.IsNullOrWhiteSpace(firstNameFilter))
             filteredEmployees = filteredEmployees.Where(employee => employee.FirstName == firstNameFilter);
         if (!string.IsNullOrWhiteSpace(lastNameFilter))

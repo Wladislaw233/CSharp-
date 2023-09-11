@@ -18,15 +18,16 @@ public class ExportToolTests
     {
         var bankClients = TestDataGenerator.GenerateListWithBankClients(3);
 
-        Console.WriteLine("Запишем клиентов в файл ClientsData.json:");
+        var fileName = "ClientsData.json";
+        
+        Console.WriteLine($"Запишем клиентов в файл {fileName}:");
 
         var mess = string.Join("\n",
             bankClients.Select(client =>
                 $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
 
         Console.WriteLine(mess);
-
-        var fileName = "ClientsData.json";
+        
         try
         {
             ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
@@ -40,7 +41,7 @@ public class ExportToolTests
         {
             bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
 
-            Console.WriteLine("Считанные клиенты из файла ClientsData.json:");
+            Console.WriteLine($"Считанные клиенты из файла {fileName}:");
 
             mess = string.Join("\n",
                 bankClients.Select(client =>
@@ -62,15 +63,15 @@ public class ExportToolTests
     {
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
 
-        Console.WriteLine("Запишем сотрудников в файл EmployeesData.json:");
+        var fileName = "EmployeesData.json";
+        
+        Console.WriteLine($"Запишем сотрудников в файл {fileName}:");
 
         var mess = string.Join("\n",
             bankEmployees.Select(employee =>
                 $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
 
         Console.WriteLine(mess);
-
-        var fileName = "EmployeesData.json";
         
         try
         {
@@ -85,7 +86,7 @@ public class ExportToolTests
         {
             bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
 
-            Console.WriteLine("Считанные сотрудники из файла EmployeesData.json:");
+            Console.WriteLine($"Считанные сотрудники из файла {fileName}:");
 
             mess = string.Join("\n",
                 bankEmployees.Select(employee =>

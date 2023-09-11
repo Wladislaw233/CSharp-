@@ -7,11 +7,17 @@ namespace Services;
 
 public class ClientService
 {
-    public static List<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
+    private readonly ClientStorage _clientStorage;
+
+    public ClientService(ClientStorage clientStorage)
+    {
+        _clientStorage = clientStorage;
+    }
+    public List<Client> GetClientsByFilters(string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
-        IEnumerable<Client> filteredClients = clientStorage;
+        IEnumerable<Client> filteredClients = _clientStorage;
         if (!string.IsNullOrWhiteSpace(firstNameFilter))
             filteredClients = filteredClients.Where(client => client.FirstName == firstNameFilter);
         if (!string.IsNullOrWhiteSpace(lastNameFilter))

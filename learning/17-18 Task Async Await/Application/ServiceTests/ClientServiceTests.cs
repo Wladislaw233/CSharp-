@@ -63,11 +63,15 @@ public class ClientServiceTests
             await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine(presentationBankClientAccounts);
-        Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
+
+        var currencyCode = "EUR";
+        var amount = new decimal(1455.23);
+        
+        Console.WriteLine($"Добавим счет {currencyCode} с балансом {amount}:");
 
         try
         {
-            await clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
+            await clientService.AddClientAccount(bankClient.ClientId, currencyCode, amount);
 
             presentationBankClientAccounts =
                 await clientService.GetPresentationClientAccounts(bankClient.ClientId);
@@ -87,15 +91,17 @@ public class ClientServiceTests
 
     private static async Task UpdatingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Обновим баланс счета EUR клиенту {bankClient.FirstName} {bankClient.LastName} на 30000:");
-
         try
         {
             var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
 
             var account = bankClientAccounts.Last();
 
-            await clientService.UpdateClientAccount(account.AccountId, amount: new decimal(30000));
+            var amount = new decimal(30000);
+            
+            Console.WriteLine($"Обновим баланс счета {account.AccountNumber} клиенту {bankClient.FirstName} {bankClient.LastName} на {amount}:");
+            
+            await clientService.UpdateClientAccount(account.AccountId, amount: amount);
 
             var presentationBankClientAccounts =
                 await clientService.GetPresentationClientAccounts(bankClient.ClientId);
@@ -115,14 +121,14 @@ public class ClientServiceTests
     
     private static async Task DeletingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Удалим счет EUR с балансом 30000:");
-
         var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
 
         var account = bankClientAccounts.Last();
 
         try
         {
+            Console.WriteLine($"Удалим счет {account.AccountNumber}:");
+            
             await clientService.DeleteClientAccount(account.AccountId);
             
             Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
@@ -183,7 +189,9 @@ public class ClientServiceTests
 
     private static async Task GettingClientsWithFilterTest(ClientService clientService)
     {
-        Console.WriteLine("Выведем клиентов с именем Al:");
+        var clientFirstName = "Al";
+        
+        Console.WriteLine($"Выведем клиентов с именем {clientFirstName}:");
         try
         {
             var filteredClients = await clientService.ClientsWithFilterAndPagination(1, 100, "Al");

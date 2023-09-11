@@ -7,23 +7,31 @@ namespace Services;
 
 public class ClientService
 {
-    public static List<Account> GetClientAccounts(ClientStorage clientStorage, Client client)
+
+    private readonly ClientStorage _clientStorage;
+
+    public ClientService(ClientStorage clientStorage)
     {
-        if (!clientStorage.Data.ContainsKey(client))
+        _clientStorage = clientStorage;
+    }
+    
+    public List<Account> GetClientAccounts(Client client)
+    {
+        if (!_clientStorage.Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
 
-        return clientStorage.Data[client];
+        return _clientStorage.Data[client];
     }
 
-    public static void WithdrawClientAccounts(ClientStorage clientStorage, Client client)
+    public void WithdrawClientAccounts(Client client)
     {
-        if (!clientStorage.Data.ContainsKey(client))
+        if (!_clientStorage.Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
 
         Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:");
 
         var mess = string.Join('\n',
-            clientStorage.Data[client].Select(clientAccount =>
+            _clientStorage.Data[client].Select(clientAccount =>
                 $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
                 $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}"));
         
@@ -59,11 +67,11 @@ public class ClientService
         }
     }
 
-    public static List<Client> GetClientsByFilters(ClientStorage clientStorage, string firstNameFilter = "",
+    public List<Client> GetClientsByFilters(string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
     {
-        IEnumerable<Client> filteredClients = clientStorage;
+        IEnumerable<Client> filteredClients = _clientStorage;
         if (!string.IsNullOrWhiteSpace(firstNameFilter))
             filteredClients = filteredClients.Where(client => client.FirstName == firstNameFilter);
         if (!string.IsNullOrWhiteSpace(lastNameFilter))

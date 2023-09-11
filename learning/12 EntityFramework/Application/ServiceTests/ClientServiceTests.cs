@@ -1,9 +1,8 @@
-﻿using BankingSystemServices.Models;
+﻿using BankingSystemServices.Database;
+using BankingSystemServices.Exceptions;
+using BankingSystemServices.Models;
 using BankingSystemServices.Services;
 using Services;
-using BankingSystemServices.Database;
-using BankingSystemServices.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace ServiceTests;
 
@@ -34,7 +33,9 @@ public class ClientServiceTests
                 GettingClientsWithFilterTest(clientService);
             }
             else
+            {
                 Console.WriteLine("Клиент для тестов не найден!");
+            }
         }
         catch (CustomException exception)
         {
@@ -44,6 +45,7 @@ public class ClientServiceTests
         {
             Console.WriteLine($"Во время работы программы возникла следующая ошибка: {e}");
         }
+
         bankingSystemDbContext.Dispose();
     }
 
@@ -55,9 +57,13 @@ public class ClientServiceTests
             clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine(presentationBankClientAccounts);
-        Console.WriteLine("Добавим счет EUR с балансом 1455,23:");
 
-        clientService.AddClientAccount(bankClient.ClientId, "EUR", new decimal(1455.23));
+        var currencyCode = "EUR";
+        var accountAmount = new decimal(1455.23);
+
+        Console.WriteLine($"Добавим счет {currencyCode} с балансом {accountAmount}:");
+
+        clientService.AddClientAccount(bankClient.ClientId, currencyCode, accountAmount);
 
         presentationBankClientAccounts =
             clientService.GetPresentationClientAccounts(bankClient.ClientId);
@@ -68,28 +74,31 @@ public class ClientServiceTests
 
     private static void UpdatingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Обновим баланс счета EUR клиенту {bankClient.FirstName} {bankClient.LastName} на 30000:");
-        
         var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
 
         var account = bankClientAccounts.Last();
-        
-        clientService.UpdateClientAccount(account.AccountId, amount: new decimal(30000));
-        
+
+        var accountAmount = new decimal(30000);
+
+        Console.WriteLine(
+            $"Обновим баланс счета {account.Currency.Code} клиенту {bankClient.FirstName} {bankClient.LastName} на {accountAmount}:");
+
+        clientService.UpdateClientAccount(account.AccountId, amount: accountAmount);
+
         var presentationBankClientAccounts =
             clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
         Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
         Console.WriteLine(presentationBankClientAccounts);
     }
-    
+
     private static void DeletingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Удалим счет EUR с балансом 30000:");
-
         var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
 
         var account = bankClientAccounts.Last();
+
+        Console.WriteLine($"Удалим счет {account.Currency.Code}:");
 
         clientService.DeleteClientAccount(account.AccountId);
 
@@ -119,15 +128,17 @@ public class ClientServiceTests
 
     private static void GettingClientsWithFilterTest(ClientService clientService)
     {
-        Console.WriteLine("Выведем клиентов с именем Al:");
-        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, "Al");
+        var clientFirstName = "Al";
+
+        Console.WriteLine($"Выведем клиентов с именем {clientFirstName}:");
+        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, clientFirstName);
 
         Console.WriteLine("Клиенты:");
 
         var mess = string.Join("\n",
             filteredClients.Select(client =>
                 $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}"));
-        
+
         Console.WriteLine(mess);
     }
 }

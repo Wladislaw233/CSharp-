@@ -9,7 +9,8 @@ namespace ServiceTests;
 public class EmployeeStorageTests
 {
     private static List<Employee> _bankEmployees = new();
-    private static readonly EmployeeStorage EmployeeStorage = new();
+    private static readonly EmployeeStorage _employeeStorage = new();
+    private static readonly EmployeeService _employeeService = new(_employeeStorage);
 
     public static void EmployeeStorageTest()
     {
@@ -34,7 +35,7 @@ public class EmployeeStorageTests
             {
                 Console.WriteLine(
                     $"\nПопытка добавления сотрудника: Имя: {employee.FirstName}, фамилия: {employee.LastName}, контракт: {employee.Contract}");
-                EmployeeStorage.Add(employee);
+                _employeeStorage.Add(employee);
                 Console.WriteLine("Успешно!");
             }
         }
@@ -44,6 +45,6 @@ public class EmployeeStorageTests
         }
 
         Console.WriteLine("\nСписок сотрудников после добавления:");
-        EmployeeService.WithdrawEmployees(EmployeeStorage);
+        _employeeService.WithdrawEmployees();
     }
 }

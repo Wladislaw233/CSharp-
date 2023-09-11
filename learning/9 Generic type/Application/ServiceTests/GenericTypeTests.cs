@@ -15,14 +15,20 @@ public class GenericTypeTests
         var bankClients = TestDataGenerator.GenerateListWithBankClients(100);
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
 
+        var clientAge = 25;
+        var employeeSalary = new decimal(150.67);
+        
         Console.WriteLine(
-            "\nДобавим клиентов в черный  список возраст которых меньше 25 и сотрудников зарплата которых меньше 150.67:");
+            $"\nДобавим клиентов в черный  список возраст которых меньше {clientAge} и сотрудников зарплата которых меньше {employeeSalary}:");
 
-        var blacklistedClients = bankClients.Where(client => client.Age < 25).ToList();
+        var blacklistedClients = bankClients.Where(client => client.Age < clientAge).ToList();
+        
         foreach (var client in blacklistedClients)
             bankService.AddToBlackList(client);
 
-        var blacklistedEmployee = bankEmployees.Where(employee => employee.Salary < new decimal(150.67)).ToList();
+       
+        var blacklistedEmployee = bankEmployees.Where(employee => employee.Salary < employeeSalary).ToList();
+        
         foreach (var employee in blacklistedEmployee)
             bankService.AddToBlackList(employee);
 
@@ -39,11 +45,15 @@ public class GenericTypeTests
         else
             Console.WriteLine("Сотрудник из черного листа не найден!");
 
-        Console.WriteLine("\nНачисление бонуса сотруднику в размере 569.12:");
+        var employeeBonus = new decimal(569.12);
+        
+        Console.WriteLine($"\nНачисление бонуса сотруднику в размере {employeeBonus}:");
+        
         var employeeWithBonus = bankEmployees.FirstOrDefault();
+        
         if (employeeWithBonus != null)
         {
-            BankService.AddBonus(employeeWithBonus, new decimal(569.12));
+            BankService.AddBonus(employeeWithBonus, employeeBonus);
             Console.WriteLine(
                 $"Сотрудник: {employeeWithBonus.FirstName} {employeeWithBonus.LastName}, бонус: {employeeWithBonus.Bonus}");
         }

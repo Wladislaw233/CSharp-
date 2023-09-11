@@ -11,7 +11,7 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
 {
     private readonly List<Currency> _listOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
     private readonly Currency _defaultCurrency;
-    public readonly NpgsqlConnection NpgsqlConnection = new();
+    
     public Dictionary<Client, List<Account>> Data { get; } = new();
 
     public ClientStorage()
