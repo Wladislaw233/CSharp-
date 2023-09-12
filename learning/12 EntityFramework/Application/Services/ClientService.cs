@@ -88,15 +88,22 @@ public class ClientService
     public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
     {
         var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        
         if (client == null)
             throw new CustomException($"Клиента с идентификатором {clientId} не существует!", nameof(clientId));
+        
         var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
+        
         if (currency == null)
             throw new CustomException($"Валюты с кодом {currencyCode} не существует!", nameof(currencyCode));
+        
         var account = CreateAccount(client, currency, amount);
+        
         if (account == null)
             throw new CustomException("Не удалось создать аккаунт!", nameof(account));
+        
         _bankingSystemDbContext.Accounts.Add(account);
+        
         SaveChanges();
     }
 

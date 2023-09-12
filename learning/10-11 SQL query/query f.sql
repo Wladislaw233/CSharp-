@@ -1,6 +1,10 @@
-SELECT
-    client.age Возраст,
-    count(client.first_name) Количество
-FROM public.client as client
+select
+    sum(count)
+from
+(SELECT
+    clients.age as age,
+    count(clients) as count
+FROM clients
 GROUP BY
-    client.age
+    age) as ac
+where count > 1

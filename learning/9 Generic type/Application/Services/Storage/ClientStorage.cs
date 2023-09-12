@@ -9,36 +9,29 @@ namespace Services.Storage;
 
 public class ClientStorage : IClientStorage, IEnumerable<Client>
 {
-    private readonly List<Currency> _listOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
+    public readonly List<Currency> ListOfCurrencies = TestDataGenerator.GenerateListOfCurrencies();
     private readonly Currency _defaultCurrency;
-    
-    public Dictionary<Client, List<Account>> Data { get; } = new();
+    public Dictionary<Client, List<Account>> ClientWithAccountsList { get; } = new();
 
     public ClientStorage()
     {
-        var currency = _listOfCurrencies.Find(currency => currency.Code == "USD");
+        var currency = ListOfCurrencies.Find(currency => currency.Code == "USD");
         if (currency != null)
             _defaultCurrency = currency;
         else
-            throw new CustomException("Не удалось установить валюту по умолчанию!", nameof(_defaultCurrency));
+            throw new ValueNotFoundException("Не удалось установить валюту по умолчанию!");
     }
 
     public void Add(Client client)
     {
-        if (Data.ContainsKey(client))
-            throw new CustomException("Данный клиент уже добавлен в банковскую систему!", nameof(client));
-
-        ClientService.ValidateClient(client);
-        Data[client] = new List<Account>
-            { TestDataGenerator.GenerateRandomBankClientAccount(_defaultCurrency, client) };
+        var defaultAccount = TestDataGenerator.GenerateRandomBankClientAccount(,);
+        ClientWithAccountsList.Add(client, );
     }
 
-    public void Update(Client client, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
-        decimal? bonus = null)
+    public void Update(Client client, Client newClient)
     {
         
-        if (!Data.ContainsKey(client))
+       /* if (!Data.ContainsKey(client))
             throw new CustomException(
                 $"Клиента {client.FirstName} {client.LastName} не существует в банковской системе!",
                 nameof(client));
@@ -60,32 +53,25 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
         if (bonus != null)
             client.Bonus = (decimal)bonus;
         
-        ClientService.ValidateClient(client);
+        ClientService.ValidateClient(client);*/
     }
 
     public void Delete(Client client)
     {
-        if (!Data.ContainsKey(client))
+        /*if (!Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        Data.Remove(client);
+        Data.Remove(client);*/
     }
 
-    public void AddAccount(Client client, string currencyCode = "USD", decimal amount = 0)
+    public void AddAccount(Client client, Account account)
     {
-        if (!Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-
-        var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
-        if (currency == null)
-            throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
-
+        
         Data[client].Add(TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount));
     }
 
-    public void UpdateAccount(Client client, string accountNumber, string? currencyCode = null,
-        decimal? amount = null)
+    public void UpdateAccount(Account account, Account newAccount)
     {
-        if (!Data.ContainsKey(client))
+        /*if (!Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
 
         var account = Data[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
@@ -103,12 +89,12 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
         }
 
         if (amount != null)
-            account.Amount += (decimal)amount;
+            account.Amount += (decimal)amount;*/
     }
 
-    public void DeleteAccount(Client client, string accountNumber)
+    public void DeleteAccount(Account account)
     {
-        if (!Data.ContainsKey(client))
+        /*if (!Data.ContainsKey(client))
             throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
 
         var account = Data[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
@@ -116,18 +102,12 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
         if (account == null)
             throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
 
-        Data[client].Remove(account);
+        Data[client].Remove(account);*/
     }
-
-    public void WithdrawBankCurrencies()
-    {
-        Console.WriteLine("\nВалюты банка:\n" + string.Join('\n',
-            _listOfCurrencies.Select(currency => $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));
-    }
-
+    
     public IEnumerator<Client> GetEnumerator()
     {
-        return Data.Keys.GetEnumerator();
+        return ClientWithAccountsList.Keys.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

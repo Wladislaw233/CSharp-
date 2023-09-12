@@ -1,7 +1,10 @@
-select client.first_name Имя,
-       client.last_name Фамилия,
-       account.currency_name Валюта,
-       account.amount Остаток
-from public.client as client
-         RIGHT JOIN public.account as account on client.id = account.client_id
+select
+    clients.first_name,
+    clients.last_name,
+    currencies.code,
+    accounts.amount
+from accounts
+left join clients on accounts.client_id = clients.client_id
+left join currencies on accounts.currency_id = currencies.currency_id
+
 

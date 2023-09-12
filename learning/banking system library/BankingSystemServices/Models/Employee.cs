@@ -82,14 +82,14 @@ public class Employee : Person
     public override int GetHashCode()
     {
         var hash = 11;
-        hash = hash * 17 + FirstName?.GetHashCode() ?? 0;
-        hash = hash * 17 + LastName?.GetHashCode() ?? 0;
+        hash = hash * 17 + FirstName.GetHashCode();
+        hash = hash * 17 + LastName.GetHashCode();
         hash = hash * 17 + DateOfBirth.GetHashCode();
         hash = hash * 17 + Age.GetHashCode();
-        hash = hash * 17 + PhoneNumber?.GetHashCode() ?? 0;
-        hash = hash * 17 + Email?.GetHashCode() ?? 0;
-        hash = hash * 17 + Address?.GetHashCode() ?? 0;
-        hash = hash * 17 + Contract?.GetHashCode() ?? 0;
+        hash = hash * 17 + PhoneNumber.GetHashCode();
+        hash = hash * 17 + Email.GetHashCode();
+        hash = hash * 17 + Address.GetHashCode();
+        hash = hash * 17 + Contract.GetHashCode();
         hash = hash * 17 + Salary.GetHashCode();
         hash = hash * 17 + IsOwner.GetHashCode();
         hash = hash * 17 + Bonus.GetHashCode();

@@ -1,9 +1,12 @@
-SELECT
-    client.first_name Имя,
-    client.last_name Фамилия,
-    client.age Возраст
-FROM public.client as client
-GROUP BY
-    client.age, client.first_name, client.last_name
-ORDER BY
-    client.age
+/*не понял до конца задания, если группировать клиентов по возрасту,
+  то и по другим полям придется, если нужна еще какая-то информация о клиенте*/
+select
+    clients.age,
+    /*clients.first_name,*/
+    count(clients) as count
+from clients
+group by
+    age
+    /*,first_name*/
+order by
+    count desc

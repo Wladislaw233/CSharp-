@@ -1,12 +1,11 @@
-SELECT
-    client.first_name Имя,
-    client.last_name Фамилия,
-    account.currency_name Валюта,
-    account.amount Остаток
-FROM public.client as client
-LEFT JOIN public.account AS account
-    ON account.client_id = client.id
-WHERE
-    account.amount < 10000
-ORDER BY
-    account.amount DESC;
+select
+    clients.first_name,
+    clients.last_name,
+    accounts.amount
+from clients
+left join accounts
+    on clients.client_id = accounts.client_id
+where
+    accounts.amount < 10000
+order by
+    amount

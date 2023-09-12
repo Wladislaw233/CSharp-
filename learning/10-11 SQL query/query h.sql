@@ -1,6 +1,6 @@
-SELECT
-    client.first_name Имя,
-    client.last_name Фамилия,
-    client.date_of_birth Дата_рождения
-FROM public.client
-LIMIT 3
+select
+    clients.client_id,
+    clients.first_name,
+    clients.last_name
+from clients
+limit 3
