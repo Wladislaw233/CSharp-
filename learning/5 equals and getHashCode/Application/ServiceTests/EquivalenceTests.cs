@@ -44,7 +44,7 @@ public class EquivalenceTests
 
             var clientAccount = TestDataGenerator.GenerateRandomBankClientAccount(currency, copiedClient);
             Console.WriteLine(
-                $"Добавим аккаунт {clientAccount.AccountNumber}, {clientAccount.Amount} {clientAccount.Currency.Code} скопированному клиенту:");
+                $"Добавим аккаунт {clientAccount.AccountNumber}, {clientAccount.Amount} {clientAccount.Currency?.Code} скопированному клиенту:");
 
             if (clientsAccounts.ContainsKey(copiedClient))
                 clientsAccounts[copiedClient].Add(clientAccount);
