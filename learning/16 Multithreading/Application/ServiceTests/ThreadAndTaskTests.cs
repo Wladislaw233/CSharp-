@@ -108,6 +108,6 @@ public class ThreadAndTaskTests
     private static void PrintClientAccount(Account account)
     {
         Console.WriteLine(
-            $"Номер {account.AccountNumber}, валюта {account.Currency.Name}, баланс {account.Amount} {account.Currency.Code}");
+            $"Номер {account.AccountNumber}, валюта {account.Currency?.Name}, баланс {account.Amount} {account.Currency?.Code}");
     }
 }
