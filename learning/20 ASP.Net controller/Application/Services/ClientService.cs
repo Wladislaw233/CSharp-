@@ -55,12 +55,7 @@ public class ClientService
 
     public async Task<Client> UpdateClient(Guid clientId, ClientDto clientDto)
     {
-        var client =
-            await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
-
-        if (client == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!",
-                nameof(clientId));
+        var client = await GetClientById(clientId);
 
         client = MapDtoToClient(clientDto, client);
 
@@ -73,11 +68,7 @@ public class ClientService
 
     public async Task DeleteClient(Guid clientId)
     {
-        var bankClient =
-            await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
-
-        if (bankClient == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+        var bankClient = await GetClientById(clientId);
 
         var clientAccounts = await _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId))
             .ToListAsync();
@@ -93,9 +84,14 @@ public class ClientService
         await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task<Client?> GetClientById(Guid clientId)
-    {
-        return await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
+    public async Task<Client> GetClientById(Guid clientId)
+    { 
+        var client = await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
+
+        if (client == null)
+            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+        
+        return client;
     }
 
     private static Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)

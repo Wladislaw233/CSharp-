@@ -29,13 +29,7 @@ public class EmployeeService
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         string? contract = null, decimal? salary = null, bool? isOwner = null, decimal? bonus = null)
     {
-        var employee =
-            await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
-                employee.EmployeeId.Equals(employeeId));
-
-        if (employee == null)
-            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
-                nameof(employeeId));
+        var employee = await GetEmployeeById(employeeId);
         
         if (firstName != null)
             employee.FirstName = firstName;
@@ -77,6 +71,15 @@ public class EmployeeService
 
     public async Task DeleteEmployee(Guid employeeId)
     {
+        var bankEmployee = await GetEmployeeById(employeeId);
+        
+        _bankingSystemDbContext.Employees.Remove(bankEmployee);
+        
+        await SaveChanges();
+    }
+
+    private async Task<Employee> GetEmployeeById(Guid employeeId)
+    {
         var bankEmployee =
             await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
                 employee.EmployeeId.Equals(employeeId));
@@ -84,12 +87,10 @@ public class EmployeeService
         if (bankEmployee == null)
             throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
                 nameof(employeeId));
-        
-        _bankingSystemDbContext.Employees.Remove(bankEmployee);
-        
-        await SaveChanges();
-    }
 
+        return bankEmployee;
+    }
+    
     private async Task ValidateEmployee(Employee employee, bool isUpdate = false)
     {
         if (!isUpdate && await _bankingSystemDbContext.Employees.ContainsAsync(employee))

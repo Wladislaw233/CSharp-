@@ -1,8 +1,7 @@
-﻿using BankingSystemServices.Models;
+﻿using BankingSystemServices.Exceptions;
+using BankingSystemServices.Models;
 using BankingSystemServices.Services;
-using Bogus;
 using Services.Storage;
-using Currency = Bogus.DataSets.Currency;
 
 namespace Services;
 
@@ -23,133 +22,172 @@ public class ClientService
 
     public void UpdateClient(Guid clientId, Client newClient)
     {
-        if (!ClientExistsInBankingSystem(clientId))
-            throw new ArgumentException("Клиента не существует в банковской системе.", nameof(clientId));
-        
+        var client =
+            _clientStorage.ClientWithAccountsList.Keys.SingleOrDefault(client => client.ClientId.Equals(clientId));
+
+        if (client is null)
+            throw new ArgumentException($"The client does with ID {clientId} not exist in the banking system.",
+                nameof(clientId));
+
         ValidateClient(newClient, true);
-        
-        _clientStorage.Update(clientId, newClient);
+
+        _clientStorage.Update(client, newClient);
     }
 
     public void DeleteClient(Guid clientId)
     {
-        if(!ClientExistsInBankingSystem(clientId))
-            throw new ArgumentException("Клиента не существует в банковской системе.", nameof(clientId));
-        
-        _clientStorage.Delete(clientId);
+        var client = GetClientById(clientId);
+
+        _clientStorage.Delete(client);
     }
 
     public void AddClientAccount(Guid clientId, string currencyCode = "USD", decimal amount = 0)
     {
-        var client =
-            _clientStorage.ClientWithAccountsList.Keys.FirstOrDefault(client => client.ClientId.Equals(clientId));
-        
-        if (!ClientExistsInBankingSystem(client: client))
-            throw new ArgumentException("Клиента не существует в банковской системе.", nameof(clientId));
-        
-        var currency = _clientStorage.ListOfCurrencies.FirstOrDefault(currency => currency.Code == currencyCode);
-        
-        if (currency == null)
-            throw new ArgumentException("переданной валюты не существует в банковской системе!",
-                nameof(currencyCode));
-        
+        var client = GetClientById(clientId);
+
+        var currency = GetCurrencyByCurrencyCode(currencyCode);
+
         var account = TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
 
         _clientStorage.AddAccount(client, account);
     }
 
-    public void UpdateAccount(Guid accountId, Account newAccount)
+    public void UpdateAccount(Guid accountId, string? currencyCode = null, decimal? amount = null)
     {
-        
+        if (currencyCode is null && amount is null)
+            throw new InvalidOperationException("update options are not specified.");
+
+        var account = GetAccountById(accountId);
+
+        var newAccount = new Account();
+
+        if (!string.IsNullOrWhiteSpace(currencyCode))
+        {
+            var currency = GetCurrencyByCurrencyCode(currencyCode);
+
+            newAccount.CurrencyId = currency.CurrencyId;
+            newAccount.Currency = currency;
+        }
+
+        if (amount is null)
+            newAccount.Amount = account.Amount;
+        else
+            newAccount.Amount = (decimal)amount;
+
+        _clientStorage.UpdateAccount(account, newAccount);
     }
 
     public void DeleteAccount(Guid accountId)
+    {
+        var account = GetAccountById(accountId);
+
+        _clientStorage.DeleteAccount(account);
+    }
+
+    public List<Account> GetClientAccounts(Client client)
+    {
+        if (!_clientStorage.ClientWithAccountsList.ContainsKey(client))
+            throw new ArgumentException("The client does not exist in the banking system!", nameof(client));
+
+        return _clientStorage.ClientWithAccountsList[client];
+    }
+
+    public void WithdrawClientAccounts(Client client)
+    {
+        if (!_clientStorage.ClientWithAccountsList.ContainsKey(client))
+            throw new ArgumentException("The client does not exist in the banking system!", nameof(client));
+
+        Console.WriteLine($"Client: {client.FirstName} {client.LastName}, accounts:");
+
+        var mess = string.Join('\n',
+            _clientStorage.ClientWithAccountsList[client].Select(clientAccount =>
+                $"Account number: {clientAccount.AccountNumber}, currency: {clientAccount.Currency?.Name}, " +
+                $"amount: {clientAccount.Amount} {clientAccount.Currency?.Code}"));
+
+        Console.WriteLine(mess);
+    }
+
+    public void WithdrawBankCurrencies()
+    {
+        Console.WriteLine("\nBank currencies:\n" + string.Join('\n',
+            _clientStorage.ListOfCurrencies.Select(currency =>
+                $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));
+    }
+
+    private Client GetClientById(Guid clientId)
+    {
+        var client =
+            _clientStorage.ClientWithAccountsList.Keys.SingleOrDefault(client => client.ClientId.Equals(clientId));
+
+        if (client is null)
+            throw new ArgumentException($"The client does with ID {clientId} not exist in the banking system.",
+                nameof(clientId));
+
+        return client;
+    }
+
+    private Account GetAccountById(Guid accountId)
     {
         var account = _clientStorage.ClientWithAccountsList.Values.SelectMany(list => list)
             .FirstOrDefault(account => account.AccountId.Equals(accountId));
 
         if (account == null)
-            throw new ArgumentException($"Лицевого счета не существует в банковской системе!");
-        
-        _clientStorage.DeleteAccount(account);
-    }
-    
-    /*public List<Account> GetClientAccounts(Client client)
-    {
-        if (!_clientStorage.Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
+            throw new ArgumentException(
+                $"The personal account with ID {accountId} does not exist in the banking system!");
 
-        return _clientStorage.Data[client];
+        return account;
     }
 
-    public void WithdrawClientAccounts(Client client)
+    private Currency GetCurrencyByCurrencyCode(string currencyCode)
     {
-        if (!_clientStorage.Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
+        var currency = _clientStorage.ListOfCurrencies.SingleOrDefault(currency => currency.Code == currencyCode);
 
-        Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, лицевые счета:");
+        if (currency is null)
+            throw new ArgumentException(
+                $"The transferred currency {currencyCode} does not exist in the banking system!",
+                nameof(currencyCode));
 
-        var mess = string.Join('\n',
-            _clientStorage.Data[client].Select(clientAccount =>
-                $"Номер счета: {clientAccount.AccountNumber}, валюта: {clientAccount.Currency.Name}, " +
-                $"баланс: {clientAccount.Amount} {clientAccount.Currency.Code}"));
-        
-        Console.WriteLine(mess);
-    }*/
-
-    public void WithdrawBankCurrencies()
-    {
-        /*Console.WriteLine("\nВалюты банка:\n" + string.Join('\n',
-            _listOfCurrencies.Select(currency => $"{currency.Code} {currency.Name} {currency.ExchangeRate}")));*/
+        return currency;
     }
-    
+
     private void ValidateClient(Client client, bool isUpdating = false)
     {
-        if (!isUpdating && ClientExistsInBankingSystem(client: client))
-            throw new InvalidOperationException("Клиент уже существует в банковской системе!");
-        
-        if (string.IsNullOrWhiteSpace(client.FirstName))
-            throw new ArgumentException("Не указано имя клиента!", nameof(client.FirstName));
-        
-        if (string.IsNullOrWhiteSpace(client.LastName))
-            throw new ArgumentException("Не указана фамилия клиента!", nameof(client.LastName));
-        
-        if (string.IsNullOrWhiteSpace(client.PhoneNumber))
-            throw new ArgumentException("Не указан номер клиента!", nameof(client.PhoneNumber));
-        
-        if (string.IsNullOrWhiteSpace(client.Email))
-            throw new ArgumentException("Не указан e-mail клиента!", nameof(client.Email));
-        
-        if (string.IsNullOrWhiteSpace(client.Address))
-            throw new ArgumentException("Не указан адрес клиента!", nameof(client.Email));
+        if (!isUpdating && _clientStorage.ClientWithAccountsList.ContainsKey(client))
+            throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
-        if (client.DateOfBirth > DateTime.Now || client.DateOfBirth == DateTime.MinValue ||
-            client.DateOfBirth == DateTime.MaxValue)
-            throw new ArgumentException("Дата рождения клиента указана неверно!", nameof(client.DateOfBirth));
+        if (string.IsNullOrWhiteSpace(client.FirstName))
+            throw new PropertyValidationException("Client first name not specified!", nameof(client.FirstName),
+                nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.LastName))
+            throw new PropertyValidationException("The client last name not specified!", nameof(client.LastName),
+                nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.PhoneNumber))
+            throw new PropertyValidationException("Client number not specified!", nameof(client.PhoneNumber),
+                nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.Email))
+            throw new PropertyValidationException("Client e-mail not specified!", nameof(client.Email), nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.Address))
+            throw new PropertyValidationException("Client address not specified!", nameof(client.Address),
+                nameof(Client));
+
+        if (client.DateOfBirth > DateTime.Now || client.DateOfBirth.Equals(DateTime.MinValue) ||
+            client.DateOfBirth.Equals(DateTime.MaxValue))
+            throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
+                nameof(Client));
 
         var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
 
         if (age < 18)
-            throw new ArgumentException("Клиенту меньше 18 лет!", nameof(client.DateOfBirth));
+            throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
+                nameof(Client));
 
-        if (age != client.Age || client.Age <= 0)
-        {
-            client.Age = age;
-            Console.WriteLine("Возраст клиента указан неверно и был скорректирован по дате его рождения!");
-        }
+        if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
     }
-    
-    private bool ClientExistsInBankingSystem(Guid? clientId = null, Client? client = null)
-    {
-        if (client != null)
-            return _clientStorage.ClientWithAccountsList.ContainsKey(client);
-            
-        if (clientId.HasValue)
-            return _clientStorage.ClientWithAccountsList.Keys.FirstOrDefault(bankClient => bankClient.ClientId.Equals(clientId)) != null;
 
-        return false;
-    }
-    /*
     public List<Client> GetClientsByFilters(string firstNameFilter = "",
         string lastNameFilter = "", string phoneNumberFilter = "", DateTime? minDateOfBirth = null,
         DateTime? maxDateOfBirth = null)
@@ -167,5 +205,5 @@ public class ClientService
             filteredClients = filteredClients.Where(client => client.DateOfBirth <= maxDateOfBirth);
 
         return filteredClients.ToList();
-    }*/
+    }
 }

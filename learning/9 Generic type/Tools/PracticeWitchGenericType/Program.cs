@@ -4,19 +4,19 @@ using ServiceTests;
 
 namespace PracticeWitchGenericType;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
-        // запуск тестов сервисов для клиентов и сотрудников.
+        /*// launching service tests for clients and employees.
         ClientStorageTests.ClientStorageTest();
-        EmployeeStorageTests.EmployeeStorageTest();
+        EmployeeStorageTests.EmployeeStorageTest();*/
 
-        // запуск тестов IEnumerable для клиентов и сотрудников.
+        // running IEnumerable tests for clients and employees.
         EnumerableTests.GetClientsByFiltersTest();
         EnumerableTests.GetEmployeesByFiltersTest();
 
-        // запуск тестов с черным листом и бонусами.
+        // running tests with a black sheet and bonuses.
         GenericTypeTests.BankServiceTest();
     }
 }

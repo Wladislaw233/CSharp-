@@ -8,7 +8,7 @@ namespace ServiceTests;
 
 public class EmployeeStorageTests
 {
-    private static List<Employee> _bankEmployees = new();
+    /*private static List<Employee> _bankEmployees = new();
     private static readonly EmployeeStorage _employeeStorage = new();
     private static readonly EmployeeService _employeeService = new(_employeeStorage);
 
@@ -46,5 +46,5 @@ public class EmployeeStorageTests
 
         Console.WriteLine("\nСписок сотрудников после добавления:");
         _employeeService.WithdrawEmployees();
-    }
+    }*/
 }

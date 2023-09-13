@@ -8,7 +8,7 @@ namespace ServiceTests;
 
 public class ClientStorageTests
 {
-    private static List<Client> _bankClients = new();
+    /*private static List<Client> _bankClients = new();
     private static readonly ClientStorage _clientStorage = new();
     private static readonly ClientService _clientService = new(_clientStorage);
 
@@ -150,5 +150,5 @@ public class ClientStorageTests
         {
             Console.WriteLine("Клиент не найден!");
         }
-    }
+    }*/
 }

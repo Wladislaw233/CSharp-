@@ -24,12 +24,24 @@ public class EmployeeController : ControllerBase
     [HttpGet("GetEmployeeById/{employeeId:guid}")]
     public async Task<ActionResult<Employee>> GetEmployeeById(Guid employeeId)
     {
-        var employee = await _employeeService.GetEmployeeById(employeeId);
-
-        if (employee == null)
-            return NotFound();
-
-        return employee;
+        try
+        {
+            var employee = await _employeeService.GetEmployeeById(employeeId);
+            return employee;
+        }
+        catch (ArgumentException exc)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(exc,
+                "An error occurred while retrieving a employee by ID from the database.");
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
+        catch (Exception exc)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
     }
 
     [HttpDelete("DeletingEmployeeById/{employeeId:guid}")]

@@ -24,12 +24,24 @@ public class ClientController : ControllerBase
     [HttpGet("GetClientById/{clientId:guid}")]
     public async Task<ActionResult<Client>> GetClientById(Guid clientId)
     {
-        var client = await _clientService.GetClientById(clientId);
-
-        if (client == null)
-            return NotFound();
-
-        return client;
+        try
+        {
+            var client = await _clientService.GetClientById(clientId);
+            return client;
+        }
+        catch (ArgumentException exc)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(exc,
+                "An error occurred while retrieving a client by ID from the database.");
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
+        catch (Exception exc)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
     }
 
     [HttpPost("AddingClient")]

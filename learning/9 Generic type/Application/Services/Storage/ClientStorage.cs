@@ -19,90 +19,47 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
         if (currency != null)
             _defaultCurrency = currency;
         else
-            throw new ValueNotFoundException("Не удалось установить валюту по умолчанию!");
+            throw new ValueNotFoundException("Failed to set default currency!");
     }
 
     public void Add(Client client)
     {
-        var defaultAccount = TestDataGenerator.GenerateRandomBankClientAccount(,);
-        ClientWithAccountsList.Add(client, );
+        var defaultAccount = TestDataGenerator.GenerateRandomBankClientAccount(_defaultCurrency, client, 0);
+        ClientWithAccountsList.Add(client, new List<Account>(){defaultAccount});
     }
 
     public void Update(Client client, Client newClient)
     {
-        
-       /* if (!Data.ContainsKey(client))
-            throw new CustomException(
-                $"Клиента {client.FirstName} {client.LastName} не существует в банковской системе!",
-                nameof(client));
-        
-        if (firstName != null)
-            client.FirstName = firstName;
-        if (lastName != null)
-            client.LastName = lastName;
-        if (age != null)
-            client.Age = (int)age;
-        if (dateOfBirth != null)
-            client.DateOfBirth = ((DateTime)dateOfBirth).ToUniversalTime();
-        if (phoneNumber != null)
-            client.PhoneNumber = phoneNumber;
-        if (address != null)
-            client.Address = address;
-        if (email != null)
-            client.Email = email;
-        if (bonus != null)
-            client.Bonus = (decimal)bonus;
-        
-        ClientService.ValidateClient(client);*/
+        client.FirstName = newClient.FirstName;
+        client.LastName = newClient.LastName;
+        client.DateOfBirth = newClient.DateOfBirth;
+        client.Age = newClient.Age;
+        client.Bonus = newClient.Bonus;
+        client.Address = newClient.Address;
+        client.PhoneNumber = newClient.PhoneNumber;
+        client.Email = newClient.Email;
     }
 
     public void Delete(Client client)
     {
-        /*if (!Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-        Data.Remove(client);*/
+        ClientWithAccountsList.Remove(client);
     }
 
     public void AddAccount(Client client, Account account)
     {
-        
-        Data[client].Add(TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount));
+        ClientWithAccountsList[client].Add(account);
     }
 
     public void UpdateAccount(Account account, Account newAccount)
     {
-        /*if (!Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-
-        var account = Data[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
-
-        if (account == null)
-            throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
-
-        if (!string.IsNullOrWhiteSpace(currencyCode))
-        {
-            var currency = _listOfCurrencies.Find(foundCurrency => foundCurrency.Code == currencyCode);
-            if (currency == null)
-                throw new CustomException($"В банке нет переданной валюты ({currencyCode})!", nameof(currencyCode));
-            account.CurrencyId = currency.CurrencyId;
-            account.Currency = currency;
-        }
-
-        if (amount != null)
-            account.Amount += (decimal)amount;*/
+        account.Currency = newAccount.Currency;
+        account.CurrencyId = newAccount.CurrencyId;
+        account.Amount = newAccount.Amount;
     }
 
     public void DeleteAccount(Account account)
     {
-        /*if (!Data.ContainsKey(client))
-            throw new CustomException("Клиента не существует в банковской системе!", nameof(client));
-
-        var account = Data[client].Find(foundAccount => foundAccount.AccountNumber == accountNumber);
-
-        if (account == null)
-            throw new CustomException($"У клиента нет счета с номером {accountNumber}!", nameof(accountNumber));
-
-        Data[client].Remove(account);*/
+        ClientWithAccountsList.Values.SelectMany(list => list).ToList().Remove(account);
     }
     
     public IEnumerator<Client> GetEnumerator()

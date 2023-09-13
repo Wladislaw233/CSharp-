@@ -1,6 +1,7 @@
 ﻿using BankingSystemServices.Database;
 using BankingSystemServices.Exceptions;
 using BankingSystemServices.Models;
+using BankingSystemServices.Models.DTO;
 using BankingSystemServices.Services;
 
 namespace Services;
@@ -27,12 +28,7 @@ public class EmployeeService
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         string? contract = null, decimal? salary = null, bool? isOwner = null, decimal? bonus = null)
     {
-        var employee =
-            _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
-
-        if (employee == null)
-            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
-                nameof(employeeId));
+        var employee = GetEmployeeById(employeeId);
 
         if (firstName != null)
             employee.FirstName = firstName;
@@ -74,6 +70,15 @@ public class EmployeeService
 
     public void DeleteEmployee(Guid employeeId)
     {
+        var bankEmployee = GetEmployeeById(employeeId);
+
+        _bankingSystemDbContext.Employees.Remove(bankEmployee);
+
+        SaveChanges();
+    }
+
+    private Employee GetEmployeeById(Guid employeeId)
+    {
         var bankEmployee =
             _bankingSystemDbContext.Employees.SingleOrDefault(employee => employee.EmployeeId.Equals(employeeId));
 
@@ -81,11 +86,9 @@ public class EmployeeService
             throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
                 nameof(employeeId));
 
-        _bankingSystemDbContext.Employees.Remove(bankEmployee);
-
-        SaveChanges();
+        return bankEmployee;
     }
-
+    
     private void ValidateEmployee(Employee employee, bool isUpdate = false)
     {
         if (!isUpdate && _bankingSystemDbContext.Employees.Contains(employee))

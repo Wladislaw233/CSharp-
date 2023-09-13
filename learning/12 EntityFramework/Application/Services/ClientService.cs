@@ -49,12 +49,7 @@ public class ClientService
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
         decimal? bonus = null)
     {
-        var client =
-            _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
-
-        if (client == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!",
-                nameof(clientId));
+        var client = GetClientById(clientId);
 
         if (firstName != null)
             client.FirstName = firstName;
@@ -83,15 +78,12 @@ public class ClientService
         ValidateClient(client, true);
         SaveChanges();
     }
-
+    
     public void DeleteClient(Guid clientId)
     {
-        var bankClient = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        var bankClient = GetClientById(clientId);
 
-        if (bankClient == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
-
-        var clientAccounts = _bankingSystemDbContext.Accounts.Where(account => account.ClientId == clientId).ToList();
+        var clientAccounts = GetClientAccounts(clientId);
 
         _bankingSystemDbContext.Accounts.RemoveRange(clientAccounts);
         _bankingSystemDbContext.Clients.Remove(bankClient);
@@ -101,15 +93,9 @@ public class ClientService
 
     public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
     {
-        var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+        var client = GetClientById(clientId);
 
-        if (client == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
-
-        var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
-
-        if (currency == null)
-            throw new ArgumentException($"There is no currency with {currencyCode}!", nameof(currencyCode));
+        var currency = GetCurrencyByCurrencyCode(currencyCode);
 
         var account = CreateAccount(client, currency, amount);
 
@@ -123,21 +109,14 @@ public class ClientService
 
     public void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
-        var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
-
-        if (account == null)
-            throw new ArgumentException($"There is no personal account with ID {accountId}.", nameof(accountId));
+        var account = GetAccountById(accountId);
 
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
-            var currency =
-                _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
-            if (currency == null)
-                throw new ArgumentException($"The bank does not have the transferred currency ({currencyCode}).",
-                    nameof(currencyCode));
-
-            account.AccountNumber = account.AccountNumber.Remove(account.AccountNumber.Length - 3) + currencyCode;
+            var currency = GetCurrencyByCurrencyCode(currencyCode);
+            
             account.CurrencyId = currency.CurrencyId;
+            account.Currency = currency;
         }
 
         if (amount != null)
@@ -147,10 +126,7 @@ public class ClientService
 
     public void DeleteClientAccount(Guid accountId)
     {
-        var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
-
-        if (account == null)
-            throw new ArgumentException($"There is no personal account with ID {accountId}.", nameof(accountId));
+        var account = GetAccountById(accountId);
 
         _bankingSystemDbContext.Accounts.Remove(account);
 
@@ -182,6 +158,38 @@ public class ClientService
         return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
     }
 
+    private Client GetClientById(Guid clientId)
+    {
+        var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
+
+        if (client == null)
+            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+
+        return client;
+    }
+
+    private Account GetAccountById(Guid accountId)
+    {
+        var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
+
+        if (account == null)
+            throw new ArgumentException($"There is no personal account with ID {accountId}.", nameof(accountId));
+
+        return account;
+    }
+
+    private Currency GetCurrencyByCurrencyCode(string currencyCode)
+    {
+        var currency =
+            _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
+        
+        if (currency == null)
+            throw new ArgumentException($"The bank does not have the transferred currency ({currencyCode}).",
+                nameof(currencyCode));
+
+        return currency;
+    }
+    
     private void ValidateClient(Client client, bool itUpdate)
     {
         if (!itUpdate && _bankingSystemDbContext.Clients.Contains(client))

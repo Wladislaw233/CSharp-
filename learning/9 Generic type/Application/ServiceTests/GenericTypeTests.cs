@@ -2,13 +2,13 @@
 
 namespace ServiceTests;
 
-public class GenericTypeTests
+public static class GenericTypeTests
 {
     public static void BankServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Запуск тестов generic type.");
-        Console.WriteLine("Черный список и бонусы:");
+        Console.WriteLine("Running generic type tests.");
+        Console.WriteLine("Blacklist and bonuses:");
         Console.ResetColor();
         var bankService = new BankService();
 
@@ -19,7 +19,7 @@ public class GenericTypeTests
         var employeeSalary = new decimal(150.67);
         
         Console.WriteLine(
-            $"\nДобавим клиентов в черный  список возраст которых меньше {clientAge} и сотрудников зарплата которых меньше {employeeSalary}:");
+            $"\nLet's add clients to the blacklist whose age is less than {clientAge} and employees whose salary is less than {employeeSalary}:");
 
         var blacklistedClients = bankClients.Where(client => client.Age < clientAge).ToList();
         
@@ -39,15 +39,15 @@ public class GenericTypeTests
         {
             var isEmployeeInBlackList = bankService.IsPersonInBlackList(employeeInBlackList);
             Console.WriteLine(
-                $"\nЕсть ли сотрудник {employeeInBlackList.FirstName} {employeeInBlackList.LastName} в черном списке? " +
+                $"\nIs {employeeInBlackList.FirstName} {employeeInBlackList.LastName} blacklisted? " +
                 $"- {isEmployeeInBlackList}");
         }
         else
-            Console.WriteLine("Сотрудник из черного листа не найден!");
+            Console.WriteLine("The employee was not found on the blacklist!");
 
         var employeeBonus = new decimal(569.12);
         
-        Console.WriteLine($"\nНачисление бонуса сотруднику в размере {employeeBonus}:");
+        Console.WriteLine($"\nAccrual of a bonus to an employee in the amount of {employeeBonus}:");
         
         var employeeWithBonus = bankEmployees.FirstOrDefault();
         
@@ -55,9 +55,9 @@ public class GenericTypeTests
         {
             BankService.AddBonus(employeeWithBonus, employeeBonus);
             Console.WriteLine(
-                $"Сотрудник: {employeeWithBonus.FirstName} {employeeWithBonus.LastName}, бонус: {employeeWithBonus.Bonus}");
+                $"Employee: {employeeWithBonus.FirstName} {employeeWithBonus.LastName}, bonus amount: {employeeWithBonus.Bonus}");
         }
         else
-            Console.WriteLine("Сотрудник с бонусом не найден!");
+            Console.WriteLine("Employee not found!");
     }
 }

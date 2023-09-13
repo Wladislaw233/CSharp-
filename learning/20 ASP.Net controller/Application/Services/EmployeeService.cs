@@ -31,13 +31,7 @@ public class EmployeeService
 
     public async Task<Employee> UpdateEmployee(Guid employeeId, EmployeeDto employeeDto)
     {
-        var employee =
-            await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
-                employee.EmployeeId.Equals(employeeId));
-
-        if (employee == null)
-            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
-                nameof(employeeId));
+        var employee = await GetEmployeeById(employeeId);
 
         employee = MapDtoToEmployee(employeeDto, employee);
 
@@ -50,13 +44,7 @@ public class EmployeeService
 
     public async Task DeleteEmployee(Guid employeeId)
     {
-        var bankEmployee =
-            await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
-                employee.EmployeeId.Equals(employeeId));
-
-        if (bankEmployee == null)
-            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
-                nameof(employeeId));
+        var bankEmployee = await GetEmployeeById(employeeId);
 
         _bankingSystemDbContext.Employees.Remove(bankEmployee);
 
@@ -110,10 +98,16 @@ public class EmployeeService
         if (age != employee.Age || employee.Age <= 0) employee.Age = age;
     }
 
-    public async Task<Employee?> GetEmployeeById(Guid employeeId)
+    public async Task<Employee> GetEmployeeById(Guid employeeId)
     {
-        return await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
+        var employee = await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
             employee.EmployeeId.Equals(employeeId));
+        
+        if (employee == null)
+            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
+                nameof(employeeId));
+        
+        return employee;
     }
 
     private async Task SaveChanges()

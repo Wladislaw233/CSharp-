@@ -1,72 +1,68 @@
-﻿using BankingSystemServices.Services;
+﻿using BankingSystemServices.Models;
+using BankingSystemServices.Services;
 using Services;
 using Services.Storage;
 
 namespace ServiceTests;
 
-public class EnumerableTests
+public static class EnumerableTests
 {
     public static void GetClientsByFiltersTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Enumerable test");
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Клиенты");
+        Console.WriteLine("Clients");
         Console.ResetColor();
 
         var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage); 
-        
+        var clientService = new ClientService(clientStorage);
+
         var bankClients = TestDataGenerator.GenerateListWithBankClients(10000);
-        
+
         foreach (var client in bankClients)
             clientStorage.Add(client);
 
-        var clientFirstName = "Mack";
+        const string clientFirstName = "Mack";
         var clientMinDateOfBirth = new DateTime(1970, 1, 1);
         var clientMaxDateOfBirth = new DateTime(2000, 1, 1);
 
         Console.WriteLine(
-            $"Поиск клиентов с именем {clientFirstName} и датой рождения большей {clientMinDateOfBirth:D} и меньшей {clientMaxDateOfBirth:D}:");
-        
+            $"Search for clients with name {clientFirstName} and date of birth greater than {clientMinDateOfBirth:D} and lesser {clientMaxDateOfBirth:D}:");
+
         var filteredClients =
             clientService.GetClientsByFilters(
                 clientFirstName,
                 minDateOfBirth: clientMinDateOfBirth,
                 maxDateOfBirth: clientMaxDateOfBirth
-                );
-        
+            );
+
         foreach (var client in filteredClients)
-            Console.WriteLine($"Клиент: {client.FirstName} {client.LastName}, " +
-                              $"дата рождения: {client.DateOfBirth.ToString("D")}, " +
-                              $"телефон: {client.PhoneNumber}, " +
-                              $"почта: {client.Email}");
+            PrintClientRepresentation(client);
 
         var sortedByDateOfBirthClients = clientStorage.OrderByDescending(client => client.DateOfBirth).ToList();
 
         var youngestClient = sortedByDateOfBirthClients.First();
-        Console.WriteLine($"\nСамый молододой клиент: {youngestClient.FirstName} {youngestClient.LastName}, " +
-                          $"дата рождения {youngestClient.DateOfBirth.ToString("D")}");
+        PrintClientRepresentation(youngestClient);
 
         var oldestClient = sortedByDateOfBirthClients.Last();
-        Console.WriteLine($"\nСамый старый клиент: {oldestClient.FirstName} {oldestClient.LastName}, " +
-                          $"дата рождения {oldestClient.DateOfBirth.ToString("D")}");
+        PrintClientRepresentation(oldestClient);
 
         var averageAge = clientStorage.Average(client => client.Age);
-        Console.WriteLine($"\nСредний возраст клиентов - {averageAge}");
+        Console.WriteLine($"\nAverage age of clients - {averageAge}");
     }
 
     public static void GetEmployeesByFiltersTest()
     {
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Сотрудники");
+        Console.WriteLine("Employees");
         Console.ResetColor();
 
         var employeeStorage = new EmployeeStorage();
         var employeeService = new EmployeeService(employeeStorage);
-        
+
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(10000);
-        
+
         foreach (var employee in bankEmployees)
             employeeStorage.Add(employee);
 
@@ -75,7 +71,7 @@ public class EnumerableTests
         var employeeMaxDateOfBirth = new DateTime(2000, 1, 1);
 
         Console.WriteLine(
-            $"Поиск сотрудников с именем {employeeFirstName} и датой рождения большей {employeeMinDateOfBirth:D} и меньшей {employeeMaxDateOfBirth:D}:");
+            $"Search for employees with the name {employeeFirstName} and a date of birth higher than {employeeMinDateOfBirth:D} and lower than {employeeMaxDateOfBirth:D}:");
 
         var filteredEmployees =
             employeeService.GetEmployeesByFilters(
@@ -85,22 +81,33 @@ public class EnumerableTests
             );
 
         foreach (var employee in filteredEmployees)
-            Console.WriteLine($"Сотрудник: {employee.FirstName} {employee.LastName}, " +
-                              $"дата рождения: {employee.DateOfBirth.ToString("D")}, " +
-                              $"зарплата: {employee.Salary}, " +
-                              $"контракт: {employee.Contract}");
+            PrintEmployeeRepresentation(employee);
 
         var sortedByDateOfBirthEmployees = employeeStorage.OrderByDescending(employee => employee.DateOfBirth).ToList();
 
         var youngestEmployee = sortedByDateOfBirthEmployees.First();
-        Console.WriteLine($"\nСамый молододой сотрудник: {youngestEmployee.FirstName} {youngestEmployee.LastName}, " +
-                          $"дата рождения {youngestEmployee.DateOfBirth.ToString("D")}");
+        PrintEmployeeRepresentation(youngestEmployee);
 
         var oldestEmployee = sortedByDateOfBirthEmployees.Last();
-        Console.WriteLine($"\nСамый старый сотрудник: {oldestEmployee.FirstName} {oldestEmployee.LastName}, " +
-                          $"дата рождения {oldestEmployee.DateOfBirth.ToString("D")}");
+        PrintEmployeeRepresentation(oldestEmployee);
 
         var averageSalary = employeeStorage.Average(employee => employee.Salary);
-        Console.WriteLine($"\nСредняя зарплата сотрудников - {averageSalary}");
+        Console.WriteLine($"\nAverage employee salary - {averageSalary}");
+    }
+
+    private static void PrintClientRepresentation(Client client)
+    {
+        Console.WriteLine($"Client: {client.FirstName} {client.LastName}, " +
+                          $"Date of Birth: {client.DateOfBirth:D}, " +
+                          $"phone number: {client.PhoneNumber}, " +
+                          $"email: {client.Email}");
+    }
+
+    private static void PrintEmployeeRepresentation(Employee employee)
+    {
+        Console.WriteLine($"Employee: {employee.FirstName} {employee.LastName}, " +
+                          $"Date of Birth: {employee.DateOfBirth:D}, " +
+                          $"Salary: {employee.Salary}, " +
+                          $"Contract: {employee.Contract}");
     }
 }
