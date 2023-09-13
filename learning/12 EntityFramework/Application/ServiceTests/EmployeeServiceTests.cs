@@ -6,80 +6,146 @@ using BankingSystemServices.Exceptions;
 
 namespace ServiceTests;
 
-public class EmployeeServiceTests
+public static class EmployeeServiceTests
 {
     public static void EmployeeServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("\nСотрудники");
+        Console.WriteLine("\nEmployees");
         Console.ResetColor();
 
         using var bankingSystemDbContext = new BankingSystemDbContext();
+ 
+        var employeeService = new EmployeeService(bankingSystemDbContext);
 
+        var bankEmployee = AddingEmployeesTest(employeeService);
+
+        if (bankEmployee != null)
+        {
+            UpdatingEmployeeTest(employeeService, bankEmployee);
+            DeletingEmployeeTest(employeeService, bankEmployee);
+            GettingEmployeesWithFilterTest(employeeService);
+        }
+        else
+        {
+            Console.WriteLine("Test employee not found!");
+        }
+    }
+
+    private static Employee? AddingEmployeesTest(EmployeeService employeeService)
+    {
+        var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
+        
+        Console.WriteLine("Added 5 employees:");
+        
+        PrintEmployeeRepresentation(addedBankEmployees);
+        
         try
         {
-            var employeeService = new EmployeeService(bankingSystemDbContext);
-
-            var addedBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
-        
-            foreach (var employee in addedBankEmployees)
+            foreach (var employee in addedBankEmployees) 
                 employeeService.AddEmployee(employee);
-
-            var bankEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5);
-
-            Console.WriteLine("Добавленные 5 сотрудников:");
-            Console.WriteLine(string.Join("\n",
-                bankEmployees.Select(employee =>
-                    $"Имя: {employee.FirstName}, фамилия: {employee.LastName}, зарплата: {employee.Salary} $, владелец: {employee.IsOwner} ")));
-
-            var bankEmployee = bankEmployees.FirstOrDefault();
-            if (bankEmployee != null)
-            {
-                UpdatingEmployeeTest(employeeService, bankEmployee);
-                DeletingEmployeeTest(employeeService, bankEmployee);
-                GettingEmployeesWithFilterTest(employeeService);
-            }
-            else
-                Console.WriteLine("Сотрудник для тестов не найден!");
+            
+            return addedBankEmployees.FirstOrDefault();
         }
-        catch (CustomException exception)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the employee to the database.");
+            Console.WriteLine(mess);
         }
-        bankingSystemDbContext.Dispose();
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+
+        return null;
     }
 
     private static void UpdatingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
     {
-        Console.WriteLine("Изменим сотруднику имя и фамилию:");
+        Console.WriteLine("Let's change the employee's first and last name:");
         Console.WriteLine(
-            $"До изменения {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
+            $"Before the change {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
 
-        employeeService.UpdateEmployee(bankEmployee.EmployeeId, "Иван", "Иванов");
-
-        Console.WriteLine(
-            $"После изменения {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
+        try
+        {
+            employeeService.UpdateEmployee(bankEmployee.EmployeeId, "Ivan", "Ivanov");
+            Console.WriteLine(
+                $"After the change {bankEmployee.FirstName} {bankEmployee.LastName}. id {bankEmployee.EmployeeId}");
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while updating the employee in database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+        
+        
     }
 
     private static void DeletingEmployeeTest(EmployeeService employeeService, Employee bankEmployee)
     {
-        Console.WriteLine($"Удаление сотрудника с id - {bankEmployee.EmployeeId}");
-        employeeService.DeleteEmployee(bankEmployee.EmployeeId);
+        Console.WriteLine($"Removing an employee with id - {bankEmployee.EmployeeId}");
+        try
+        {
+            employeeService.DeleteEmployee(bankEmployee.EmployeeId);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while deleting the client in database.");
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void GettingEmployeesWithFilterTest(EmployeeService employeeService)
     {
-        Console.WriteLine("Выведем первые 5 владельцев банка:");
-        
-        var filteredEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5, isOwner: true);
-        
-        Console.WriteLine("Владельцы:");
-        
+        Console.WriteLine("Let's display the first 5 owners of the bank:");
+
+        try
+        {
+            var filteredEmployees = employeeService.EmployeesWithFilterAndPagination(1, 5, isOwner: true);
+
+            Console.WriteLine("Bank owners:");
+
+            PrintEmployeeRepresentation(filteredEmployees);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+    }
+
+    private static void PrintEmployeeRepresentation(IEnumerable<Employee> employees)
+    {
         var mess = string.Join("\n",
-            filteredEmployees.Select(employee =>
-                $"Имя {employee.FirstName}, фамилия {employee.LastName}, дата рождения {employee.DateOfBirth.ToString("D")}, " +
-                $"зарплата: {employee.Salary} $, владелец: {employee.IsOwner}"));
-        
+            employees.Select(employee =>
+                $"Firstname {employee.FirstName}, lastname {employee.LastName}, Date of Birth {employee.DateOfBirth:D}," +
+                $" salary: {employee.Salary} $, is owner: {employee.IsOwner}"));
+
         Console.WriteLine(mess);
     }
+    
 }

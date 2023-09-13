@@ -1,22 +1,22 @@
-﻿using BankingSystemServices.Models;
+﻿using BankingSystemServices.Database;
+using BankingSystemServices.Exceptions;
+using BankingSystemServices.Models;
 using BankingSystemServices.Services;
 using Services;
-using BankingSystemServices.Database;
-using BankingSystemServices.Exceptions;
 
 namespace ServiceTests;
 
-public class ClientServiceTests
+public static class ClientServiceTests
 {
     public static void ClientServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Клиенты");
+        Console.WriteLine("Clients");
         Console.ResetColor();
-        
+
         using var bankingSystemDbContext = new BankingSystemDbContext();
         var clientService = new ClientService(bankingSystemDbContext);
-        
+
         var bankClient = AddingClientTest(clientService).Result;
 
         if (bankClient != null)
@@ -29,7 +29,9 @@ public class ClientServiceTests
             GettingClientsWithFilterTest(clientService).Wait();
         }
         else
-            Console.WriteLine("Клиент для тестов не найден!");
+        {
+            Console.WriteLine("Test client not found!");
+        }
     }
 
     private static async Task<Client?> AddingClientTest(ClientService clientService)
@@ -43,49 +45,66 @@ public class ClientServiceTests
 
             return bankClients.FirstOrDefault();
         }
-        catch (CustomException e)
+        catch (InvalidOperationException e)
         {
-            CustomException.ExceptionHandling("Во время добавления клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while performing the operation.");
+            Console.WriteLine(mess);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the client to the database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
 
         return null;
     }
-    
+
     private static async Task AddingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+        Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
 
-        var presentationBankClientAccounts =
+        var representationBankClientAccounts =
             await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-        Console.WriteLine(presentationBankClientAccounts);
+        Console.WriteLine(representationBankClientAccounts);
 
-        var currencyCode = "EUR";
+        const string currencyCode = "EUR";
         var amount = new decimal(1455.23);
-        
-        Console.WriteLine($"Добавим счет {currencyCode} с балансом {amount}:");
+
+        Console.WriteLine($"Add account {currencyCode} with balance {amount}:");
 
         try
         {
             await clientService.AddClientAccount(bankClient.ClientId, currencyCode, amount);
 
-            presentationBankClientAccounts =
+            representationBankClientAccounts =
                 await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-            Console.WriteLine(presentationBankClientAccounts);
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine(representationBankClientAccounts);
         }
-        catch (CustomException e)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Во время добавления счета клиенту возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the client account to the database.");
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
 
@@ -98,27 +117,31 @@ public class ClientServiceTests
             var account = bankClientAccounts.Last();
 
             var amount = new decimal(30000);
-            
-            Console.WriteLine($"Обновим баланс счета {account.AccountNumber} клиенту {bankClient.FirstName} {bankClient.LastName} на {amount}:");
-            
+
+            Console.WriteLine(
+                $"Let's update the account balance {account.AccountNumber} for client {bankClient.FirstName} {bankClient.LastName} to {amount}:");
+
             await clientService.UpdateClientAccount(account.AccountId, amount: amount);
 
             var presentationBankClientAccounts =
                 await clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
             Console.WriteLine(presentationBankClientAccounts);
         }
-        catch (CustomException e)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Во время обновления счета клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while updating the client account in database.");
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
-    
+
     private static async Task DeletingClientAccountTest(ClientService clientService, Client bankClient)
     {
         var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
@@ -127,86 +150,101 @@ public class ClientServiceTests
 
         try
         {
-            Console.WriteLine($"Удалим счет {account.AccountNumber}:");
-            
+            Console.WriteLine($"Let's delete the account {account.AccountNumber}:");
+
             await clientService.DeleteClientAccount(account.AccountId);
-            
-            Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-            
+
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+
             var presentationBankClientAccounts =
                 await clientService.GetPresentationClientAccounts(bankClient.ClientId);
-            
+
             Console.WriteLine(presentationBankClientAccounts);
         }
-        catch (CustomException e)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Во время удаления счета клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while deleting the client account in database.");
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
 
     private static async Task UpdatingClientTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Изменим клиенту имя и фамилию:");
+        Console.WriteLine("Let's change the client's first and last name:");
         Console.WriteLine(
-            $"До изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+            $"Before the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
 
         try
         {
-            await clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
+            await clientService.UpdateClient(bankClient.ClientId, "Vlad", "Yurchenko");
             Console.WriteLine(
-                $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+                $"After the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
         }
-        catch (CustomException e)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Во время обновления клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while updating the client in database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
 
     private static async Task DeletingClientTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Удаление клиента с id - {bankClient.ClientId}");
+        Console.WriteLine($"Delete client by id - {bankClient.ClientId}");
         try
         {
             await clientService.DeleteClient(bankClient.ClientId);
         }
-        catch (CustomException e)
+        catch (ArgumentException e)
         {
-            CustomException.ExceptionHandling("Во время удаления клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while deleting the client in database.");
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
 
     private static async Task GettingClientsWithFilterTest(ClientService clientService)
     {
-        var clientFirstName = "Al";
-        
-        Console.WriteLine($"Выведем клиентов с именем {clientFirstName}:");
+        const string clientFirstName = "Al";
+
+        Console.WriteLine($"We will display clients with the name {clientFirstName}:");
         try
         {
-            var filteredClients = await clientService.ClientsWithFilterAndPagination(1, 100, "Al");
+            var filteredClients = await clientService.ClientsWithFilterAndPagination(1, 100, clientFirstName);
 
-            Console.WriteLine("Клиенты:");
+            Console.WriteLine("Clients:");
 
             var mess = string.Join("\n",
                 filteredClients.Select(client =>
-                    $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}"));
+                    $"First name {client.FirstName}, last name {client.LastName}, date of birth {client.DateOfBirth:D}"));
 
             Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Возникла ошибка при получении клиентов по фильтрам: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
     }
 }

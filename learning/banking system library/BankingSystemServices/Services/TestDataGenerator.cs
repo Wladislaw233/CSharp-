@@ -3,7 +3,7 @@ using Bogus;
 
 namespace BankingSystemServices.Services;
 
-public class TestDataGenerator
+public static class TestDataGenerator
 {
     private static readonly Faker<Client> FakerClients = new Faker<Client>()
         .RuleFor(client => client.ClientId, faker => faker.Random.Guid())
@@ -47,7 +47,7 @@ public class TestDataGenerator
     
     public static string GenerateEmployeeContract(Employee employee)
     {
-        return $"{employee.FirstName} {employee.LastName}, дата рождения: {employee.DateOfBirth.ToString("D")}";
+        return $"{employee.FirstName} {employee.LastName}, Date of Birth: {employee.DateOfBirth:D}";
     }
     public static int CalculateAge(DateTime dateOfBirth)
     {
@@ -91,7 +91,7 @@ public class TestDataGenerator
             Currency = currency,
             ClientId = client.ClientId,
             Client = client,
-            Amount = amount != null ? (decimal)amount : Faker.Finance.Amount(),
+            Amount = amount ?? Faker.Finance.Amount(),
             AccountNumber = Faker.Finance.Account(25)
         };
     }

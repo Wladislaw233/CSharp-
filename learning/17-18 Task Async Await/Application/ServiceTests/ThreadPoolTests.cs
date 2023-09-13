@@ -1,18 +1,17 @@
 ﻿namespace ServiceTests;
 
-public class ThreadPoolTests
+public static class ThreadPoolTests
 {
-
     public static void StartThreadPoolTests()
     {
-        //ThreadPool.SetMaxThreads(10, 10); - не работает, переделал на semaphoreSlim.
+        //ThreadPool.SetMaxThreads(10, 10); - doesn't work, changed it to semaphoreSlim.
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Последовательное и асинхронное выполнение задач. (17.а)");
+        Console.WriteLine("Sequential and asynchronous execution of tasks. (17.а)");
         Console.ResetColor();
         
-        Console.WriteLine("запуск 15 задач, при доступных 10 потоках (последовательное выполнение).");
+        Console.WriteLine("launching 15 tasks, with 10 threads available (sequential execution).");
         ThreadPoolTest();
-        Console.WriteLine("запуск 15 задач, при доступных 10 потоках (асинхронное выполнение).");
+        Console.WriteLine("launching 15 tasks with 10 threads available (asynchronous execution).");
         ThreadPoolAsyncTest().GetAwaiter().GetResult();
     }
     
@@ -23,17 +22,18 @@ public class ThreadPoolTests
         for (var index = 1; index <= 15; index++)
         {
             semaphoreSlim.Wait();
+            var indexOfTask = index;
             Task.Run(() =>
             {
-                Console.WriteLine($"Задача {index} стартует. Доступные потоки: {semaphoreSlim.CurrentCount}/10.");
+                Console.WriteLine($"The {indexOfTask} task starts. Available streams: {semaphoreSlim.CurrentCount}/10.");
                 Thread.Sleep(2000);
                 semaphoreSlim.Release();
-                Console.WriteLine($"Задача {index} окончена. Доступные потоки: {semaphoreSlim.CurrentCount}/10.");
+                Console.WriteLine($"The task {indexOfTask} is finished. Available streams: {semaphoreSlim.CurrentCount}/10.");
             }).Wait();
             Thread.Sleep(100);
         }
         
-        // дожидаемся выполнения всех задач.
+        // We are waiting for all tasks to be completed.
         Thread.Sleep(5000);
     }
     
@@ -46,18 +46,18 @@ public class ThreadPoolTests
         for (var index = 1; index <= 15; index++)
         {
             await semaphoreSlim.WaitAsync();
+            var indexOfTask = index;
             tasks.Add(Task.Run(async () =>
             {
-                var numberOfTask = index;
-                Console.WriteLine($"Задача {numberOfTask} стартует. Доступные потоки: {semaphoreSlim.CurrentCount}/10.");
+                Console.WriteLine($"The {indexOfTask} task starts. Available streams: {semaphoreSlim.CurrentCount}/10.");
                 await Task.Delay(2000);
                 semaphoreSlim.Release();
-                Console.WriteLine($"Задача {numberOfTask} окончена. Доступные потоки: {semaphoreSlim.CurrentCount}/10.");
+                Console.WriteLine($"The task {indexOfTask} is finished. Available streams: {semaphoreSlim.CurrentCount}/10.");
             }));
             await Task.Delay(100);
         }
         
-        // дожидаемся выполнения всех задач.
+        // We are waiting for all tasks to be completed.
         await Task.WhenAll(tasks);
     }
     

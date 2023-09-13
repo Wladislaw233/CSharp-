@@ -1,10 +1,8 @@
-﻿
-using Services;
-using ServiceTests;
+﻿using ServiceTests;
 
 namespace PracticeWithTask;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
@@ -12,22 +10,21 @@ internal class Program
         var updateRatesTask = RateUpdaterServiceTests.RateUpdaterTest();
 
         Thread.Sleep(1000);
-        
+
         var cashDispenserServiceTask = CashDispenserServiceTests.CashDispenserServiceTest();
 
         Thread.Sleep(500);
-        
+
         // task 17 a.
-        
+
         ThreadPoolTests.StartThreadPoolTests();
-        
+
         // task 17 b.
-        
+
         ClientServiceTests.ClientServiceTest();
         EmployeeServiceTests.EmployeeServiceTest();
-        
+
         cashDispenserServiceTask.GetAwaiter().GetResult();
         updateRatesTask.GetAwaiter().GetResult();
-        
     }
 }

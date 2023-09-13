@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Npgsql;
 
-namespace Service;
+namespace Services;
 
 public class BankingSystemDb
 {
@@ -22,11 +22,9 @@ public class BankingSystemDb
 
     private void OpenConnection()
     {
-        using (var connection = GetConnection())
-        {
-            connection.Open();
-            LogOpenedConnectionCount();
-        }
+        using var connection = GetConnection();
+        connection.Open();
+        LogOpenedConnectionCount();
     }
 
     private void LogOpenedConnectionCount()
@@ -46,10 +44,8 @@ public class BankingSystemDb
         for (var i = 0; i < count; i++)
         {
             var chunkSize = random.Next(4096);
-            using (var connectionAndMemory = new ConnectionAndMemory(chunkSize, _configuration))
-            {
-                connectionAndMemory.DoWork();
-            }
+            using var connectionAndMemory = new ConnectionAndMemory(chunkSize, _configuration);
+            ConnectionAndMemory.DoWork();
         }
     }
 }

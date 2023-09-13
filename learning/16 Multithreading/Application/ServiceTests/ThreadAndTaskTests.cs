@@ -1,34 +1,34 @@
-﻿using BankingSystemServices.Models;
+﻿using BankingSystemServices.ExportTool;
+using BankingSystemServices.Models;
 using BankingSystemServices.Services;
-using BankingSystemServices.ExportTool;
 
 namespace ServiceTests;
 
-public class ThreadAndTaskTests
+public static class ThreadAndTaskTests
 {
     public static void ThreadTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Параллельный импорт и экспорт клиентов");
+        Console.WriteLine("Parallel import and export of clients");
         Console.ResetColor();
         ParallelExportAndImportClientsTest();
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Параттельное начисление на аккаунт клиента");
+        Console.WriteLine("Parallel accrual to the client account");
         Console.ResetColor();
         ParallelAccrualToAccountTest();
     }
 
     private static void ParallelExportAndImportClientsTest()
     {
-        // клиенты для экспорта.
+        // clients for export.
         var bankClientsForExport = TestDataGenerator.GenerateListWithBankClients(5);
 
-        // клиенты для импорта.
+        // clients for import.
         var bankClientsForImport = TestDataGenerator.GenerateListWithBankClients(5);
 
         var pathToDirectory = Path.Combine("D:", "Learning thread");
-        var importFileName = "ClientsForImport.csv";
-        
+        const string importFileName = "ClientsForImport.csv";
+
         try
         {
             ExportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
@@ -42,7 +42,7 @@ public class ThreadAndTaskTests
                         var importBankClients =
                             ExportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
                         bankClientsForExport.AddRange(importBankClients);
-                        Console.WriteLine("Импортированные клиенты");
+                        Console.WriteLine("Imported clients");
                         PrintClients(importBankClients);
                     }
                 },
@@ -50,20 +50,22 @@ public class ThreadAndTaskTests
                 {
                     lock (locker)
                     {
-                        Console.WriteLine("Экспортированные клиенты");
+                        Console.WriteLine("Exported clients");
                         PrintClients(bankClientsForExport);
-                        var exportFileName = "ExportClients.csv";
+                        const string exportFileName = "ExportClients.csv";
                         ExportService.WriteClientsDataToScvFile(bankClientsForExport, pathToDirectory, exportFileName);
                     }
                 });
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine($"Не найден csv файл для чтения! - {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "CSV file not found to read.");
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время параллельного экспорта и импорта клиентов произошла ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
 
         Thread.Sleep(1000);
@@ -75,7 +77,7 @@ public class ThreadAndTaskTests
         var currency = TestDataGenerator.GenerateRandomCurrency();
         var account = TestDataGenerator.GenerateRandomBankClientAccount(currency, bankClient, 0);
 
-        Console.WriteLine($"Счет клиента {bankClient.FirstName} {bankClient.LastName} до изменения:");
+        Console.WriteLine($"Client account {bankClient.FirstName} {bankClient.LastName} before updating:");
         PrintClientAccount(account);
 
         var accountAccrual = new Action<Account, int>(AccountAccrual);
@@ -92,22 +94,22 @@ public class ThreadAndTaskTests
     {
         for (var index = 0; index < 10; index++)
             account.Amount += 100;
-        Console.WriteLine($"Аккаунт после обработки потоком - {threadIndex}:");
+        Console.WriteLine($"Account after processing by stream - {threadIndex}:");
         PrintClientAccount(account);
     }
-    
-    private static void PrintClients(List<Client> clients)
+
+    private static void PrintClients(IEnumerable<Client> clients)
     {
         var mess = string.Join("\n",
             clients.Select(client =>
-                $"ID {client.ClientId},{client.FirstName} {client.LastName} {client.DateOfBirth.ToString("D")}"));
-        
+                $"ID {client.ClientId},{client.FirstName} {client.LastName} {client.DateOfBirth:D}"));
+
         Console.WriteLine(mess);
     }
 
     private static void PrintClientAccount(Account account)
     {
         Console.WriteLine(
-            $"Номер {account.AccountNumber}, валюта {account.Currency?.Name}, баланс {account.Amount} {account.Currency?.Code}");
+            $"Account number {account.AccountNumber}, currency {account.Currency?.Name}, amount {account.Amount} {account.Currency?.Code}");
     }
 }

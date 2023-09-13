@@ -4,7 +4,7 @@ using BankingSystemServices.Services;
 
 namespace ServiceTests;
 
-public class ExportToolTests
+public static class ExportToolTests
 {
     private static readonly string PathToDirectory = Path.Combine("D:", "Learning Serialization");
 
@@ -18,44 +18,40 @@ public class ExportToolTests
     {
         var bankClients = TestDataGenerator.GenerateListWithBankClients(3);
 
-        var fileName = "ClientsData.json";
-        
-        Console.WriteLine($"Запишем клиентов в файл {fileName}:");
+        const string fileName = "ClientsData.json";
 
-        var mess = string.Join("\n",
-            bankClients.Select(client =>
-                $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
+        Console.WriteLine($"Let's write clients to the file {fileName}:");
 
-        Console.WriteLine(mess);
-        
+        PrintClientsRepresentation(bankClients);
+
         try
         {
             ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while writing the file.");
+            Console.WriteLine(eMess);
         }
 
         try
         {
             bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
 
-            Console.WriteLine($"Считанные клиенты из файла {fileName}:");
+            Console.WriteLine($"Read clients from file {fileName}:");
 
-            mess = string.Join("\n",
-                bankClients.Select(client =>
-                    $"Id клиента - {client.ClientId}, {client.FirstName} {client.LastName}"));
-
-            Console.WriteLine(mess);
+            PrintClientsRepresentation(bankClients);
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine($"Json файл не был найден! - {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, "Json file was not found!");
+            Console.WriteLine(eMess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(eMess);
         }
     }
 
@@ -63,44 +59,57 @@ public class ExportToolTests
     {
         var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
 
-        var fileName = "EmployeesData.json";
-        
-        Console.WriteLine($"Запишем сотрудников в файл {fileName}:");
+        const string fileName = "EmployeesData.json";
 
-        var mess = string.Join("\n",
-            bankEmployees.Select(employee =>
-                $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
+        Console.WriteLine($"Let's record employees in a file {fileName}:");
 
-        Console.WriteLine(mess);
-        
+        PrintEmployeesRepresentation(bankEmployees);
+
         try
         {
             ExportService.WritePersonsDataToJsonFile(bankEmployees, PathToDirectory, fileName);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(eMess);
         }
-        
+
         try
         {
             bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
 
-            Console.WriteLine($"Считанные сотрудники из файла {fileName}:");
+            Console.WriteLine($"Read employees from file {fileName}:");
 
-            mess = string.Join("\n",
-                bankEmployees.Select(employee =>
-                    $"Id сотрудника - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
-
-            Console.WriteLine(mess);
+            PrintEmployeesRepresentation(bankEmployees);
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine($"Json файл не был найден! - {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, "Json file was not found.");
+            Console.WriteLine(eMess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(eMess);
         }
+    }
+
+    private static void PrintClientsRepresentation(IEnumerable<Client> clients)
+    {
+        var mess = string.Join("\n",
+            clients.Select(client =>
+                $"Client ID -{client.ClientId}, {client.FirstName} {client.LastName}"));
+
+        Console.WriteLine(mess);
+    }
+
+    private static void PrintEmployeesRepresentation(IEnumerable<Employee> employees)
+    {
+        var mess = string.Join("\n",
+            employees.Select(employee =>
+                $"Employee ID - {employee.EmployeeId}, {employee.FirstName} {employee.LastName}"));
+
+        Console.WriteLine(mess);
     }
 }

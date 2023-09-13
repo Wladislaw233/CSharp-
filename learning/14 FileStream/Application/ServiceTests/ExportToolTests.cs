@@ -1,37 +1,34 @@
-﻿using BankingSystemServices.Services;
-using Services;
-using BankingSystemServices.Database;
+﻿using BankingSystemServices.Database;
 using BankingSystemServices.Exceptions;
 using BankingSystemServices.ExportTool;
+using BankingSystemServices.Models;
+using BankingSystemServices.Services;
+using Services;
 
 namespace ServiceTests;
 
-public class ExportToolTests
+public static class ExportToolTests
 {
     private static readonly string PathToDirectory = Path.Combine("D:", "Learning FileStream");
     private const string FileName = "clients.csv";
+
     public static void ExportCsvServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Название файла {FileName}, лежит в папке {PathToDirectory}");
+        Console.WriteLine($"File name - {FileName}, file path - {PathToDirectory}");
         Console.ResetColor();
-        
+
         WriteClientsDataToScvFileTest();
         ReadClientsDataFromScvFileTest();
-            
     }
 
     private static void WriteClientsDataToScvFileTest()
     {
         var recordableClients = TestDataGenerator.GenerateListWithBankClients(5);
-        
-        Console.WriteLine("Запишем следующих клиентов:");
-        
-        var mess = string.Join("\n",
-            recordableClients.Select(client =>
-                $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
-        
-        Console.WriteLine(mess);
+
+        Console.WriteLine("Let's sign up the next clients:");
+
+        PrintClientRepresentation(recordableClients);
 
         try
         {
@@ -39,22 +36,20 @@ public class ExportToolTests
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время записи файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while writing the file.");
+            Console.WriteLine(eMess);
         }
     }
 
     private static void ReadClientsDataFromScvFileTest()
     {
-        Console.WriteLine("\nПрочитаем клиентов из файла и добавим их в базу:");
+        Console.WriteLine("\nLet's read clients from the file and add them to the database:");
         try
         {
             var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
 
-            var mess = string.Join("\n",
-                readableClients.Select(client =>
-                    $"{client.FirstName} {client.LastName}, дата рождения - {client.DateOfBirth.ToString("D")}"));
-
-            Console.WriteLine(mess);
+            PrintClientRepresentation(readableClients);
 
             using var bankingSystemDbContext = new BankingSystemDbContext();
             {
@@ -64,17 +59,42 @@ public class ExportToolTests
                     clientService.AddClient(client);
             }
         }
-        catch (CustomException e)
+        catch (InvalidOperationException e)
         {
-            CustomException.ExceptionHandling("Во время добавления клиента возникла ошибка: ", e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while performing the operation.");
+            Console.WriteLine(mess);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the client to the database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
         }
         catch (FileNotFoundException e)
         {
-            Console.WriteLine($"Json файл не был найден! - {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, $"File {FileName} not found.");
+            Console.WriteLine(eMess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время чтения файла возникла ошибка: {e}");
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while reading the file.");
+            Console.WriteLine(eMess);
         }
+    }
+
+    private static void PrintClientRepresentation(IEnumerable<Client> clients)
+    {
+        var mess = string.Join("\n",
+            clients.Select(client =>
+                $"{client.FirstName} {client.LastName}, Date of Birth - {client.DateOfBirth:D}"));
+
+        Console.WriteLine(mess);
     }
 }

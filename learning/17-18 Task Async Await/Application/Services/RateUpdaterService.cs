@@ -3,20 +3,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
-public class RateUpdaterService
+public static class RateUpdaterService
 {
-    public async Task UpdateRatesAsync()
+    public static async Task UpdateRatesAsync()
     {
         while (true)
         {
             await UpdateRatesForAllClientsAsync();
             await Task.Delay(TimeSpan.FromDays(30));
         }
+        // ReSharper disable once FunctionNeverReturns
     }
 
     private static async Task UpdateRatesForAllClientsAsync()
     {
-        Console.WriteLine("Начало обработки...");
+        Console.WriteLine("Start processing...");
         await using var bankingSystemDbContext = new BankingSystemDbContext();
 
         var accounts = await bankingSystemDbContext.Accounts.ToListAsync();
@@ -26,6 +27,6 @@ public class RateUpdaterService
 
         await bankingSystemDbContext.SaveChangesAsync();
         await bankingSystemDbContext.DisposeAsync();
-        Console.WriteLine("Конец обработки. Проценты начислены.\nСледующая обработка через 30 дней.");
+        Console.WriteLine("End of processing. Interest accrued.\nNext processing in 30 days.");
     }
 }

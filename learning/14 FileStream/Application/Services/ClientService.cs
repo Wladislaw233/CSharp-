@@ -1,13 +1,13 @@
-﻿using BankingSystemServices.Models;
-using BankingSystemServices.Services;
-using BankingSystemServices.Database;
+﻿using BankingSystemServices.Database;
 using BankingSystemServices.Exceptions;
+using BankingSystemServices.Models;
+using BankingSystemServices.Services;
 
 namespace Services;
 
 public class ClientService
 {
-    private BankingSystemDbContext _bankingSystemDbContext;
+    private readonly BankingSystemDbContext _bankingSystemDbContext;
     private readonly Currency? _defaultCurrency;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
@@ -23,70 +23,73 @@ public class ClientService
 
             _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
             if (_defaultCurrency == null)
-                throw new CustomException("Не удалось получить валюту по умолчанию!", nameof(_defaultCurrency));
+                throw new ValueNotFoundException("Failed to get default currency!");
         }
         else
-            throw new CustomException("Не удалось установить соединение с базой данных!");
+        {
+            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
+        }
     }
 
     public void AddClient(Client client)
     {
         ValidateClient(client);
         var defaultAccount = CreateAccount(client, _defaultCurrency);
+
         if (defaultAccount == null)
-            throw new CustomException("Не удалось создать аккаунт по умолчанию!", nameof(defaultAccount));
+            throw new InvalidOperationException("Failed to create default account!");
+
         _bankingSystemDbContext.Clients.Add(client);
         _bankingSystemDbContext.Accounts.Add(defaultAccount);
+
         SaveChanges();
     }
 
     private void SaveChanges()
     {
-        try
-        {
-            _bankingSystemDbContext.SaveChanges();
-        }
-        catch (Exception exception)
-        {
-            throw new CustomException(exception.Message, nameof(_bankingSystemDbContext));
-        }
-    }
-    
-    private Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
-    {
-        if (currency != null) 
-            return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
-        return null;
+        _bankingSystemDbContext.SaveChanges();
     }
 
-    private void ValidateClient(Client client, bool itUpdate = false)
+    private static Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
     {
-        if (!itUpdate && _bankingSystemDbContext.Clients.Contains(client))
-            throw new CustomException("Данный клиент уже добавлен в банковскую систему!", nameof(client));
+        return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
+    }
+
+    private void ValidateClient(Client client)
+    {
+        if (_bankingSystemDbContext.Clients.Contains(client))
+            throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
+
         if (string.IsNullOrWhiteSpace(client.FirstName))
-            throw new CustomException("Не указано имя клиента!", nameof(client.FirstName));
-        if (string.IsNullOrWhiteSpace(client.LastName))
-            throw new CustomException("Не указана фамилия клиента!", nameof(client.LastName));
-        if (string.IsNullOrWhiteSpace(client.PhoneNumber))
-            throw new CustomException("Не указан номер клиента!", nameof(client.PhoneNumber));
-        if (string.IsNullOrWhiteSpace(client.Email))
-            throw new CustomException("Не указан e-mail клиента!", nameof(client.Email));
-        if (string.IsNullOrWhiteSpace(client.Address))
-            throw new CustomException("Не указан адрес клиента!", nameof(client.Email));
+            throw new PropertyValidationException("Client first name not specified!", nameof(client.FirstName),
+                nameof(Client));
 
-        if (client.DateOfBirth > DateTime.Now || client.DateOfBirth == DateTime.MinValue ||
-            client.DateOfBirth == DateTime.MaxValue)
-            throw new CustomException("Дата рождения клиента указана неверно!", nameof(client.DateOfBirth));
+        if (string.IsNullOrWhiteSpace(client.LastName))
+            throw new PropertyValidationException("The client last name not specified!", nameof(client.LastName),
+                nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.PhoneNumber))
+            throw new PropertyValidationException("Client number not specified!", nameof(client.PhoneNumber),
+                nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.Email))
+            throw new PropertyValidationException("Client e-mail not specified!", nameof(client.Email), nameof(Client));
+
+        if (string.IsNullOrWhiteSpace(client.Address))
+            throw new PropertyValidationException("Client address not specified!", nameof(client.Address),
+                nameof(Client));
+
+        if (client.DateOfBirth > DateTime.Now || client.DateOfBirth.Equals(DateTime.MinValue) ||
+            client.DateOfBirth.Equals(DateTime.MaxValue))
+            throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
+                nameof(Client));
 
         var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
 
         if (age < 18)
-            throw new CustomException("Клиенту меньше 18 лет!", nameof(client.Age));
+            throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
+                nameof(Client));
 
-        if (age != client.Age || client.Age <= 0)
-        {
-            client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
-            Console.WriteLine("Возраст клиента указан неверно и был скорректирован по дате его рождения!");
-        }
+        if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
     }
 }

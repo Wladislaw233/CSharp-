@@ -6,90 +6,140 @@ using Services;
 
 namespace ServiceTests;
 
-public class ClientServiceTests
+public static class ClientServiceTests
 {
     public static void ClientServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Клиенты");
+        Console.WriteLine("Clients");
         Console.ResetColor();
+
         using var bankingSystemDbContext = new BankingSystemDbContext();
+        var clientService = new ClientService(bankingSystemDbContext);
+
+        var bankClient = AddingClientTest(clientService);
+
+        if (bankClient != null)
+        {
+            AddingClientAccountTest(clientService, bankClient);
+            UpdatingClientAccountTest(clientService, bankClient);
+            DeletingClientAccountTest(clientService, bankClient);
+            UpdatingClientTest(clientService, bankClient);
+            DeletingClientTest(clientService, bankClient);
+            GettingClientsWithFilterTest(clientService);
+        }
+        else
+        {
+            Console.WriteLine("Test client not found!");
+        }
+    }
+
+    private static Client? AddingClientTest(ClientService clientService)
+    {
+        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+
         try
         {
-            var clientService = new ClientService(bankingSystemDbContext);
-            var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
-
             foreach (var client in bankClients)
                 clientService.AddClient(client);
 
-            var bankClient = bankClients.FirstOrDefault();
-            if (bankClient != null)
-            {
-                AddingClientAccountTest(clientService, bankClient);
-                UpdatingClientAccountTest(clientService, bankClient);
-                DeletingClientAccountTest(clientService, bankClient);
-                UpdatingClientTest(clientService, bankClient);
-                DeletingClientTest(clientService, bankClient);
-                GettingClientsWithFilterTest(clientService);
-            }
-            else
-            {
-                Console.WriteLine("Клиент для тестов не найден!");
-            }
+            return bankClients.FirstOrDefault();
         }
-        catch (CustomException exception)
+        catch (InvalidOperationException e)
         {
-            CustomException.ExceptionHandling("Программа остановлена по причине:", exception);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while performing the operation.");
+            Console.WriteLine(mess);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the client to the database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Во время работы программы возникла следующая ошибка: {e}");
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
         }
 
-        bankingSystemDbContext.Dispose();
+        return null;
     }
 
     private static void AddingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
+        Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
 
-        var presentationBankClientAccounts =
+        var representationBankClientAccounts =
             clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-        Console.WriteLine(presentationBankClientAccounts);
+        Console.WriteLine(representationBankClientAccounts);
 
-        var currencyCode = "EUR";
-        var accountAmount = new decimal(1455.23);
+        const string currencyCode = "EUR";
+        var amount = new decimal(1455.23);
 
-        Console.WriteLine($"Добавим счет {currencyCode} с балансом {accountAmount}:");
+        Console.WriteLine($"Add account {currencyCode} with balance {amount}:");
 
-        clientService.AddClientAccount(bankClient.ClientId, currencyCode, accountAmount);
+        try
+        {
+            clientService.AddClientAccount(bankClient.ClientId, currencyCode, amount);
 
-        presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId);
+            representationBankClientAccounts =
+                clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-        Console.WriteLine(presentationBankClientAccounts);
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine(representationBankClientAccounts);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while adding the client account to the database.");
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void UpdatingClientAccountTest(ClientService clientService, Client bankClient)
     {
-        var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
+        try
+        {
+            var bankClientAccounts = clientService.GetClientAccounts(bankClient.ClientId);
 
-        var account = bankClientAccounts.Last();
+            var account = bankClientAccounts.Last();
 
-        var accountAmount = new decimal(30000);
+            var amount = new decimal(30000);
 
-        Console.WriteLine(
-            $"Обновим баланс счета {account.Currency.Code} клиенту {bankClient.FirstName} {bankClient.LastName} на {accountAmount}:");
+            Console.WriteLine(
+                $"Let's update the account balance {account.AccountNumber} for client {bankClient.FirstName} {bankClient.LastName} to {amount}:");
 
-        clientService.UpdateClientAccount(account.AccountId, amount: accountAmount);
+            clientService.UpdateClientAccount(account.AccountId, amount: amount);
 
-        var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId);
+            var presentationBankClientAccounts =
+                clientService.GetPresentationClientAccounts(bankClient.ClientId);
 
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-        Console.WriteLine(presentationBankClientAccounts);
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine(presentationBankClientAccounts);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while updating the client account in database.");
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void DeletingClientAccountTest(ClientService clientService, Client bankClient)
@@ -98,47 +148,103 @@ public class ClientServiceTests
 
         var account = bankClientAccounts.Last();
 
-        Console.WriteLine($"Удалим счет {account.Currency.Code}:");
+        try
+        {
+            Console.WriteLine($"Let's delete the account {account.AccountNumber}:");
 
-        clientService.DeleteClientAccount(account.AccountId);
+            clientService.DeleteClientAccount(account.AccountId);
 
-        var presentationBankClientAccounts =
-            clientService.GetPresentationClientAccounts(bankClient.ClientId);
+            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
 
-        Console.WriteLine($"Лицевые счета клиента {bankClient.FirstName} {bankClient.LastName}:");
-        Console.WriteLine(presentationBankClientAccounts);
+            var presentationBankClientAccounts =
+                clientService.GetPresentationClientAccounts(bankClient.ClientId);
+
+            Console.WriteLine(presentationBankClientAccounts);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while deleting the client account in database.");
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void UpdatingClientTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine("Изменим клиенту имя и фамилию:");
+        Console.WriteLine("Let's change the client's first and last name:");
         Console.WriteLine(
-            $"До изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+            $"Before the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
 
-        clientService.UpdateClient(bankClient.ClientId, "Влад", "Юрченко");
-        Console.WriteLine(
-            $"После изменения {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+        try
+        { 
+            clientService.UpdateClient(bankClient.ClientId, "Vlad", "Yurchenko");
+            Console.WriteLine(
+                $"After the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while updating the client in database.");
+            Console.WriteLine(mess);
+        }
+        catch (PropertyValidationException e)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void DeletingClientTest(ClientService clientService, Client bankClient)
     {
-        Console.WriteLine($"Удаление клиента с id - {bankClient.ClientId}");
-        clientService.DeleteClient(bankClient.ClientId);
+        Console.WriteLine($"Delete client by id - {bankClient.ClientId}");
+        try
+        {
+            clientService.DeleteClient(bankClient.ClientId);
+        }
+        catch (ArgumentException e)
+        {
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+                "An error occurred while deleting the client in database.");
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 
     private static void GettingClientsWithFilterTest(ClientService clientService)
     {
-        var clientFirstName = "Al";
+        const string clientFirstName = "Al";
 
-        Console.WriteLine($"Выведем клиентов с именем {clientFirstName}:");
-        var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, clientFirstName);
+        Console.WriteLine($"We will display clients with the name {clientFirstName}:");
+        try
+        {
+            var filteredClients = clientService.ClientsWithFilterAndPagination(1, 100, clientFirstName);
 
-        Console.WriteLine("Клиенты:");
+            Console.WriteLine("Clients:");
 
-        var mess = string.Join("\n",
-            filteredClients.Select(client =>
-                $"Имя {client.FirstName}, фамилия {client.LastName}, дата рождения {client.DateOfBirth.ToString("D")}"));
+            var mess = string.Join("\n",
+                filteredClients.Select(client =>
+                    $"First name {client.FirstName}, last name {client.LastName}, date of birth {client.DateOfBirth:D}"));
 
-        Console.WriteLine(mess);
+            Console.WriteLine(mess);
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            Console.WriteLine(mess);
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text;
-using BankingSystemServices.Exceptions;
 using BankingSystemServices.Models;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -9,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace BankingSystemServices.ExportTool;
 
-public class ExportService
+public abstract class ExportService
 {
     private static readonly TypeConverterOptions DateTimeOptions = new()
     {
@@ -17,10 +16,10 @@ public class ExportService
         DateTimeStyle = DateTimeStyles.AdjustToUniversal
     };
 
-    public static void WriteClientsDataToScvFile(List<Client> clients, string pathToDirectory, string csvFileName)
+    public static void WriteClientsDataToScvFile(IEnumerable<Client> clients, string pathToDirectory, string csvFileName)
     {
         if (string.IsNullOrWhiteSpace(pathToDirectory) || string.IsNullOrWhiteSpace(csvFileName))
-            throw new CustomException("Неверно переданы параметры для записи данных.");
+            throw new ArgumentException("The parameters for writing data were passed incorrectly.");
 
         var directoryInfo = new DirectoryInfo(pathToDirectory);
 
@@ -47,12 +46,12 @@ public class ExportService
     public static List<Client> ReadClientsDataFromScvFile(string pathToDirectory, string csvFileName)
     {
         if (string.IsNullOrWhiteSpace(pathToDirectory) || string.IsNullOrWhiteSpace(csvFileName))
-            throw new CustomException("Неверно переданы параметры для считывания данных.");
+            throw new ArgumentException("The parameters for writing data were passed incorrectly.");
 
         var fullPath = GetFullPathToFile(pathToDirectory, csvFileName);
 
         if (!File.Exists(fullPath))
-            throw new FileNotFoundException("CSV файл для чтения не существует!");
+            throw new FileNotFoundException("The CSV file to read does not exist!");
         
         using (var fileStream = new FileStream(fullPath, FileMode.Open))
         {
@@ -89,19 +88,18 @@ public class ExportService
         var fullPath = GetFullPathToFile(pathToDirectory, jsonFileName);
 
         if (!File.Exists(fullPath))
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("The JSON file to read does not exist!");
         
         using (var fileStream = new FileStream(fullPath, FileMode.Open))
         {
             var jsonTextBytesArray = new byte[fileStream.Length];
             
+            // ReSharper disable once MustUseReturnValue
             fileStream.Read(jsonTextBytesArray, 0, jsonTextBytesArray.Length);
 
             var jsonText = Encoding.Default.GetString(jsonTextBytesArray);
             var persons = JsonConvert.DeserializeObject<T[]>(jsonText);
-            if (persons != null)
-                return persons.ToList();
-            return new List<T>();
+            return persons != null ? persons.ToList() : new List<T>();
         }
     }
 

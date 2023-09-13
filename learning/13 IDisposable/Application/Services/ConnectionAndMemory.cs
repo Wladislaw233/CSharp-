@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 
-namespace Service;
+namespace Services;
 
-public class ConnectionAndMemory : IDisposable
+public sealed class ConnectionAndMemory : IDisposable
 {
     public static long TotalFreed { get; private set; }
     public static long TotalAllocated { get; private set; }
@@ -12,7 +12,7 @@ public class ConnectionAndMemory : IDisposable
     private readonly IntPtr _chunkHandle;
     private readonly int _chunkSize;
     private bool _isFreed;
-    
+
     public ConnectionAndMemory(int chunkSize, IConfiguration configuration)
     {
         var bankingSystemDb = new BankingSystemDb(configuration);
@@ -22,6 +22,7 @@ public class ConnectionAndMemory : IDisposable
         _chunkHandle = Marshal.AllocHGlobal(chunkSize);
         TotalAllocated += chunkSize;
     }
+
     private void ReleaseUnmanagedResources()
     {
         if (_isFreed) return;
@@ -29,15 +30,17 @@ public class ConnectionAndMemory : IDisposable
         TotalFreed += _chunkSize;
         _isFreed = true;
     }
-    public void DoWork() { }
-    protected virtual void Dispose(bool disposing)
+
+    public static void DoWork()
+    {
+    }
+
+    private void Dispose(bool disposing)
     {
         ReleaseUnmanagedResources();
-        if (disposing)
-        {
-            _connection?.Dispose();
-        }
+        if (disposing) _connection.Dispose();
     }
+
     public void Dispose()
     {
         Dispose(true);

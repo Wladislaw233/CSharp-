@@ -2,6 +2,7 @@
 using BankingSystemServices.Exceptions;
 using BankingSystemServices.Models;
 using BankingSystemServices.Models.DTO;
+using BankingSystemServices.Services;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -39,17 +40,30 @@ public class ClientController : ControllerBase
             var client = await _clientService.AddClient(clientDto);
             return Ok(client);
         }
-        catch (CustomException ex)
+        catch (InvalidOperationException exc)
         {
-            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
-                "An error occurred while adding the client to the database: ");
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc,
+                "An error occurred while performing the operation.");
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
-        catch (Exception ex)
+        catch (ArgumentException exc)
         {
-            var mess = ExceptionHandlingService.ExceptionHandling(ex);
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(exc,
+                "An error occurred while adding the client to the database.");
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
+        catch (PropertyValidationException exc)
+        {
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
+        catch (Exception exc)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
     }
@@ -62,17 +76,23 @@ public class ClientController : ControllerBase
             var client = await _clientService.UpdateClient(clientId, clientDto);
             return Ok(client);
         }
-        catch (CustomException ex)
+        catch (ArgumentException exc)
         {
-            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
-                "An error occurred while updating the client in the database: ");
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(exc,
+                "An error occurred while updating the client in the database.");
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
-        catch (Exception ex)
+        catch (PropertyValidationException exc)
         {
-            var mess = ExceptionHandlingService.ExceptionHandling(ex);
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
+            return BadRequest(mess);
+        }
+        catch (Exception exc)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
     }
@@ -85,17 +105,17 @@ public class ClientController : ControllerBase
             await _clientService.DeleteClient(clientId);
             return Ok();
         }
-        catch (CustomException ex)
+        catch (ArgumentException exc)
         {
-            var mess = ExceptionHandlingService.CustomExceptionHandling(ex,
-                "An error occurred when deleting a client from the database: ");
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.ArgumentExceptionHandler(exc,
+                "An error occurred when deleting a client from the database.");
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
-        catch (Exception ex)
+        catch (Exception exc)
         {
-            var mess = ExceptionHandlingService.ExceptionHandling(ex);
-            _logger.Log(LogLevel.Error, ex, mess);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
+            _logger.Log(LogLevel.Error, exc, mess);
             return BadRequest(mess);
         }
     }

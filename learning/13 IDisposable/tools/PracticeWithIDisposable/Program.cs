@@ -1,4 +1,4 @@
-﻿using Service;
+﻿using Services;
 using Microsoft.Extensions.Configuration;
 
 namespace PracticeWithIDisposable;

@@ -27,15 +27,4 @@ public class CustomException : Exception
     {
         ParameterOfException = parameterOfException;
     }
-
-    public static void ExceptionHandling( string description, CustomException exception)
-    {
-        var mess = description + exception.Message;
-        
-        mess += string.IsNullOrWhiteSpace(exception.ParameterOfException)
-            ? ""
-            : $" Parameter: {exception.ParameterOfException}";
-        
-        Console.WriteLine(mess);
-    }
 }

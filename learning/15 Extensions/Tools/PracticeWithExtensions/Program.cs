@@ -2,24 +2,24 @@
 
 namespace PracticeWithExtensions;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
-        var seconds = 5;
+        const int seconds = 5;
         var timeSpan = seconds.Seconds();
-        Console.WriteLine($"Секунды: {timeSpan}");
+        Console.WriteLine($"Seconds: {timeSpan}");
 
-        var minutes = 10;
+        const int minutes = 10;
         timeSpan = minutes.Minutes();
-        Console.WriteLine($"Минуты: {timeSpan}");
+        Console.WriteLine($"Minutes: {timeSpan}");
 
-        var hours = 22;
+        const int hours = 22;
         timeSpan = hours.Hours();
-        Console.WriteLine($"Часы: {timeSpan}");
+        Console.WriteLine($"Hours: {timeSpan}");
 
-        var days = 12;
+        const int days = 12;
         timeSpan = days.Days();
-        Console.WriteLine($"Дни: {timeSpan}");
+        Console.WriteLine($"Days: {timeSpan}");
     }
 }

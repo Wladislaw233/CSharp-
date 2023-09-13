@@ -9,7 +9,7 @@ namespace Services;
 
 public class ClientService
 {
-    private BankingSystemDbContext _bankingSystemDbContext;
+    private readonly BankingSystemDbContext _bankingSystemDbContext;
     private readonly Currency? _defaultCurrency;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
@@ -24,12 +24,13 @@ public class ClientService
             }
 
             _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
+
             if (_defaultCurrency == null)
-                throw new CustomException("Failed to get default currency!", nameof(_defaultCurrency));
+                throw new ValueNotFoundException("Failed to get default currency!");
         }
         else
         {
-            throw new CustomException("Failed to establish a connection to the database!");
+            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
         }
     }
 
@@ -42,7 +43,7 @@ public class ClientService
         var defaultAccount = CreateAccount(client, _defaultCurrency);
 
         if (defaultAccount == null)
-            throw new CustomException("Failed to create default account!", nameof(defaultAccount));
+            throw new InvalidOperationException("Failed to create default account!");
 
         await _bankingSystemDbContext.Clients.AddAsync(client);
         await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
@@ -58,7 +59,7 @@ public class ClientService
             await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
 
         if (client == null)
-            throw new CustomException($"The client with identifier {clientId} does not exist!",
+            throw new ArgumentException($"The client with identifier {clientId} does not exist!",
                 nameof(clientId));
 
         client = MapDtoToClient(clientDto, client);
@@ -76,9 +77,9 @@ public class ClientService
             await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
 
         if (bankClient == null)
-            throw new CustomException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
 
-        var clientAccounts = await _bankingSystemDbContext.Accounts.Where(account => account.ClientId == clientId)
+        var clientAccounts = await _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId))
             .ToListAsync();
 
         _bankingSystemDbContext.Accounts.RemoveRange(clientAccounts);
@@ -86,19 +87,12 @@ public class ClientService
 
         await SaveChanges();
     }
-    
+
     private async Task SaveChanges()
     {
-        try
-        {
-            await _bankingSystemDbContext.SaveChangesAsync();
-        }
-        catch (Exception exception)
-        {
-            throw new CustomException(exception.Message, nameof(_bankingSystemDbContext));
-        }
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
-    
+
     public async Task<Client?> GetClientById(Guid clientId)
     {
         return await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
@@ -106,43 +100,47 @@ public class ClientService
 
     private static Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
     {
-        if (currency != null)
-            return TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
-        return null;
+        return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
     }
 
     private async Task ValidateClient(Client client, bool itUpdate = false)
     {
         if (!itUpdate && await _bankingSystemDbContext.Clients.ContainsAsync(client))
-            throw new CustomException("This client has already been added to the banking system!", nameof(client));
+            throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
         if (string.IsNullOrWhiteSpace(client.FirstName))
-            throw new CustomException("Client first name not specified!", nameof(client.FirstName));
+            throw new PropertyValidationException("Client first name not specified!", nameof(client.FirstName),
+                nameof(Client));
 
         if (string.IsNullOrWhiteSpace(client.LastName))
-            throw new CustomException("The client last name not specified!", nameof(client.LastName));
+            throw new PropertyValidationException("The client last name not specified!", nameof(client.LastName),
+                nameof(Client));
 
         if (string.IsNullOrWhiteSpace(client.PhoneNumber))
-            throw new CustomException("Client number not specified!", nameof(client.PhoneNumber));
+            throw new PropertyValidationException("Client number not specified!", nameof(client.PhoneNumber),
+                nameof(Client));
 
         if (string.IsNullOrWhiteSpace(client.Email))
-            throw new CustomException("Client e-mail not specified!", nameof(client.Email));
+            throw new PropertyValidationException("Client e-mail not specified!", nameof(client.Email), nameof(Client));
 
         if (string.IsNullOrWhiteSpace(client.Address))
-            throw new CustomException("Client address not specified!", nameof(client.Address));
+            throw new PropertyValidationException("Client address not specified!", nameof(client.Address),
+                nameof(Client));
 
         if (client.DateOfBirth > DateTime.Now || client.DateOfBirth.Equals(DateTime.MinValue) ||
             client.DateOfBirth.Equals(DateTime.MaxValue))
-            throw new CustomException("The client date of birth is incorrect!", nameof(client.DateOfBirth));
+            throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
+                nameof(Client));
 
         var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
 
         if (age < 18)
-            throw new CustomException("The client is under 18 years old!", nameof(client.Age));
+            throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
+                nameof(Client));
 
         if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
     }
-    
+
     private static Client MapDtoToClient(ClientDto clientDto, Client? client = null)
     {
         var mappedClient = client ?? new Client();
