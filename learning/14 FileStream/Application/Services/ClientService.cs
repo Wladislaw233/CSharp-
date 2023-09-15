@@ -8,56 +8,48 @@ namespace Services;
 public class ClientService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
-    private readonly Currency? _defaultCurrency;
+    private Currency? _defaultCurrency;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
-        if (_bankingSystemDbContext.Database.CanConnect())
-        {
-            if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
-            {
-                _bankingSystemDbContext.Currencies.AddRange(TestDataGenerator.GenerateListOfCurrencies());
-                SaveChanges();
-            }
-
-            _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
-            if (_defaultCurrency == null)
-                throw new ValueNotFoundException("Failed to get default currency!");
-        }
-        else
-        {
-            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
-        }
     }
 
     public void AddClient(Client client)
     {
         ValidateClient(client);
+
+        _defaultCurrency ??= GetDefaultCurrency();
+
         var defaultAccount = CreateAccount(client, _defaultCurrency);
 
         if (defaultAccount == null)
-            throw new InvalidOperationException("Failed to create default account!");
+            throw new InvalidOperationException("Failed to create default account! Default currency not found.");
 
         _bankingSystemDbContext.Clients.Add(client);
         _bankingSystemDbContext.Accounts.Add(defaultAccount);
 
-        SaveChanges();
-    }
-
-    private void SaveChanges()
-    {
         _bankingSystemDbContext.SaveChanges();
     }
 
-    private static Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
+    private static Account? CreateAccount(Client client, Currency currency, decimal amount = 0)
     {
-        return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
+        return TestDataGenerator.GenerateBankClientAccount(currency, client, amount);
+    }
+
+    private Currency GetDefaultCurrency()
+    {
+        var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == "USD");
+
+        if (currency is null)
+            throw new ValueNotFoundException("Default currency not found.");
+
+        return currency;
     }
 
     private void ValidateClient(Client client)
     {
-        if (_bankingSystemDbContext.Clients.Contains(client))
+        if (_bankingSystemDbContext.Clients.Any(c => c.ClientId.Equals(client.ClientId)))
             throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
         if (string.IsNullOrWhiteSpace(client.FirstName))

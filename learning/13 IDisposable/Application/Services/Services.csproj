@@ -17,11 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="bin\Debug\net6.0\appsettings.json" />
-      <None Include="obj\Debug\net6.0\appsettings.json" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Folder Include="bin\Debug\net6.0\" />
     </ItemGroup>
 

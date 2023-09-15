@@ -3,9 +3,9 @@ using Bogus;
 
 namespace BankingSystemServices.Services;
 
-public static class TestDataGenerator
+public class TestDataGenerator
 {
-    private static readonly Faker<Client> FakerClients = new Faker<Client>()
+    private readonly Faker<Client> _fakerClients = new Faker<Client>()
         .RuleFor(client => client.ClientId, faker => faker.Random.Guid())
         .RuleFor(client => client.FirstName, faker => faker.Person.FirstName)
         .RuleFor(client => client.LastName, faker => faker.Person.LastName)
@@ -17,7 +17,7 @@ public static class TestDataGenerator
         .RuleFor(client => client.Address, faker => faker.Address.FullAddress())
         .RuleFor(client => client.Bonus, faker => faker.Finance.Amount());
     
-    private static readonly Faker<Employee> FakerEmployee = new Faker<Employee>()
+    private readonly Faker<Employee> _fakerEmployee = new Faker<Employee>()
         .RuleFor(employee => employee.EmployeeId, faker => faker.Random.Guid())
         .RuleFor(employee => employee.FirstName, faker => faker.Person.FirstName)
         .RuleFor(employee => employee.LastName, faker => faker.Person.LastName)
@@ -32,14 +32,14 @@ public static class TestDataGenerator
         .RuleFor(employee => employee.IsOwner, faker => faker.Random.Bool())
         .RuleFor(employee => employee.Contract, (_, employee) => GenerateEmployeeContract(employee));
 
-    private static readonly Faker<Currency> FakerCurrency = new Faker<Currency>()
+    private readonly Faker<Currency> _fakerCurrency = new Faker<Currency>()
         .RuleFor(currency => currency.CurrencyId, faker => faker.Random.Guid())
         .RuleFor(currency => currency.Code, faker => faker.Finance.Currency().Code)
         .RuleFor(currency => currency.Name, faker => faker.Finance.Currency().Description)
         .RuleFor(currency => currency.ExchangeRate, faker => faker.Random.Decimal());
     
     private static readonly Faker Faker = new();
-
+    
     public static int RandomNumber(int minValue, int maxValue)
     {
         return Faker.Random.Int(minValue, maxValue);
@@ -55,9 +55,9 @@ public static class TestDataGenerator
         return DateTime.Now.Year - dateOfBirth.Year - subtractedMonth;
     }
 
-    public static Client GenerateRandomInvalidClient(bool changeAge = false)
+    public Client GenerateRandomInvalidClient(bool changeAge = false)
     {
-        var invalidClient = FakerClients.Generate();
+        var invalidClient = _fakerClients.Generate();
         if (changeAge)
             invalidClient.Age = 0;
         else
@@ -66,9 +66,9 @@ public static class TestDataGenerator
         return invalidClient;
     }
     
-    public static Employee GenerateRandomInvalidEmployee(bool changeAge = false)
+    public Employee GenerateRandomInvalidEmployee(bool changeAge = false)
     {
-        var invalidEmployee = FakerEmployee.Generate();
+        var invalidEmployee = _fakerEmployee.Generate();
         if (changeAge)
             invalidEmployee.Age = 0;
         else
@@ -77,12 +77,17 @@ public static class TestDataGenerator
         return invalidEmployee;
     }
     
-    public static Client GenerateRandomBankClient()
+    public Client GenerateRandomBankClient()
     {
-        return FakerClients.Generate();
+        return _fakerClients.Generate();
+    }
+
+    public Employee GenerateRandomBankEmployee()
+    {
+        return _fakerEmployee.Generate();
     }
     
-    public static Account GenerateRandomBankClientAccount(Currency currency, Client client, decimal? amount = null)
+    public static Account GenerateBankClientAccount(Currency currency, Client client, decimal? amount = null)
     {
         return new Account
         {
@@ -96,49 +101,49 @@ public static class TestDataGenerator
         };
     }
 
-    public static Dictionary<Client, List<Account>> GenerateDictionaryWithBankClientsAccounts(Currency currency,
+    public Dictionary<Client, List<Account>> GenerateDictionaryWithBankClientsAccounts(Currency currency,
         int numberOfClients = 10)
     {
         var clientsAccounts = new Dictionary<Client, List<Account>>();
 
-        var clients = FakerClients.Generate(numberOfClients);
+        var clients = _fakerClients.Generate(numberOfClients);
         foreach (var client in clients)
                 clientsAccounts.TryAdd(client,
-                    new List<Account> { GenerateRandomBankClientAccount(currency, client) });
+                    new List<Account> { GenerateBankClientAccount(currency, client) });
         
         return clientsAccounts;
     }
 
-    public static List<Client> GenerateListWithBankClients(int numberOfClients = 10)
+    public List<Client> GenerateListWithBankClients(int numberOfClients = 10)
     {
-        return FakerClients.Generate(numberOfClients);
+        return _fakerClients.Generate(numberOfClients);
     }
 
-    public static Dictionary<string, Client> GenerateDictionaryWithBankClients(List<Client> listBankClients)
+    public Dictionary<string, Client> GenerateDictionaryWithBankClients(List<Client> listBankClients)
     {
         var dictionaryBankClients = new Dictionary<string, Client>();
         foreach (var bankClient in listBankClients)
             dictionaryBankClients[bankClient.PhoneNumber] = bankClient;
-        dictionaryBankClients.Add("00000000", FakerClients.Generate());
+        dictionaryBankClients.Add("00000000", _fakerClients.Generate());
         return dictionaryBankClients;
     }
 
-    public static List<Employee> GenerateListWithBankEmployees(int numberOfEmployees = 10)
+    public List<Employee> GenerateListWithBankEmployees(int numberOfEmployees = 10)
     {
-        return FakerEmployee.Generate(numberOfEmployees);
+        return _fakerEmployee.Generate(numberOfEmployees);
     }
 
-    public static Currency GenerateRandomCurrency()
+    public Currency GenerateRandomCurrency()
     {
-        return FakerCurrency.Generate();
+        return _fakerCurrency.Generate();
     }
     public static List<Currency> GenerateListOfCurrencies()
     {
         return new List<Currency>()
         {
-            new Currency(){CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = 1 },
-            new Currency(){CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
-            new Currency(){CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
+            new (){CurrencyId = Guid.NewGuid(), Code = "USD", Name = "US Dollar", ExchangeRate = 1 },
+            new (){CurrencyId = Guid.NewGuid(), Code = "EUR", Name = "Euro", ExchangeRate = new decimal(0.97) },
+            new (){CurrencyId = Guid.NewGuid(), Code = "RUB", Name = "Russian ruble", ExchangeRate = new decimal(96.64) }
         };
     }
 }

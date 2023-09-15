@@ -4,56 +4,60 @@ using BankingSystemServices.Models;
 using BankingSystemServices.Models.DTO;
 using BankingSystemServices.Services;
 using Microsoft.EntityFrameworkCore;
+using Services.Interfaces;
 
 namespace Services;
 
-public class EmployeeService
+public class EmployeeService : IEmployeeService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
 
     public EmployeeService(BankingSystemDbContext bankingSystemDbContext)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
-        if (!_bankingSystemDbContext.Database.CanConnect())
-            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
     }
 
-    public async Task<Employee> AddEmployee(EmployeeDto employeeDto)
+    public async Task<Employee> AddEmployeeAsync(EmployeeDto employeeDto)
     {
         var employee = MapDtoToEmployee(employeeDto);
 
-        await ValidateEmployee(employee);
+        await ValidateEmployeeAsync(employee);
+
         await _bankingSystemDbContext.Employees.AddAsync(employee);
-        await SaveChanges();
+
+        await _bankingSystemDbContext.SaveChangesAsync();
 
         return employee;
     }
 
-    public async Task<Employee> UpdateEmployee(Guid employeeId, EmployeeDto employeeDto)
+    public async Task<Employee> UpdateEmployeeAsync(Guid employeeId, EmployeeDto newEmployeeDto)
     {
-        var employee = await GetEmployeeById(employeeId);
+        var employee = await GetEmployeeByIdAsync(employeeId);
 
-        employee = MapDtoToEmployee(employeeDto, employee);
+        employee = MapDtoToEmployee(newEmployeeDto, employee);
 
-        await ValidateEmployee(employee, true);
+        await ValidateEmployeeAsync(employee, true);
+
         _bankingSystemDbContext.Employees.Update(employee);
-        await SaveChanges();
+
+        await _bankingSystemDbContext.SaveChangesAsync();
 
         return employee;
     }
 
-    public async Task DeleteEmployee(Guid employeeId)
+    public async Task DeleteEmployeeAsync(Guid employeeId)
     {
-        var bankEmployee = await GetEmployeeById(employeeId);
+        var bankEmployee = await GetEmployeeByIdAsync(employeeId);
 
         _bankingSystemDbContext.Employees.Remove(bankEmployee);
 
-        await SaveChanges();
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    private async Task ValidateEmployee(Employee employee, bool isUpdate = false)
+    private async Task ValidateEmployeeAsync(Employee employee, bool isUpdate = false)
     {
-        if (!isUpdate && await _bankingSystemDbContext.Employees.ContainsAsync(employee))
+        if (!isUpdate &&
+            await _bankingSystemDbContext.Employees.AnyAsync(e => e.EmployeeId.Equals(employee.EmployeeId)))
             throw new ArgumentException("This employee has already been added to the banking system!",
                 nameof(employee));
 
@@ -89,7 +93,7 @@ public class EmployeeService
             throw new PropertyValidationException("The employee's date of birth is incorrect!",
                 nameof(employee.DateOfBirth), nameof(Employee));
 
-        var age = TestDataGenerator.CalculateAge(employee.DateOfBirth);
+        var age = await Task.Run(() => TestDataGenerator.CalculateAge(employee.DateOfBirth));
 
         if (age < 18)
             throw new PropertyValidationException("Employee is under 18 years old!", nameof(employee.Age),
@@ -98,21 +102,15 @@ public class EmployeeService
         if (age != employee.Age || employee.Age <= 0) employee.Age = age;
     }
 
-    public async Task<Employee> GetEmployeeById(Guid employeeId)
+    public async Task<Employee> GetEmployeeByIdAsync(Guid employeeId)
     {
         var employee = await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>
             employee.EmployeeId.Equals(employeeId));
-        
-        if (employee == null)
-            throw new ArgumentException($"The employee with identifier {employeeId} does not exist!",
-                nameof(employeeId));
-        
-        return employee;
-    }
 
-    private async Task SaveChanges()
-    {
-        await _bankingSystemDbContext.SaveChangesAsync();
+        if (employee == null)
+            throw new ValueNotFoundException($"The employee with identifier {employeeId} does not exist!");
+
+        return employee;
     }
 
     private static Employee MapDtoToEmployee(EmployeeDto employeeDto, Employee? employee = null)

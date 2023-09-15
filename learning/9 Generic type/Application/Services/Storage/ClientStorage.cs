@@ -24,7 +24,7 @@ public class ClientStorage : IClientStorage, IEnumerable<Client>
 
     public void Add(Client client)
     {
-        var defaultAccount = TestDataGenerator.GenerateRandomBankClientAccount(_defaultCurrency, client, 0);
+        var defaultAccount = TestDataGenerator.GenerateBankClientAccount(_defaultCurrency, client, 0);
         ClientWithAccountsList.Add(client, new List<Account>(){defaultAccount});
     }
 

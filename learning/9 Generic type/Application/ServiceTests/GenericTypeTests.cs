@@ -12,8 +12,9 @@ public static class GenericTypeTests
         Console.ResetColor();
         var bankService = new BankService();
 
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(100);
-        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(100);
+        var testDataGenerator = new TestDataGenerator();
+        var bankClients = testDataGenerator.GenerateListWithBankClients(100);
+        var bankEmployees = testDataGenerator.GenerateListWithBankEmployees(100);
 
         var clientAge = 25;
         var employeeSalary = new decimal(150.67);

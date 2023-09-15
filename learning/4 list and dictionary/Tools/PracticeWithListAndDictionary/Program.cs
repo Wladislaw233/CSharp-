@@ -6,12 +6,14 @@ namespace PracticeWithListAndDictionary;
 
 internal class Program
 {
-    private static readonly List<Client> ListBankClients = TestDataGenerator.GenerateListWithBankClients(1000);
+    private static readonly TestDataGenerator _testDataGenerator = new();
+    
+    private static readonly List<Client> ListBankClients = _testDataGenerator.GenerateListWithBankClients(1000);
 
     private static readonly Dictionary<string, Client> DictionaryBankClients =
-        TestDataGenerator.GenerateDictionaryWithBankClients(ListBankClients);
+        _testDataGenerator.GenerateDictionaryWithBankClients(ListBankClients);
 
-    private static readonly List<Employee> ListBankEmployees = TestDataGenerator.GenerateListWithBankEmployees(1000);
+    private static readonly List<Employee> ListBankEmployees = _testDataGenerator.GenerateListWithBankEmployees(1000);
 
     private static readonly Stopwatch Stopwatch = new();
 
@@ -22,7 +24,7 @@ internal class Program
         var phoneNumber = ListBankClients.Skip(randomNumber).Last().PhoneNumber;
         
         // добавление последнего клиента в словарь для осуществления тестов.
-        var lastClientInDictionary = TestDataGenerator.GenerateRandomBankClient();
+        var lastClientInDictionary = _testDataGenerator.GenerateRandomBankClient();
         DictionaryBankClients.Add(lastClientInDictionary.PhoneNumber, lastClientInDictionary);
         
         // 2.а замер времени выполнения поиска клиента по его номеру телефона среди элементов списка.

@@ -2,10 +2,11 @@
 
 namespace PracticeWithSerialization;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
-        ExportToolTests.ExportJsonServiceTest();
+        var exportToolTests = new ExportToolTests();
+        exportToolTests.ExportJsonServiceTest();
     }
 }

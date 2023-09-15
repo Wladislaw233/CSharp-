@@ -1,5 +1,6 @@
 ﻿namespace BankingSystemServices.Exceptions;
 
+[Serializable]
 public class ValueNotFoundException : Exception
 {
     public ValueNotFoundException()
@@ -10,7 +11,8 @@ public class ValueNotFoundException : Exception
     {
     }
 
-    public ValueNotFoundException(string message, Exception? inner) : base(message, inner)
+    public ValueNotFoundException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 }

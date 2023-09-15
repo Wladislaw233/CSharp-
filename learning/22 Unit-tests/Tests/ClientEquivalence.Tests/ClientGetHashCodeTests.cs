@@ -5,11 +5,13 @@ namespace Equivalence.Tests;
 
 public class ClientGetHashCodeTests
 {
+    private readonly TestDataGenerator _testDataGenerator = new();
+    
     [Fact]
     public void GetHashCode_ReturnsSameValueForEqualClients()
     {
         // Arrange
-        var client = TestDataGenerator.GenerateRandomBankClient();
+        var client = _testDataGenerator.GenerateRandomBankClient();
         var copiedClient = Client.CopyClient(client);
 
         // Act
@@ -24,8 +26,8 @@ public class ClientGetHashCodeTests
     public void GetHashCode_ReturnsDifferentValueForDifferentClients()
     {
         // Arrange
-        var firstClient = TestDataGenerator.GenerateRandomBankClient();
-        var secondClient = TestDataGenerator.GenerateRandomBankClient();
+        var firstClient = _testDataGenerator.GenerateRandomBankClient();
+        var secondClient = _testDataGenerator.GenerateRandomBankClient();
         
         // Act
         var hashCodeFirstClient = firstClient.GetHashCode();

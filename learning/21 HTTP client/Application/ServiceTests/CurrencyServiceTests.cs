@@ -2,20 +2,17 @@
 
 namespace ServiceTests;
 
-public class CurrencyServiceTests
+public static class CurrencyServiceTests
 {
-    public static void CurrencyConverterTest()
+    public static async Task CurrencyConverterTest()
     {
-        var fromCurrencyCode = "USD";
-        var toCurrencyCode = "EUR";
+        const string fromCurrencyCode = "USD";
+        const string toCurrencyCode = "EUR";
         var amount = new decimal(1235.23);
         
-        var currencyService = new CurrencyService();
-
         try
         {
-            var result = currencyService.CurrencyConverter(fromCurrencyCode, toCurrencyCode, amount).GetAwaiter()
-                .GetResult();
+            var result = await CurrencyService.CurrencyConverter(fromCurrencyCode, toCurrencyCode, amount);
 
             Console.WriteLine($"Convert {amount:F} {fromCurrencyCode} to {toCurrencyCode}: {result:F}");
         }

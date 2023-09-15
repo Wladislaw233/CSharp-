@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace Services;
 
-public class CurrencyService
+public static class CurrencyService
 {
     private const string BaseUri = "https://api.apilayer.com/fixer";
     private const string ApiKey = "tlV2586VfaaAFaKWdoaG71Hg4fpBZreS";
 
-    public async Task<decimal> CurrencyConverter(string fromCurrencyCode, string toCurrencyCode,
+    public static async Task<decimal> CurrencyConverter(string fromCurrencyCode, string toCurrencyCode,
         decimal amount)
     {
         var regex = new Regex("\\s+");

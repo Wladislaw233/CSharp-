@@ -9,8 +9,8 @@ namespace PracticeWithTypes
         public static void Main(string[] args)
         {
             // пункт а.
-            
-            var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees();
+            var testDataGenerator = new TestDataGenerator();
+            var bankEmployees = testDataGenerator.GenerateListWithBankEmployees();
             var owners = bankEmployees.FindAll(employee => employee.IsOwner);
             
             Console.WriteLine("Введите прибыль банка:");
@@ -26,7 +26,7 @@ namespace PracticeWithTypes
             
             // пункт б.
 
-            var client = TestDataGenerator.GenerateRandomBankClient();
+            var client = testDataGenerator.GenerateRandomBankClient();
            
             var convertedEmployee = (Employee)client;
 

@@ -9,7 +9,7 @@ public class ClientServiceTests
 {
     private List<Client> _bankClients = new();
     private readonly ClientService _clientService = new();
-
+    private readonly TestDataGenerator _testDataGenerator = new();
     public void ClientServiceTest()
     {
         AddClientTest();
@@ -19,9 +19,9 @@ public class ClientServiceTests
 
     private void AddClientTest()
     {
-        _bankClients = TestDataGenerator.GenerateListWithBankClients(3);
-        _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient(true));
-        _bankClients.Add(TestDataGenerator.GenerateRandomInvalidClient());
+        _bankClients = _testDataGenerator.GenerateListWithBankClients(3);
+        _bankClients.Add(_testDataGenerator.GenerateRandomInvalidClient(true));
+        _bankClients.Add(_testDataGenerator.GenerateRandomInvalidClient());
 
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("КЛИЕНТЫ");

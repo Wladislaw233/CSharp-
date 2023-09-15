@@ -2,10 +2,11 @@
 
 namespace PracticeWithFileStream;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
-        ExportToolTests.ExportCsvServiceTest();
+        var exportToolsTests = new ExportToolTests();
+        exportToolsTests.ExportCsvServiceTest();
     }
 }

@@ -14,7 +14,8 @@ public static class CashDispenserServiceTests
         await using var bankingSystemDbContext = new BankingSystemDbContext();
 
         var clientService = new ClientService(bankingSystemDbContext);
-        var bankClients = clientService.ClientsWithFilterAndPagination(1, 5).Result;
+
+        var bankClients = await clientService.ClientsWithFilterAndPaginationAsync(1, 5);
 
         var tasks = new List<Task>();
 
@@ -23,22 +24,21 @@ public static class CashDispenserServiceTests
             Console.WriteLine(
                 $"Personal accounts of the client {client.FirstName} {client.LastName} before cashing out:");
 
-            var presentationClientAccounts = await clientService.GetPresentationClientAccounts(client.ClientId);
+            var mess = await clientService.GetPresentationClientAccountsAsync(client.ClientId);
 
-            Console.WriteLine(presentationClientAccounts);
+            Console.WriteLine(mess);
 
-            var task = CashDispenserService.CashOutAsync(client);
-            tasks.Add(task);
+            tasks.Add(CashDispenserService.CashOutAsync(client.ClientId));
         }
 
         await Task.WhenAll(tasks);
 
-        Console.WriteLine();
-
         foreach (var client in bankClients)
         {
             Console.WriteLine($"Personal accounts of client {client.FirstName} {client.LastName} after cashing out:");
-            var presentationClientAccounts = await clientService.GetPresentationClientAccounts(client.ClientId);
+
+            var presentationClientAccounts = await clientService.GetPresentationClientAccountsAsync(client.ClientId);
+
             Console.WriteLine(presentationClientAccounts);
         }
     }

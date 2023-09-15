@@ -4,19 +4,21 @@ using BankingSystemServices.Services;
 
 namespace ServiceTests;
 
-public static class ExportToolTests
+public class ExportToolTests
 {
-    private static readonly string PathToDirectory = Path.Combine("D:", "Learning Serialization");
+    private readonly string _pathToDirectory = Path.Combine("D:", "Learning Serialization");
 
-    public static void ExportJsonServiceTest()
+    private readonly TestDataGenerator _testDataGenerator = new();
+
+    public void ExportJsonServiceTest()
     {
         ExportClientsInJsonTest();
         ExportEmployeesInJsonTest();
     }
 
-    private static void ExportClientsInJsonTest()
+    private void ExportClientsInJsonTest()
     {
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(3);
+        var bankClients = _testDataGenerator.GenerateListWithBankClients(3);
 
         const string fileName = "ClientsData.json";
 
@@ -26,7 +28,7 @@ public static class ExportToolTests
 
         try
         {
-            ExportService.WritePersonsDataToJsonFile(bankClients, PathToDirectory, fileName);
+            ExportService.WritePersonsDataToJsonFile(bankClients, _pathToDirectory, fileName);
         }
         catch (Exception e)
         {
@@ -37,27 +39,23 @@ public static class ExportToolTests
 
         try
         {
-            bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(PathToDirectory, fileName);
+            bankClients = ExportService.ReadPersonsDataFromJsonFile<Client>(_pathToDirectory, fileName);
 
             Console.WriteLine($"Read clients from file {fileName}:");
 
             PrintClientsRepresentation(bankClients);
         }
-        catch (FileNotFoundException e)
-        {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, "Json file was not found!");
-            Console.WriteLine(eMess);
-        }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while reading the file.");
             Console.WriteLine(eMess);
         }
     }
 
-    private static void ExportEmployeesInJsonTest()
+    private void ExportEmployeesInJsonTest()
     {
-        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
+        var bankEmployees = _testDataGenerator.GenerateListWithBankEmployees(3);
 
         const string fileName = "EmployeesData.json";
 
@@ -67,30 +65,27 @@ public static class ExportToolTests
 
         try
         {
-            ExportService.WritePersonsDataToJsonFile(bankEmployees, PathToDirectory, fileName);
+            ExportService.WritePersonsDataToJsonFile(bankEmployees, _pathToDirectory, fileName);
         }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while writing the file.");
             Console.WriteLine(eMess);
         }
 
         try
         {
-            bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(PathToDirectory, fileName);
+            bankEmployees = ExportService.ReadPersonsDataFromJsonFile<Employee>(_pathToDirectory, fileName);
 
             Console.WriteLine($"Read employees from file {fileName}:");
 
             PrintEmployeesRepresentation(bankEmployees);
         }
-        catch (FileNotFoundException e)
-        {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, "Json file was not found.");
-            Console.WriteLine(eMess);
-        }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while reading the file.");
             Console.WriteLine(eMess);
         }
     }

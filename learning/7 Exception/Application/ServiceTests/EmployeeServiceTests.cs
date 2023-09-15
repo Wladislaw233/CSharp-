@@ -14,10 +14,11 @@ public class EmployeeServiceTests
     
     private static void AddBankEmployeeTest()
     {
-        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(3);
+        var testDataGenerator = new TestDataGenerator();
+        var bankEmployees = testDataGenerator.GenerateListWithBankEmployees(3);
         var employeeService = new EmployeeService();
-        bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee(true));
-        bankEmployees.Add(TestDataGenerator.GenerateRandomInvalidEmployee());
+        bankEmployees.Add(testDataGenerator.GenerateRandomInvalidEmployee(true));
+        bankEmployees.Add(testDataGenerator.GenerateRandomInvalidEmployee());
 
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("СОТРУДНИКИ");

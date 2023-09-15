@@ -7,6 +7,7 @@ namespace ServiceTests;
 
 public static class EnumerableTests
 {
+    private static readonly TestDataGenerator _testDataGenerator = new();
     public static void GetClientsByFiltersTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
@@ -18,7 +19,7 @@ public static class EnumerableTests
         var clientStorage = new ClientStorage();
         var clientService = new ClientService(clientStorage);
 
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(10000);
+        var bankClients = _testDataGenerator.GenerateListWithBankClients(10000);
 
         foreach (var client in bankClients)
             clientStorage.Add(client);
@@ -61,7 +62,7 @@ public static class EnumerableTests
         var employeeStorage = new EmployeeStorage();
         var employeeService = new EmployeeService(employeeStorage);
 
-        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees(10000);
+        var bankEmployees = _testDataGenerator.GenerateListWithBankEmployees(10000);
 
         foreach (var employee in bankEmployees)
             employeeStorage.Add(employee);

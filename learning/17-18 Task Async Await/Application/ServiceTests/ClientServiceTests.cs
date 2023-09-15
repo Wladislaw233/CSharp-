@@ -1,32 +1,38 @@
 ﻿using BankingSystemServices.Database;
-using BankingSystemServices.Exceptions;
 using BankingSystemServices.Models;
 using BankingSystemServices.Services;
 using Services;
 
 namespace ServiceTests;
 
-public static class ClientServiceTests
+public class ClientServiceTests
 {
-    public static void ClientServiceTest()
+    private readonly ClientService _clientService;
+    private readonly TestDataGenerator _testDataGenerator = new();
+
+    private Client? _client;
+
+    public ClientServiceTests(BankingSystemDbContext bankingSystemDbContext)
+    {
+        _clientService = new ClientService(bankingSystemDbContext);
+    }
+
+    public async Task ClientServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Clients");
         Console.ResetColor();
 
-        using var bankingSystemDbContext = new BankingSystemDbContext();
-        var clientService = new ClientService(bankingSystemDbContext);
+        _client = await AddingClientTest();
 
-        var bankClient = AddingClientTest(clientService).Result;
-
-        if (bankClient != null)
+        if (_client != null)
         {
-            AddingClientAccountTest(clientService, bankClient).Wait();
-            UpdatingClientAccountTest(clientService, bankClient).Wait();
-            DeletingClientAccountTest(clientService, bankClient).Wait();
-            UpdatingClientTest(clientService, bankClient).Wait();
-            DeletingClientTest(clientService, bankClient).Wait();
-            GettingClientsWithFilterTest(clientService).Wait();
+            await AddingClientAccountTest();
+            await UpdatingClientAccountTest();
+            await DeletingClientAccountTest();
+            await UpdatingClientTest();
+            await DeletingClientTest();
+            await GettingClientsWithFilterTest();
         }
         else
         {
@@ -34,49 +40,35 @@ public static class ClientServiceTests
         }
     }
 
-    private static async Task<Client?> AddingClientTest(ClientService clientService)
+    private async Task<Client?> AddingClientTest()
     {
-        var bankClients = TestDataGenerator.GenerateListWithBankClients(5);
+        var bankClients = _testDataGenerator.GenerateListWithBankClients(5);
 
         try
         {
             foreach (var client in bankClients)
-                await clientService.AddClient(client);
+                await _clientService.AddClientAsync(client);
 
             return bankClients.FirstOrDefault();
         }
-        catch (InvalidOperationException e)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while performing the operation.");
-            Console.WriteLine(mess);
-        }
-        catch (ArgumentException e)
-        {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
-                "An error occurred while adding the client to the database.");
-            Console.WriteLine(mess);
-        }
-        catch (PropertyValidationException e)
-        {
-            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
-            Console.WriteLine(mess);
-        }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while adding the client to the database.");
             Console.WriteLine(mess);
+            return null;
         }
-
-        return null;
     }
 
-    private static async Task AddingClientAccountTest(ClientService clientService, Client bankClient)
+    private async Task AddingClientAccountTest()
     {
-        Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+        if (_client == null)
+            return;
+
+        Console.WriteLine($"Client's personal accounts {_client.FirstName} {_client.LastName}:");
 
         var representationBankClientAccounts =
-            await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+            await _clientService.GetPresentationClientAccountsAsync(_client.ClientId);
 
         Console.WriteLine(representationBankClientAccounts);
 
@@ -87,151 +79,148 @@ public static class ClientServiceTests
 
         try
         {
-            await clientService.AddClientAccount(bankClient.ClientId, currencyCode, amount);
+            await _clientService.AddClientAccountAsync(_client.ClientId, currencyCode, amount);
 
             representationBankClientAccounts =
-                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+                await _clientService.GetPresentationClientAccountsAsync(_client.ClientId);
 
-            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine($"Client's personal accounts {_client.FirstName} {_client.LastName}:");
             Console.WriteLine(representationBankClientAccounts);
-        }
-        catch (ArgumentException e)
-        {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
-                "An error occurred while adding the client account to the database.");
-            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while adding the client account to the database.");
             Console.WriteLine(mess);
         }
     }
 
-    private static async Task UpdatingClientAccountTest(ClientService clientService, Client bankClient)
+    private async Task UpdatingClientAccountTest()
     {
+        if (_client == null)
+            return;
+
         try
         {
-            var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
+            var bankClientAccounts = await _clientService.GetClientAccountsAsync(_client.ClientId);
 
-            var account = bankClientAccounts.Last();
+            var account = bankClientAccounts.LastOrDefault();
+
+            if (account == null)
+            {
+                Console.WriteLine("Client account for update not found.");
+                return;
+            }
 
             var amount = new decimal(30000);
 
             Console.WriteLine(
-                $"Let's update the account balance {account.AccountNumber} for client {bankClient.FirstName} {bankClient.LastName} to {amount}:");
+                $"Let's update the account balance {account.AccountNumber} for client {_client.FirstName} {_client.LastName} to {amount}:");
 
-            await clientService.UpdateClientAccount(account.AccountId, amount: amount);
+            await _clientService.UpdateClientAccountAsync(account.AccountId, amount: amount);
 
             var presentationBankClientAccounts =
-                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+                await _clientService.GetPresentationClientAccountsAsync(_client.ClientId);
 
-            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine($"Client's personal accounts {_client.FirstName} {_client.LastName}:");
             Console.WriteLine(presentationBankClientAccounts);
-        }
-        catch (ArgumentException e)
-        {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
-                "An error occurred while updating the client account in database.");
-            Console.WriteLine(mess);
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while updating the client account in database.");
             Console.WriteLine(mess);
         }
     }
 
-    private static async Task DeletingClientAccountTest(ClientService clientService, Client bankClient)
+    private async Task DeletingClientAccountTest()
     {
-        var bankClientAccounts = await clientService.GetClientAccounts(bankClient.ClientId);
+        if (_client == null)
+            return;
 
-        var account = bankClientAccounts.Last();
+        var bankClientAccounts = await _clientService.GetClientAccountsAsync(_client.ClientId);
+
+        var account = bankClientAccounts.LastOrDefault();
+
+        if (account == null)
+        {
+            Console.WriteLine("Client account for deleting not found.");
+            return;
+        }
 
         try
         {
             Console.WriteLine($"Let's delete the account {account.AccountNumber}:");
 
-            await clientService.DeleteClientAccount(account.AccountId);
+            await _clientService.DeleteClientAccountAsync(account.AccountId);
 
-            Console.WriteLine($"Client's personal accounts {bankClient.FirstName} {bankClient.LastName}:");
+            Console.WriteLine($"Client's personal accounts {_client.FirstName} {_client.LastName}:");
 
             var presentationBankClientAccounts =
-                await clientService.GetPresentationClientAccounts(bankClient.ClientId);
+                await _clientService.GetPresentationClientAccountsAsync(_client.ClientId);
 
             Console.WriteLine(presentationBankClientAccounts);
         }
-        catch (ArgumentException e)
+        catch (Exception e)
         {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
                 "An error occurred while deleting the client account in database.");
             Console.WriteLine(mess);
         }
-        catch (Exception e)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
-            Console.WriteLine(mess);
-        }
     }
 
-    private static async Task UpdatingClientTest(ClientService clientService, Client bankClient)
+    private async Task UpdatingClientTest()
     {
-        Console.WriteLine("Let's change the client's first and last name:");
-        Console.WriteLine(
-            $"Before the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+        if (_client == null)
+            return;
 
+        Console.WriteLine("Let's change the client's:");
+        Console.WriteLine(
+            $"Before the change {_client.FirstName} {_client.LastName}. id {_client.ClientId}");
+
+        var newClient = _testDataGenerator.GenerateRandomBankClient();
         try
         {
-            await clientService.UpdateClient(bankClient.ClientId, "Vlad", "Yurchenko");
+            await _clientService.UpdateClientAsync(_client.ClientId, newClient);
+
             Console.WriteLine(
-                $"After the change {bankClient.FirstName} {bankClient.LastName}. id {bankClient.ClientId}");
+                $"After the change {_client.FirstName} {_client.LastName}. id {_client.ClientId}");
         }
-        catch (ArgumentException e)
+        catch (Exception e)
         {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
                 "An error occurred while updating the client in database.");
             Console.WriteLine(mess);
         }
-        catch (PropertyValidationException e)
+    }
+
+    private async Task DeletingClientTest()
+    {
+        if (_client == null)
+            return;
+
+        Console.WriteLine($"Delete client by id - {_client.ClientId}");
+
+        try
         {
-            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
-            Console.WriteLine(mess);
+            await _clientService.DeleteClientAsync(_client.ClientId);
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
-            Console.WriteLine(mess);
-        }
-    }
-
-    private static async Task DeletingClientTest(ClientService clientService, Client bankClient)
-    {
-        Console.WriteLine($"Delete client by id - {bankClient.ClientId}");
-        try
-        {
-            await clientService.DeleteClient(bankClient.ClientId);
-        }
-        catch (ArgumentException e)
-        {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
                 "An error occurred while deleting the client in database.");
             Console.WriteLine(mess);
         }
-        catch (Exception e)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
-            Console.WriteLine(mess);
-        }
     }
 
-    private static async Task GettingClientsWithFilterTest(ClientService clientService)
+    private async Task GettingClientsWithFilterTest()
     {
         const string clientFirstName = "Al";
 
         Console.WriteLine($"We will display clients with the name {clientFirstName}:");
         try
         {
-            var filteredClients = await clientService.ClientsWithFilterAndPagination(1, 100, clientFirstName);
+            var filteredClients = await _clientService.ClientsWithFilterAndPaginationAsync(1, 100, clientFirstName);
 
             Console.WriteLine("Clients:");
 
@@ -243,7 +232,8 @@ public static class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
+                "An error occurred while getting the clients from database.");
             Console.WriteLine(mess);
         }
     }

@@ -9,114 +9,78 @@ namespace Services;
 public class ClientService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
-    private readonly Currency? _defaultCurrency;
+    private Currency? _defaultCurrency;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
-        if (_bankingSystemDbContext.Database.CanConnect())
-        {
-            if (!_bankingSystemDbContext.Currencies.Any())
-            {
-                _bankingSystemDbContext.Currencies.AddRange(TestDataGenerator.GenerateListOfCurrencies());
-                SaveChanges().GetAwaiter().GetResult();
-            }
-
-            _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
-            if (_defaultCurrency == null)
-                throw new ValueNotFoundException("Failed to get default currency!");
-        }
-        else
-        {
-            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
-        }
     }
 
-    public async Task AddClient(Client client)
+    public async Task AddClientAsync(Client client)
     {
-        await ValidateClient(client);
+        await ValidateClientAsync(client);
 
-        var defaultAccount = CreateAccount(client, _defaultCurrency);
+        _defaultCurrency ??= await GetDefaultCurrencyAsync();
 
-        if (defaultAccount == null)
-            throw new InvalidOperationException("Failed to create default account!");
+        var defaultAccount = await CreateAccount(client, _defaultCurrency);
 
         await _bankingSystemDbContext.Clients.AddAsync(client);
         await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
 
-        await SaveChanges();
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
-        decimal? bonus = null)
+    public async Task UpdateClientAsync(Guid clientId, Client newClient)
     {
-        var client = await GetClientById(clientId);
+        var client = await GetClientByIdAsync(clientId);
 
-        if (firstName != null)
-            client.FirstName = firstName;
+        await ValidateClientAsync(newClient);
 
-        if (lastName != null)
-            client.LastName = lastName;
+        client.FirstName = newClient.FirstName;
+        client.LastName = newClient.LastName;
+        client.Age = newClient.Age;
+        client.DateOfBirth = newClient.DateOfBirth.ToUniversalTime();
+        client.PhoneNumber = newClient.PhoneNumber;
+        client.Address = newClient.Address;
+        client.Email = newClient.Email;
+        client.Bonus = newClient.Bonus;
 
-        if (age != null)
-            client.Age = (int)age;
-
-        if (dateOfBirth != null)
-            client.DateOfBirth = ((DateTime)dateOfBirth).ToUniversalTime();
-
-        if (phoneNumber != null)
-            client.PhoneNumber = phoneNumber;
-
-        if (address != null)
-            client.Address = address;
-
-        if (email != null)
-            client.Email = email;
-
-        if (bonus != null)
-            client.Bonus = (decimal)bonus;
-
-        await ValidateClient(client, true);
-        await SaveChanges();
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteClient(Guid clientId)
+    public async Task DeleteClientAsync(Guid clientId)
     {
-        var bankClient = await GetClientById(clientId);
+        var bankClient = await GetClientByIdAsync(clientId);
 
-        var clientAccounts = await GetClientAccounts(clientId);
+        var clientAccounts = await GetClientAccountsAsync(clientId);
 
         _bankingSystemDbContext.Accounts.RemoveRange(clientAccounts);
         _bankingSystemDbContext.Clients.Remove(bankClient);
 
-        await SaveChanges();
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task AddClientAccount(Guid clientId, string currencyCode, decimal amount)
+    public async Task AddClientAccountAsync(Guid clientId, string currencyCode, decimal amount)
     {
-        var client = await GetClientById(clientId);
+        var client = await GetClientByIdAsync(clientId);
 
-        var currency = await GetCurrencyByCurrencyCode(currencyCode);
+        var currency = await GetCurrencyByCurrencyCodeAsync(currencyCode);
 
-        var account = CreateAccount(client, currency, amount);
-
-        if (account == null)
-            throw new InvalidOperationException("Failed to create account!");
-
+        var account = await CreateAccount(client, currency, amount);
+        
         await _bankingSystemDbContext.Accounts.AddAsync(account);
 
-        await SaveChanges();
+        await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
+    public async Task UpdateClientAccountAsync(Guid accountId, string currencyCode = "", decimal? amount = null)
     {
-        var account = await GetAccountById(accountId);
+        var account = await GetAccountByIdAsync(accountId);
 
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
-            var currency = await GetCurrencyByCurrencyCode(currencyCode);
-            
+            var currency = await GetCurrencyByCurrencyCodeAsync(currencyCode);
+
             account.CurrencyId = currency.CurrencyId;
             account.Currency = currency;
         }
@@ -124,24 +88,30 @@ public class ClientService
         if (amount != null)
             account.Amount = (decimal)amount;
 
-        await SaveChanges();
-    }
-
-    public async Task DeleteClientAccount(Guid accountId)
-    {
-        var account = await GetAccountById(accountId);
-
-        _bankingSystemDbContext.Accounts.Remove(account);
-
-        await SaveChanges();
-    }
-
-    private async Task SaveChanges()
-    {
         await _bankingSystemDbContext.SaveChangesAsync();
     }
 
-    public async Task<string> GetPresentationClientAccounts(Guid clientId)
+    public async Task DeleteClientAccountAsync(Guid accountId)
+    {
+        var account = await GetAccountByIdAsync(accountId);
+
+        _bankingSystemDbContext.Accounts.Remove(account);
+
+        await _bankingSystemDbContext.SaveChangesAsync();
+    }
+
+    private async Task<Currency> GetDefaultCurrencyAsync()
+    {
+        var currency =
+            await _bankingSystemDbContext.Currencies.SingleOrDefaultAsync(currency => currency.Code == "USD");
+
+        if (currency == null)
+            throw new ValueNotFoundException("Default currency USD not found.");
+
+        return currency;
+    }
+
+    public async Task<string> GetPresentationClientAccountsAsync(Guid clientId)
     {
         var clientAccounts = await (from account in _bankingSystemDbContext.Accounts
             join currency in _bankingSystemDbContext.Currencies on account.CurrencyId equals currency.CurrencyId
@@ -151,51 +121,52 @@ public class ClientService
         return string.Join("\n", clientAccounts);
     }
 
-    public async Task<List<Account>> GetClientAccounts(Guid clientId)
+    public async Task<IEnumerable<Account>> GetClientAccountsAsync(Guid clientId)
     {
         return await _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId)).ToListAsync();
     }
 
-    private static Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
+    private static async Task<Account> CreateAccount(Client client, Currency currency, decimal amount = 0)
     {
-        return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
+        return await Task.Run(() => TestDataGenerator.GenerateBankClientAccount(currency, client, amount));
     }
 
-    private async Task<Client> GetClientById(Guid clientId)
+    private async Task<Client> GetClientByIdAsync(Guid clientId)
     {
-        var client = await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
+        var client =
+            await _bankingSystemDbContext.Clients.SingleOrDefaultAsync(client => client.ClientId.Equals(clientId));
 
         if (client == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+            throw new ValueNotFoundException($"The client with identifier {clientId} does not exist!");
 
         return client;
     }
 
-    private async Task<Account> GetAccountById(Guid accountId)
+    private async Task<Account> GetAccountByIdAsync(Guid accountId)
     {
-        var account = await _bankingSystemDbContext.Accounts.SingleOrDefaultAsync(account => account.AccountId.Equals(accountId));
+        var account =
+            await _bankingSystemDbContext.Accounts.SingleOrDefaultAsync(account => account.AccountId.Equals(accountId));
 
         if (account == null)
-            throw new ArgumentException($"There is no personal account with ID {accountId}.", nameof(accountId));
+            throw new ValueNotFoundException($"There is no personal account with ID {accountId}.");
 
         return account;
     }
 
-    private async Task<Currency> GetCurrencyByCurrencyCode(string currencyCode)
+    private async Task<Currency> GetCurrencyByCurrencyCodeAsync(string currencyCode)
     {
         var currency =
             await _bankingSystemDbContext.Currencies.SingleOrDefaultAsync(currency => currency.Code == currencyCode);
-        
+
         if (currency == null)
-            throw new ArgumentException($"The bank does not have the transferred currency ({currencyCode}).",
-                nameof(currencyCode));
+            throw new ValueNotFoundException($"The bank does not have the transferred currency ({currencyCode}).");
 
         return currency;
     }
-    
-    private async Task ValidateClient(Client client, bool itUpdate = false)
+
+    private async Task ValidateClientAsync(Client client, bool itUpdate = false)
     {
-        if (!itUpdate && await _bankingSystemDbContext.Clients.ContainsAsync(client))
+        if (!itUpdate && await _bankingSystemDbContext.Clients.AnyAsync(c => c.ClientId.Equals(client.ClientId)))
             throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
         if (string.IsNullOrWhiteSpace(client.FirstName))
@@ -222,7 +193,7 @@ public class ClientService
             throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
                 nameof(Client));
 
-        var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
+        var age = await Task.Run(() => TestDataGenerator.CalculateAge(client.DateOfBirth));
 
         if (age < 18)
             throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
@@ -231,7 +202,8 @@ public class ClientService
         if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
     }
 
-    public async Task<List<Client>> ClientsWithFilterAndPagination(int page, int pageSize, string? firstName = null,
+    public async Task<List<Client>> ClientsWithFilterAndPaginationAsync(int page, int pageSize,
+        string? firstName = null,
         string? lastName = null, int? age = null, Guid? clientId = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
     {
@@ -256,7 +228,7 @@ public class ClientService
         query = query.OrderBy(client => client.FirstName);
 
         query = query.Skip((page - 1) * pageSize).Take(pageSize);
-        var resultQuery = await query.ToListAsync();
-        return resultQuery;
+
+        return await query.ToListAsync();
     }
 }

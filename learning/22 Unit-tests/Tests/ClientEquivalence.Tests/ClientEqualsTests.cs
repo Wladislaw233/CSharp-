@@ -5,11 +5,13 @@ namespace Equivalence.Tests;
 
 public class ClientEqualsTests
 {
+    private readonly TestDataGenerator _testDataGenerator = new();
+    
     [Fact]
     public void Equals_ReturnsTrueForIdenticalClients()
     {
         // Arrange
-        var client = TestDataGenerator.GenerateRandomBankClient();
+        var client = _testDataGenerator.GenerateRandomBankClient();
         var copiedClient = Client.CopyClient(client);
         
         // Act
@@ -23,8 +25,8 @@ public class ClientEqualsTests
     public void Equals_ReturnFalseForDifferentClients()
     {
         // Arrange
-        var firstClient = TestDataGenerator.GenerateRandomBankClient();
-        var secondClient = TestDataGenerator.GenerateRandomBankClient();
+        var firstClient = _testDataGenerator.GenerateRandomBankClient();
+        var secondClient = _testDataGenerator.GenerateRandomBankClient();
         
         // Act
         var isIdentical = firstClient.Equals(secondClient);

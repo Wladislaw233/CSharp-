@@ -1,5 +1,4 @@
 ﻿using BankingSystemServices.Database;
-using BankingSystemServices.Exceptions;
 using BankingSystemServices.ExportTool;
 using BankingSystemServices.Models;
 using BankingSystemServices.Services;
@@ -7,24 +6,27 @@ using Services;
 
 namespace ServiceTests;
 
-public static class ExportToolTests
+public class ExportToolTests
 {
-    private static readonly string PathToDirectory = Path.Combine("D:", "Learning FileStream");
+    private readonly string _pathToDirectory = Path.Combine("D:", "Learning FileStream");
     private const string FileName = "clients.csv";
-
-    public static void ExportCsvServiceTest()
+    
+    private readonly ExportService _exportService = new();
+    
+    public void ExportCsvServiceTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"File name - {FileName}, file path - {PathToDirectory}");
+        Console.WriteLine($"File name - {FileName}, file path - {_pathToDirectory}");
         Console.ResetColor();
 
         WriteClientsDataToScvFileTest();
         ReadClientsDataFromScvFileTest();
     }
 
-    private static void WriteClientsDataToScvFileTest()
+    private void WriteClientsDataToScvFileTest()
     {
-        var recordableClients = TestDataGenerator.GenerateListWithBankClients(5);
+        var testDataGenerator = new TestDataGenerator();
+        var recordableClients = testDataGenerator.GenerateListWithBankClients(5);
 
         Console.WriteLine("Let's sign up the next clients:");
 
@@ -32,7 +34,7 @@ public static class ExportToolTests
 
         try
         {
-            ExportService.WriteClientsDataToScvFile(recordableClients, PathToDirectory, FileName);
+            _exportService.WriteClientsDataToScvFile(recordableClients, _pathToDirectory, FileName);
         }
         catch (Exception e)
         {
@@ -42,12 +44,12 @@ public static class ExportToolTests
         }
     }
 
-    private static void ReadClientsDataFromScvFileTest()
+    private void ReadClientsDataFromScvFileTest()
     {
         Console.WriteLine("\nLet's read clients from the file and add them to the database:");
         try
         {
-            var readableClients = ExportService.ReadClientsDataFromScvFile(PathToDirectory, FileName);
+            var readableClients = _exportService.ReadClientsDataFromScvFile(_pathToDirectory, FileName);
 
             PrintClientRepresentation(readableClients);
 
@@ -58,28 +60,6 @@ public static class ExportToolTests
                 foreach (var client in readableClients)
                     clientService.AddClient(client);
             }
-        }
-        catch (InvalidOperationException e)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while performing the operation.");
-            Console.WriteLine(mess);
-        }
-        catch (ArgumentException e)
-        {
-            var mess = ExceptionHandlingService.ArgumentExceptionHandler(e,
-                "An error occurred while adding the client to the database.");
-            Console.WriteLine(mess);
-        }
-        catch (PropertyValidationException e)
-        {
-            var mess = ExceptionHandlingService.PropertyValidationExceptionHandler(e);
-            Console.WriteLine(mess);
-        }
-        catch (FileNotFoundException e)
-        {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e, $"File {FileName} not found.");
-            Console.WriteLine(eMess);
         }
         catch (Exception e)
         {

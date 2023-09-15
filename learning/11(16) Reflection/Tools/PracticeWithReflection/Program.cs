@@ -1,5 +1,5 @@
 ﻿
-using Models;
+using ReflectionTests;
 
 namespace PracticeWithReflection;
 
@@ -7,6 +7,7 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        ReflectionTests.ReflectionTest();
+        var reflectionTests = new ReflectionTriangleTests();
+        reflectionTests.ReflectionTest();
     }
 }

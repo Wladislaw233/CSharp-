@@ -4,34 +4,43 @@ using BankingSystemServices.Services;
 
 namespace ServiceTests;
 
-public static class ThreadAndTaskTests
+public class ThreadAndTaskTests
 {
-    public static void ThreadTest()
+    private readonly TestDataGenerator _testDataGenerator = new();
+    
+    public void ThreadTest()
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Parallel import and export of clients");
         Console.ResetColor();
+        
         ParallelExportAndImportClientsTest();
+        
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Parallel accrual to the client account");
         Console.ResetColor();
+        
         ParallelAccrualToAccountTest();
     }
 
-    private static void ParallelExportAndImportClientsTest()
+    private void ParallelExportAndImportClientsTest()
     {
         // clients for export.
-        var bankClientsForExport = TestDataGenerator.GenerateListWithBankClients(5);
+        var bankClientsForExport = _testDataGenerator.GenerateListWithBankClients(5);
 
         // clients for import.
-        var bankClientsForImport = TestDataGenerator.GenerateListWithBankClients(5);
+        var bankClientsForImport = _testDataGenerator.GenerateListWithBankClients(5);
 
         var pathToDirectory = Path.Combine("D:", "Learning thread");
+        
         const string importFileName = "ClientsForImport.csv";
+        const string exportFileName = "ExportClients.csv";
 
+        var exportService = new ExportService();
+        
         try
         {
-            ExportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
+            exportService.WriteClientsDataToScvFile(bankClientsForImport, pathToDirectory, importFileName);
 
             object locker = new();
 
@@ -40,9 +49,12 @@ public static class ThreadAndTaskTests
                     lock (locker)
                     {
                         var importBankClients =
-                            ExportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
+                            exportService.ReadClientsDataFromScvFile(pathToDirectory, importFileName);
+                        
                         bankClientsForExport.AddRange(importBankClients);
+                        
                         Console.WriteLine("Imported clients");
+                        
                         PrintClients(importBankClients);
                     }
                 },
@@ -51,41 +63,44 @@ public static class ThreadAndTaskTests
                     lock (locker)
                     {
                         Console.WriteLine("Exported clients");
+                        
                         PrintClients(bankClientsForExport);
-                        const string exportFileName = "ExportClients.csv";
-                        ExportService.WriteClientsDataToScvFile(bankClientsForExport, pathToDirectory, exportFileName);
+                        
+                        exportService.WriteClientsDataToScvFile(bankClientsForExport, pathToDirectory, exportFileName);
                     }
                 });
         }
-        catch (FileNotFoundException e)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "CSV file not found to read.");
-            Console.WriteLine(mess);
-        }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e);
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "Error during parallel import and export of clients.");
             Console.WriteLine(mess);
         }
 
         Thread.Sleep(1000);
     }
 
-    private static void ParallelAccrualToAccountTest()
+    private void ParallelAccrualToAccountTest()
     {
-        var bankClient = TestDataGenerator.GenerateRandomBankClient();
-        var currency = TestDataGenerator.GenerateRandomCurrency();
-        var account = TestDataGenerator.GenerateRandomBankClientAccount(currency, bankClient, 0);
+        var bankClient = _testDataGenerator.GenerateRandomBankClient();
+        var currency = _testDataGenerator.GenerateRandomCurrency();
+        var account = TestDataGenerator.GenerateBankClientAccount(currency, bankClient, 0);
 
         Console.WriteLine($"Client account {bankClient.FirstName} {bankClient.LastName} before updating:");
+        
         PrintClientAccount(account);
-
-        var accountAccrual = new Action<Account, int>(AccountAccrual);
-
-        Parallel.Invoke(
-            () => accountAccrual(account, 1),
-            () => accountAccrual(account, 2)
-        );
+        
+        try
+        {
+            Parallel.Invoke(
+                () => AccountAccrual(account, 1),
+                () => AccountAccrual(account, 2)
+            );
+        }
+        catch (Exception e)
+        {
+            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,"Error during parallel accrual to accounts.");
+            Console.WriteLine(mess);
+        }
 
         Thread.Sleep(1000);
     }

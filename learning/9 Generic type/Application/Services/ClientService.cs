@@ -47,7 +47,7 @@ public class ClientService
 
         var currency = GetCurrencyByCurrencyCode(currencyCode);
 
-        var account = TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount);
+        var account = TestDataGenerator.GenerateBankClientAccount(currency, client, amount);
 
         _clientStorage.AddAccount(client, account);
     }

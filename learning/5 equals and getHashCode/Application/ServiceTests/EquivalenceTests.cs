@@ -5,6 +5,8 @@ namespace ServiceTests;
 
 public class EquivalenceTests
 {
+    private static readonly TestDataGenerator _testDataGenerator = new();
+    
     public static void GetHashCodeNecessityPositiveTest()
     {
         EquivalenceInDictionaryTest();
@@ -17,8 +19,8 @@ public class EquivalenceTests
         Console.WriteLine("Словарь");
         Console.ResetColor();
 
-        var currency = TestDataGenerator.GenerateRandomCurrency();
-        var clientsAccounts = TestDataGenerator.GenerateDictionaryWithBankClientsAccounts(currency);
+        var currency = _testDataGenerator.GenerateRandomCurrency();
+        var clientsAccounts = _testDataGenerator.GenerateDictionaryWithBankClientsAccounts(currency);
 
         var client = clientsAccounts.First().Key;
         Console.WriteLine("Копируемый клиент:");
@@ -42,7 +44,7 @@ public class EquivalenceTests
                 Console.WriteLine("Не удалось найти аккаунты скопированного клиента!");
             }
 
-            var clientAccount = TestDataGenerator.GenerateRandomBankClientAccount(currency, copiedClient);
+            var clientAccount = TestDataGenerator.GenerateBankClientAccount(currency, copiedClient);
             Console.WriteLine(
                 $"Добавим аккаунт {clientAccount.AccountNumber}, {clientAccount.Amount} {clientAccount.Currency?.Code} скопированному клиенту:");
 
@@ -67,7 +69,7 @@ public class EquivalenceTests
         Console.WriteLine("Коллекция");
         Console.ResetColor();
 
-        var bankEmployees = TestDataGenerator.GenerateListWithBankEmployees();
+        var bankEmployees = _testDataGenerator.GenerateListWithBankEmployees();
         var employee = bankEmployees.First();
         Console.WriteLine("Копируемый сотрудник:");
         PrintEmployeeRepresentation(employee);

@@ -8,77 +8,45 @@ namespace Services;
 public class ClientService
 {
     private readonly BankingSystemDbContext _bankingSystemDbContext;
-    private readonly Currency? _defaultCurrency;
+    private Currency? _defaultCurrency;
 
     public ClientService(BankingSystemDbContext bankingSystemDbContext)
     {
         _bankingSystemDbContext = bankingSystemDbContext;
-        if (_bankingSystemDbContext.Database.CanConnect())
-        {
-            if (_bankingSystemDbContext.Currencies.FirstOrDefault() == null)
-            {
-                _bankingSystemDbContext.Currencies.AddRange(TestDataGenerator.GenerateListOfCurrencies());
-                SaveChanges();
-            }
-
-            _defaultCurrency = _bankingSystemDbContext.Currencies.ToList().Find(currency => currency.Code == "USD");
-            if (_defaultCurrency == null)
-                throw new ValueNotFoundException("Failed to get default currency!");
-        }
-        else
-        {
-            throw new DatabaseNotConnectedException("Failed to establish a connection to the database!");
-        }
     }
 
     public void AddClient(Client client)
     {
-        ValidateClient(client, false);
+        ValidateClient(client);
+
+        _defaultCurrency ??= GetDefaultCurrency();
+
         var defaultAccount = CreateAccount(client, _defaultCurrency);
-
-        if (defaultAccount == null)
-            throw new InvalidOperationException("Failed to create default account!");
-
+        
         _bankingSystemDbContext.Clients.Add(client);
         _bankingSystemDbContext.Accounts.Add(defaultAccount);
 
-        SaveChanges();
+        _bankingSystemDbContext.SaveChanges();
     }
 
-    public void UpdateClient(Guid clientId, string? firstName = null, string? lastName = null, int? age = null,
-        DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null,
-        decimal? bonus = null)
+    public void UpdateClient(Guid clientId, Client newClient)
     {
         var client = GetClientById(clientId);
 
-        if (firstName != null)
-            client.FirstName = firstName;
+        ValidateClient(newClient, true);
 
-        if (lastName != null)
-            client.LastName = lastName;
+        client.FirstName = newClient.FirstName;
+        client.LastName = newClient.LastName;
+        client.Age = newClient.Age;
+        client.DateOfBirth = newClient.DateOfBirth.ToUniversalTime();
+        client.PhoneNumber = newClient.PhoneNumber;
+        client.Address = newClient.Address;
+        client.Email = newClient.Email;
+        client.Bonus = newClient.Bonus;
 
-        if (age != null)
-            client.Age = (int)age;
-
-        if (dateOfBirth != null)
-            client.DateOfBirth = ((DateTime)dateOfBirth).ToUniversalTime();
-
-        if (phoneNumber != null)
-            client.PhoneNumber = phoneNumber;
-
-        if (address != null)
-            client.Address = address;
-
-        if (email != null)
-            client.Email = email;
-
-        if (bonus != null)
-            client.Bonus = (decimal)bonus;
-
-        ValidateClient(client, true);
-        SaveChanges();
+        _bankingSystemDbContext.SaveChanges();
     }
-    
+
     public void DeleteClient(Guid clientId)
     {
         var bankClient = GetClientById(clientId);
@@ -88,7 +56,7 @@ public class ClientService
         _bankingSystemDbContext.Accounts.RemoveRange(clientAccounts);
         _bankingSystemDbContext.Clients.Remove(bankClient);
 
-        SaveChanges();
+        _bankingSystemDbContext.SaveChanges();
     }
 
     public void AddClientAccount(Guid clientId, string currencyCode, decimal amount)
@@ -98,13 +66,10 @@ public class ClientService
         var currency = GetCurrencyByCurrencyCode(currencyCode);
 
         var account = CreateAccount(client, currency, amount);
-
-        if (account == null)
-            throw new InvalidOperationException("Failed to create account!");
-
+        
         _bankingSystemDbContext.Accounts.Add(account);
 
-        SaveChanges();
+        _bankingSystemDbContext.SaveChanges();
     }
 
     public void UpdateClientAccount(Guid accountId, string currencyCode = "", decimal? amount = null)
@@ -114,14 +79,15 @@ public class ClientService
         if (!string.IsNullOrWhiteSpace(currencyCode))
         {
             var currency = GetCurrencyByCurrencyCode(currencyCode);
-            
+
             account.CurrencyId = currency.CurrencyId;
             account.Currency = currency;
         }
 
         if (amount != null)
             account.Amount = (decimal)amount;
-        SaveChanges();
+
+        _bankingSystemDbContext.SaveChanges();
     }
 
     public void DeleteClientAccount(Guid accountId)
@@ -130,11 +96,6 @@ public class ClientService
 
         _bankingSystemDbContext.Accounts.Remove(account);
 
-        SaveChanges();
-    }
-
-    private void SaveChanges()
-    {
         _bankingSystemDbContext.SaveChanges();
     }
 
@@ -148,14 +109,14 @@ public class ClientService
         return string.Join("\n", clientAccounts);
     }
 
-    public List<Account> GetClientAccounts(Guid clientId)
+    public IEnumerable<Account> GetClientAccounts(Guid clientId)
     {
         return _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId)).ToList();
     }
 
-    private Account? CreateAccount(Client client, Currency? currency, decimal amount = 0)
+    private static Account CreateAccount(Client client, Currency currency, decimal amount = 0)
     {
-        return currency != null ? TestDataGenerator.GenerateRandomBankClientAccount(currency, client, amount) : null;
+        return TestDataGenerator.GenerateBankClientAccount(currency, client, amount);
     }
 
     private Client GetClientById(Guid clientId)
@@ -163,7 +124,7 @@ public class ClientService
         var client = _bankingSystemDbContext.Clients.SingleOrDefault(client => client.ClientId.Equals(clientId));
 
         if (client == null)
-            throw new ArgumentException($"The client with identifier {clientId} does not exist!", nameof(clientId));
+            throw new ValueNotFoundException($"The client with identifier {clientId} does not exist!");
 
         return client;
     }
@@ -173,7 +134,7 @@ public class ClientService
         var account = _bankingSystemDbContext.Accounts.SingleOrDefault(account => account.AccountId.Equals(accountId));
 
         if (account == null)
-            throw new ArgumentException($"There is no personal account with ID {accountId}.", nameof(accountId));
+            throw new ValueNotFoundException($"There is no personal account with ID {accountId}.");
 
         return account;
     }
@@ -182,17 +143,26 @@ public class ClientService
     {
         var currency =
             _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == currencyCode);
-        
+
         if (currency == null)
-            throw new ArgumentException($"The bank does not have the transferred currency ({currencyCode}).",
-                nameof(currencyCode));
+            throw new ValueNotFoundException($"The bank does not have the transferred currency ({currencyCode}).");
 
         return currency;
     }
-    
-    private void ValidateClient(Client client, bool itUpdate)
+
+    private Currency GetDefaultCurrency()
     {
-        if (!itUpdate && _bankingSystemDbContext.Clients.Contains(client))
+        var currency = _bankingSystemDbContext.Currencies.SingleOrDefault(currency => currency.Code == "USD");
+
+        if (currency == null)
+            throw new ValueNotFoundException("Default currency not found.");
+
+        return currency;
+    }
+
+    private void ValidateClient(Client client, bool itUpdate = false)
+    {
+        if (!itUpdate && _bankingSystemDbContext.Clients.Any(c => c.ClientId.Equals(client.ClientId)))
             throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
         if (string.IsNullOrWhiteSpace(client.FirstName))
@@ -228,7 +198,7 @@ public class ClientService
         if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
     }
 
-    public List<Client> ClientsWithFilterAndPagination(int page, int pageSize, string? firstName = null,
+    public IEnumerable<Client> ClientsWithFilterAndPagination(int page, int pageSize, string? firstName = null,
         string? lastName = null, int? age = null,
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
     {

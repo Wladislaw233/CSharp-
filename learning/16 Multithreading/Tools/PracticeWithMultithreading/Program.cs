@@ -7,6 +7,7 @@ internal static class Program
 {
     public static void Main(string[] args)
     {
-        ThreadAndTaskTests.ThreadTest();
+        var threadAndTaskTests = new ThreadAndTaskTests();
+        threadAndTaskTests.ThreadTest();
     }
 }
