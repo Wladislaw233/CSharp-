@@ -22,16 +22,16 @@ public class ClientServiceTests
         Console.WriteLine("Clients");
         Console.ResetColor();
 
-        _client = AddingClientTest();
+        _client = AddClientTest();
 
         if (_client != null)
         {
-            AddingClientAccountTest();
-            UpdatingClientAccountTest();
-            DeletingClientAccountTest();
-            UpdatingClientTest();
-            DeletingClientTest();
-            GettingClientsWithFilterTest();
+            AddClientAccountTest();
+            UpdateClientAccountTest();
+            DeleteClientAccountTest();
+            UpdateClientTest();
+            DeleteClientTest();
+            GetClientsWithFilterTest();
         }
         else
         {
@@ -39,7 +39,7 @@ public class ClientServiceTests
         }
     }
 
-    private Client? AddingClientTest()
+    private Client? AddClientTest()
     {
         var bankClients = _testDataGenerator.GenerateListWithBankClients(5);
 
@@ -52,13 +52,12 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when adding client.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
             return null;
         }
     }
 
-    private void AddingClientAccountTest()
+    private void AddClientAccountTest()
     {
         if (_client == null)
             return;
@@ -87,12 +86,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when adding client account.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void UpdatingClientAccountTest()
+    private void UpdateClientAccountTest()
     {
         if (_client == null)
             return;
@@ -118,12 +116,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when updating client account.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void DeletingClientAccountTest()
+    private void DeleteClientAccountTest()
     {
         if (_client == null)
             return;
@@ -147,12 +144,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when deleting client account.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void UpdatingClientTest()
+    private void UpdateClientTest()
     {
         if (_client == null)
             return;
@@ -171,12 +167,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when updating client.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void DeletingClientTest()
+    private void DeleteClientTest()
     {
         if (_client == null)
             return;
@@ -188,12 +183,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when deleting client.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void GettingClientsWithFilterTest()
+    private void GetClientsWithFilterTest()
     {
         const string clientFirstName = "Al";
 
@@ -212,8 +206,7 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when getting clients with filter.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 }

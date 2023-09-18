@@ -25,8 +25,7 @@ namespace ReflectionTests
             }
             catch (Exception e)
             {
-                var mess = ExceptionHandlingService.GeneralExceptionHandler(e,"Error when using reflection.");
-                Console.WriteLine(mess);
+                Console.WriteLine(e);
             }
         }
 

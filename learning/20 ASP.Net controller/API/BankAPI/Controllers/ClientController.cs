@@ -1,7 +1,5 @@
-﻿using BankingSystemServices.Exceptions;
-using BankingSystemServices.Models;
+﻿using BankingSystemServices.Models;
 using BankingSystemServices.Models.DTO;
-using BankingSystemServices.Services;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -15,12 +13,10 @@ namespace BankAPI.Controllers;
 public class ClientController : ControllerBase
 {
     private readonly IClientService _clientService;
-    private readonly ILogger<ClientController> _logger;
 
-    public ClientController(IClientService clientService, ILogger<ClientController> logger)
+    public ClientController(IClientService clientService)
     {
         _clientService = clientService;
-        _logger = logger;
     }
 
     /// <summary>
@@ -33,28 +29,14 @@ public class ClientController : ControllerBase
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
     [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status500InternalServerError)]
     [HttpGet("GetClientById/{clientId:guid}")]
     public async Task<ActionResult<Client>> GetClientById(Guid clientId)
     {
-        try
-        {
-            var client = await _clientService.GetClientByIdAsync(clientId);
-            return Ok(client);
-        }
-        catch (ValueNotFoundException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return NotFound(mess);
-        }
-        catch (Exception exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return StatusCode(StatusCodes.Status500InternalServerError, mess);
-        }
+        var client = await _clientService.GetClientByIdAsync(clientId);
+        
+        return Ok(client);
     }
 
     /// <summary>
@@ -67,34 +49,14 @@ public class ClientController : ControllerBase
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
     [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status500InternalServerError)]
     [HttpPost("AddClient")]
     public async Task<ActionResult<Client>> AddClient(ClientDto clientDto)
     {
-        try
-        {
-            var client = await _clientService.AddClientAsync(clientDto);
-            return Ok(client);
-        }
-        catch (ArgumentException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return BadRequest(mess);
-        }
-        catch (PropertyValidationException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return BadRequest(mess);
-        }
-        catch (Exception exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return StatusCode(StatusCodes.Status500InternalServerError, mess);
-        }
+        var client = await _clientService.AddClientAsync(clientDto);
+        
+        return Ok(client);
     }
 
     /// <summary>
@@ -109,41 +71,15 @@ public class ClientController : ControllerBase
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
     [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status500InternalServerError)]
     [HttpPut("UpdateClient/{clientId:guid}")]
     public async Task<ActionResult<Client>> UpdateClient(Guid clientId, ClientDto clientDto)
     {
-        try
-        {
-            var client = await _clientService.UpdateClientAsync(clientId, clientDto);
-            return Ok(client);
-        }
-        catch (ValueNotFoundException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return NotFound(mess);
-        }
-        catch (ArgumentException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return BadRequest(mess);
-        }
-        catch (PropertyValidationException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return BadRequest(mess);
-        }
-        catch (Exception exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return StatusCode(StatusCodes.Status500InternalServerError, mess);
-        }
+        var client = await _clientService.UpdateClientAsync(clientId, clientDto);
+        
+        return Ok(client);
     }
 
     /// <summary>
@@ -156,27 +92,13 @@ public class ClientController : ControllerBase
     ///     HTTP 500 InternalServerError and error massage if an unexpected error occurs on the server.
     /// </returns>
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorDetailsDto), StatusCodes.Status500InternalServerError)]
     [HttpDelete("DeleteClientById/{clientId:guid}")]
     public async Task<ActionResult> DeleteClientById(Guid clientId)
     {
-        try
-        {
-            await _clientService.DeleteClientAsync(clientId);
-            return Ok();
-        }
-        catch (ValueNotFoundException exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return NotFound(mess);
-        }
-        catch (Exception exc)
-        {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exc);
-            _logger.Log(LogLevel.Error, exc, mess);
-            return StatusCode(StatusCodes.Status500InternalServerError, mess);
-        }
+        await _clientService.DeleteClientAsync(clientId);
+        
+        return Ok();
     }
 }

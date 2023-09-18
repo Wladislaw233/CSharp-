@@ -43,8 +43,7 @@ public class ClientServiceTests
         }
         catch (CustomException exception)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exception, "Произошла ошибка при добавлении клиента.");
-            Console.WriteLine(mess);
+            Console.WriteLine(exception);
         }
     }
 
@@ -70,8 +69,7 @@ public class ClientServiceTests
             }
             catch (CustomException exception)
             {
-                var mess = ExceptionHandlingService.GeneralExceptionHandler(exception, "Произошла ошибка при добавлении счета клиенту.");
-                Console.WriteLine(mess);
+                Console.WriteLine(exception);
             }
         }
     }
@@ -107,8 +105,7 @@ public class ClientServiceTests
                 }
                 catch (CustomException exception)
                 {
-                    var mess = ExceptionHandlingService.GeneralExceptionHandler(exception, "Произошла ошибка при добавлении счета клиенту.");
-                    Console.WriteLine(mess);
+                    Console.WriteLine(exception);
                 }
             }
         }

@@ -57,7 +57,8 @@ public class EmployeeService : IEmployeeService
     private async Task ValidateEmployeeAsync(Employee employee, bool isUpdate = false)
     {
         if (!isUpdate &&
-            await _bankingSystemDbContext.Employees.AnyAsync(e => e.EmployeeId.Equals(employee.EmployeeId)))
+            (await _bankingSystemDbContext.Employees.AnyAsync(e => e.EmployeeId.Equals(employee.EmployeeId)) ||
+             await EmployeeContainsInDatabase(employee)))
             throw new ArgumentException("This employee has already been added to the banking system!",
                 nameof(employee));
 
@@ -102,6 +103,16 @@ public class EmployeeService : IEmployeeService
         if (age != employee.Age || employee.Age <= 0) employee.Age = age;
     }
 
+    private async Task<bool> EmployeeContainsInDatabase(Employee employee)
+    {
+        return await _bankingSystemDbContext.Employees.AnyAsync(e => e.FirstName == employee.FirstName 
+                                                                   && e.LastName == employee.LastName 
+                                                                   && e.PhoneNumber == employee.PhoneNumber
+                                                                   && e.Address == employee.Address
+                                                                   && e.Email == employee.Email
+                                                                   && e.DateOfBirth.Equals(employee.DateOfBirth));
+    }
+    
     public async Task<Employee> GetEmployeeByIdAsync(Guid employeeId)
     {
         var employee = await _bankingSystemDbContext.Employees.SingleOrDefaultAsync(employee =>

@@ -32,9 +32,7 @@ public class ExportToolTests
         }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while writing the file.");
-            Console.WriteLine(eMess);
+            Console.WriteLine(e);
         }
 
         try
@@ -47,9 +45,7 @@ public class ExportToolTests
         }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while reading the file.");
-            Console.WriteLine(eMess);
+            Console.WriteLine(e);
         }
     }
 
@@ -69,9 +65,7 @@ public class ExportToolTests
         }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while writing the file.");
-            Console.WriteLine(eMess);
+            Console.WriteLine(e);
         }
 
         try
@@ -84,9 +78,7 @@ public class ExportToolTests
         }
         catch (Exception e)
         {
-            var eMess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while reading the file.");
-            Console.WriteLine(eMess);
+            Console.WriteLine(e);
         }
     }
 

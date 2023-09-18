@@ -1,4 +1,5 @@
 using System.Reflection;
+using BankAPI.Middlewares;
 using BankingSystemServices.Database;
 using Services;
 using Services.Interfaces;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<BankingSystemDbContext>();
+
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
@@ -29,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandlerMiddleware();
 
 app.UseHttpsRedirection();
 

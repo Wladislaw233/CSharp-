@@ -23,16 +23,16 @@ public class ClientServiceTests
         Console.WriteLine("Clients");
         Console.ResetColor();
 
-        _client = await AddingClientTest();
+        _client = await AddClientTest();
 
         if (_client != null)
         {
-            await AddingClientAccountTest();
-            await UpdatingClientAccountTest();
-            await DeletingClientAccountTest();
-            await UpdatingClientTest();
-            await DeletingClientTest();
-            await GettingClientsWithFilterTest();
+            await AddClientAccountTest();
+            await UpdateClientAccountTest();
+            await DeleteClientAccountTest();
+            await UpdateClientTest();
+            await DeleteClientTest();
+            await GetClientsWithFilterTest();
         }
         else
         {
@@ -40,7 +40,7 @@ public class ClientServiceTests
         }
     }
 
-    private async Task<Client?> AddingClientTest()
+    private async Task<Client?> AddClientTest()
     {
         var bankClients = _testDataGenerator.GenerateListWithBankClients(5);
 
@@ -53,14 +53,12 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while adding the client to the database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
             return null;
         }
     }
 
-    private async Task AddingClientAccountTest()
+    private async Task AddClientAccountTest()
     {
         if (_client == null)
             return;
@@ -89,13 +87,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while adding the client account to the database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private async Task UpdatingClientAccountTest()
+    private async Task UpdateClientAccountTest()
     {
         if (_client == null)
             return;
@@ -127,13 +123,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while updating the client account in database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private async Task DeletingClientAccountTest()
+    private async Task DeleteClientAccountTest()
     {
         if (_client == null)
             return;
@@ -163,13 +157,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while deleting the client account in database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private async Task UpdatingClientTest()
+    private async Task UpdateClientTest()
     {
         if (_client == null)
             return;
@@ -188,13 +180,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while updating the client in database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private async Task DeletingClientTest()
+    private async Task DeleteClientTest()
     {
         if (_client == null)
             return;
@@ -207,13 +197,11 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while deleting the client in database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private async Task GettingClientsWithFilterTest()
+    private async Task GetClientsWithFilterTest()
     {
         const string clientFirstName = "Al";
 
@@ -232,9 +220,7 @@ public class ClientServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,
-                "An error occurred while getting the clients from database.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 }

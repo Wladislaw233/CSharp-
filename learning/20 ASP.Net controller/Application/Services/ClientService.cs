@@ -26,7 +26,7 @@ public class ClientService : IClientService
 
         _defaultCurrency ??= await GetDefaultCurrencyAsync();
 
-        var defaultAccount = await CreateAccountAsync(client, _defaultCurrency);
+        var defaultAccount = CreateAccountAsync(client, _defaultCurrency);
         
         await _bankingSystemDbContext.Clients.AddAsync(client);
         await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
@@ -84,16 +84,16 @@ public class ClientService : IClientService
         return currency;
     }
 
-    private static async Task<Account> CreateAccountAsync(Client client, Currency currency, decimal amount = 0)
+    private static Account CreateAccountAsync(Client client, Currency currency, decimal amount = 0)
     {
-        return await Task.Run(() => TestDataGenerator.GenerateBankClientAccount(currency, client, amount));
+        return TestDataGenerator.GenerateBankClientAccount(currency, client, amount);
     }
 
     private async Task ValidateClientAsync(Client client, bool itUpdate = false)
     {
         if (!itUpdate 
-            && await _bankingSystemDbContext.Clients.AnyAsync(c => c.ClientId.Equals(client.ClientId))
-            && !await ClientContainsInDatabase(client))
+            && (await _bankingSystemDbContext.Clients.AnyAsync(c => c.ClientId.Equals(client.ClientId))
+            || await ClientContainsInDatabase(client)))
             throw new ArgumentException("This client has already been added to the banking system!", nameof(client));
 
         if (string.IsNullOrWhiteSpace(client.FirstName))
@@ -120,28 +120,23 @@ public class ClientService : IClientService
             throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
                 nameof(Client));
 
-        var age = await Task.Run(() => TestDataGenerator.CalculateAge(client.DateOfBirth));
+        var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
 
         if (age < 18)
             throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
                 nameof(Client));
 
-        if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
+        if (age != client.Age || client.Age <= 0) client.Age = age;
     }
 
     private async Task<bool> ClientContainsInDatabase(Client client)
     {
-        var clientContains = await (from clients in _bankingSystemDbContext.Clients
-            where clients.FirstName == client.FirstName &&
-                  clients.LastName == client.LastName &&
-                  clients.PhoneNumber == client.PhoneNumber &&
-                  clients.Address == client.Address &&
-                  clients.Email == client.Email &&
-                  clients.DateOfBirth.Equals(client.DateOfBirth) &&
-                  clients.Age == client.Age
-            select 0).AnyAsync();
-
-        return clientContains;
+        return await _bankingSystemDbContext.Clients.AnyAsync(c => c.FirstName == client.FirstName 
+                                                                   && c.LastName == client.LastName 
+                                                                   && c.PhoneNumber == client.PhoneNumber
+                                                                   && c.Address == client.Address
+                                                                   && c.Email == client.Email
+                                                                   && c.DateOfBirth.Equals(client.DateOfBirth));
     }
     
     private static Client MapDtoToClient(ClientDto clientDto, Client? client = null)

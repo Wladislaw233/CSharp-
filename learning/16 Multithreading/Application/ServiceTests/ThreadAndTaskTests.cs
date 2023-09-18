@@ -72,8 +72,7 @@ public class ThreadAndTaskTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "Error during parallel import and export of clients.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
 
         Thread.Sleep(1000);
@@ -98,8 +97,7 @@ public class ThreadAndTaskTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e,"Error during parallel accrual to accounts.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
 
         Thread.Sleep(1000);

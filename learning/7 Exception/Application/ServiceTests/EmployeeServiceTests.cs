@@ -38,8 +38,7 @@ public class EmployeeServiceTests
         }
         catch (CustomException exception)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(exception, "При добавлении сотрудника произошла ошибка.");
-            Console.WriteLine(mess);
+            Console.WriteLine(exception);
         }
 
         Console.WriteLine("\nСписок сотрудников после добавления:");

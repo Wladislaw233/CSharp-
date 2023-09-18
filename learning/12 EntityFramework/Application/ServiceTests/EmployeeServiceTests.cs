@@ -22,13 +22,13 @@ public class EmployeeServiceTests
         Console.WriteLine("\nEmployees");
         Console.ResetColor();
 
-        _employee = AddingEmployeesTest();
+        _employee = AddEmployeesTest();
 
         if (_employee != null)
         {
-            UpdatingEmployeeTest();
-            DeletingEmployeeTest();
-            GettingEmployeesWithFilterTest();
+            UpdateEmployeeTest();
+            DeleteEmployeeTest();
+            GetEmployeesWithFilterTest();
         }
         else
         {
@@ -36,7 +36,7 @@ public class EmployeeServiceTests
         }
     }
 
-    private Employee? AddingEmployeesTest()
+    private Employee? AddEmployeesTest()
     {
         var addedBankEmployees = _testDataGenerator.GenerateListWithBankEmployees(100);
 
@@ -53,13 +53,12 @@ public class EmployeeServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when adding employee.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
             return null;
         }
     }
 
-    private void UpdatingEmployeeTest()
+    private void UpdateEmployeeTest()
     {
         if (_employee == null)
             return;
@@ -77,12 +76,11 @@ public class EmployeeServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when updating employee.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void DeletingEmployeeTest()
+    private void DeleteEmployeeTest()
     {
         if (_employee == null)
             return;
@@ -94,12 +92,11 @@ public class EmployeeServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when deleting employee.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
-    private void GettingEmployeesWithFilterTest()
+    private void GetEmployeesWithFilterTest()
     {
         Console.WriteLine("Let's display the first 5 owners of the bank:");
 
@@ -113,8 +110,7 @@ public class EmployeeServiceTests
         }
         catch (Exception e)
         {
-            var mess = ExceptionHandlingService.GeneralExceptionHandler(e, "error when getting employees with filter.");
-            Console.WriteLine(mess);
+            Console.WriteLine(e);
         }
     }
 
