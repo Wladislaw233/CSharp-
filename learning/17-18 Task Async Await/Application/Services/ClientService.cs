@@ -22,7 +22,7 @@ public class ClientService
 
         _defaultCurrency ??= await GetDefaultCurrencyAsync();
 
-        var defaultAccount = await CreateAccount(client, _defaultCurrency);
+        var defaultAccount = CreateAccount(client, _defaultCurrency);
 
         await _bankingSystemDbContext.Clients.AddAsync(client);
         await _bankingSystemDbContext.Accounts.AddAsync(defaultAccount);
@@ -66,7 +66,7 @@ public class ClientService
 
         var currency = await GetCurrencyByCurrencyCodeAsync(currencyCode);
 
-        var account = await CreateAccount(client, currency, amount);
+        var account = CreateAccount(client, currency, amount);
         
         await _bankingSystemDbContext.Accounts.AddAsync(account);
 
@@ -126,9 +126,9 @@ public class ClientService
         return await _bankingSystemDbContext.Accounts.Where(account => account.ClientId.Equals(clientId)).ToListAsync();
     }
 
-    private static async Task<Account> CreateAccount(Client client, Currency currency, decimal amount = 0)
+    private static Account CreateAccount(Client client, Currency currency, decimal amount = 0)
     {
-        return await Task.Run(() => TestDataGenerator.GenerateBankClientAccount(currency, client, amount));
+        return TestDataGenerator.GenerateBankClientAccount(currency, client, amount);
     }
 
     private async Task<Client> GetClientByIdAsync(Guid clientId)
@@ -193,13 +193,13 @@ public class ClientService
             throw new PropertyValidationException("The client date of birth is incorrect!", nameof(client.DateOfBirth),
                 nameof(Client));
 
-        var age = await Task.Run(() => TestDataGenerator.CalculateAge(client.DateOfBirth));
+        var age = TestDataGenerator.CalculateAge(client.DateOfBirth);
 
         if (age < 18)
             throw new PropertyValidationException("The client is under 18 years old!", nameof(client.Age),
                 nameof(Client));
 
-        if (age != client.Age || client.Age <= 0) client.Age = TestDataGenerator.CalculateAge(client.DateOfBirth);
+        if (age != client.Age || client.Age <= 0) client.Age = age;
     }
 
     public async Task<List<Client>> ClientsWithFilterAndPaginationAsync(int page, int pageSize,

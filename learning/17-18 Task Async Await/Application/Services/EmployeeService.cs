@@ -49,7 +49,7 @@ public class EmployeeService
     {
         var bankEmployee = await GetEmployeeByIdAsync(employeeId);
 
-        await Task.Run(() => _bankingSystemDbContext.Employees.Remove(bankEmployee));
+        _bankingSystemDbContext.Employees.Remove(bankEmployee);
 
         await _bankingSystemDbContext.SaveChangesAsync();
     }
@@ -105,7 +105,7 @@ public class EmployeeService
             throw new PropertyValidationException("The employee's date of birth is incorrect!",
                 nameof(employee.DateOfBirth), nameof(Employee));
 
-        var age = await Task.Run(() => TestDataGenerator.CalculateAge(employee.DateOfBirth));
+        var age = TestDataGenerator.CalculateAge(employee.DateOfBirth);
 
         if (age < 18)
             throw new PropertyValidationException("Employee is under 18 years old!", nameof(employee.Age),
