@@ -203,6 +203,7 @@ public class ClientService
         DateTime? dateOfBirth = null, string? phoneNumber = null, string? address = null, string? email = null)
     {
         IQueryable<Client> query = _bankingSystemDbContext.Clients;
+        
         if (firstName != null)
             query = query.Where(client => client.FirstName == firstName);
         if (lastName != null)

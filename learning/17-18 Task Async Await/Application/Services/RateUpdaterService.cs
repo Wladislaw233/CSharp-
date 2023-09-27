@@ -57,7 +57,7 @@ public class RateUpdaterService
         await using var dbContext = new BankingSystemDbContext();
 
         var chunk = await dbContext.Accounts
-            .OrderBy(account => account.AccountId)
+            .OrderBy(account => account.AccountNumber)
             .Skip(_chunkSize * index)
             .Take(_chunkSize)
             .ToListAsync();

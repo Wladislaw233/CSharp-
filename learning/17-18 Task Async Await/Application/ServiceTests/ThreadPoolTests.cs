@@ -14,7 +14,7 @@ public static class ThreadPoolTests
         Console.ResetColor();
 
         Console.WriteLine("launching 15 tasks, with 10 threads available (sequential execution).");
-        await ThreadPoolTest();
+        //await ThreadPoolTest();
 
         Console.WriteLine("launching 15 tasks with 10 threads available (asynchronous execution).");
         await ThreadPoolAsyncTest();
@@ -50,7 +50,7 @@ public static class ThreadPoolTests
         // ReSharper disable once NotAccessedVariable
         ThreadPool.GetAvailableThreads(out var workerThreads, out var completionPortThreads);
         Console.WriteLine($"The {indexOfTask} task starts. Available streams: {workerThreads}/{TotalThreads}.");
-        await Task.Delay(2000);
+        Thread.Sleep(20000);
         ThreadPool.GetAvailableThreads(out workerThreads, out completionPortThreads);
         Console.WriteLine($"The task {indexOfTask} is finished. Available streams: {workerThreads}/{TotalThreads}.");
     }
